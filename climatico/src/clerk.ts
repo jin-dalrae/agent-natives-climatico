@@ -1,0 +1,60 @@
+import { Think } from "@cloudflare/think";
+import { tool } from "ai";
+import { z } from "zod";
+import { createWorkersAI } from "workers-ai-provider";
+import { getLedger } from "./ledger";
+
+export class Clerk extends Think<Env> {
+  getModel() {
+    return createWorkersAI({ binding: this.env.AI })("@cf/moonshotai/kimi-k2.6");
+  }
+
+  getSystemPrompt() {
+    return [
+      "You are the Climatico clerk.",
+      "Climatico is an agent-native climate action desk.",
+      "You file briefs, watches, offsets, and site assessments against a place.",
+      "You never invent climate facts. Tools persist a receipt even when they refuse.",
+      "If a caller asks for a payout, greenwash claim, or action without a location, call complete_action and let policy refuse it.",
+      "Always show the receipt id, status, and refusal reason when present.",
+    ].join(" ");
+  }
+
+  getTools() {
+    return {
+      complete_action: tool({
+        description: "Commit or refuse a climate action. Writes a durable receipt.",
+        inputSchema: z.object({
+          intent: z.enum(["brief", "watch", "offset", "assess"]),
+          location: z.string(),
+          amountCents: z.number().int().optional(),
+          note: z.string().optional(),
+        }),
+        execute: async ({ intent, location, amountCents, note }) => {
+          const ledger = await getLedger(this.env);
+          const minted = await ledger.mintCredential({
+            subject: `clerk:${this.name}`,
+            scopes: ["climatico:read", "climatico:transact"],
+          });
+          return await ledger.runAction({ intent, location, amountCents, note }, minted.principal);
+        },
+      }),
+      list_receipts: tool({
+        description: "List recent Climatico receipts.",
+        inputSchema: z.object({ limit: z.number().int().optional() }),
+        execute: async ({ limit }) => {
+          const ledger = await getLedger(this.env);
+          return await ledger.listReceipts(limit ?? 10);
+        },
+      }),
+      get_policy: tool({
+        description: "Climatico allow and refuse rules.",
+        inputSchema: z.object({}),
+        execute: async () => {
+          const ledger = await getLedger(this.env);
+          return await ledger.policyDoc();
+        },
+      }),
+    };
+  }
+}

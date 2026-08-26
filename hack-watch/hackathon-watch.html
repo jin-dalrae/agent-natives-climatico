@@ -1,0 +1,478 @@
+<title>Agent Natives Watch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f4f2; --card:#fbfbfa; --sunk:#ececea;
+  --ink:#191c1f; --ink-2:#4d5459; --ink-3:#7d868c;
+  --rule:#dcdedc; --rule-2:#c8ccc9;
+  --accent:#0f6f7d; --accent-soft:#e2f0f1;
+  --ok:#2c7a52; --ok-soft:#e0efe6;
+  --warn:#96650f; --warn-soft:#f6ecd8;
+  --crit:#a53a34; --crit-soft:#f7e4e2;
+  --shadow:0 1px 2px rgba(25,28,31,.06),0 6px 20px -12px rgba(25,28,31,.18);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#121417; --card:#1a1e22; --sunk:#0d0f11;
+  --ink:#e9ecec; --ink-2:#a3adb2; --ink-3:#727d83;
+  --rule:#2a3036; --rule-2:#3a4249;
+  --accent:#4cc3d2; --accent-soft:#12333a;
+  --ok:#5cc98d; --ok-soft:#143224;
+  --warn:#e0aa4d; --warn-soft:#332714;
+  --crit:#ef8177; --crit-soft:#361d1b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --paper:#121417; --card:#1a1e22; --sunk:#0d0f11;
+  --ink:#e9ecec; --ink-2:#a3adb2; --ink-3:#727d83;
+  --rule:#2a3036; --rule-2:#3a4249;
+  --accent:#4cc3d2; --accent-soft:#12333a;
+  --ok:#5cc98d; --ok-soft:#143224;
+  --warn:#e0aa4d; --warn-soft:#332714;
+  --crit:#ef8177; --crit-soft:#361d1b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:Archivo,ui-sans-serif,system-ui,sans-serif;text-wrap:balance;margin:0}
+code,.mono,.t{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ---- top strip ---- */
+.bar{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--rule)}
+.bar .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px}
+.brand{font-family:Archivo;font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.brand span{color:var(--ink-3);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;
+  box-shadow:0 0 0 0 var(--ok);animation:pulse 2.4s ease-out infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+.bar .spacer{flex:1}
+.clock{font-family:"IBM Plex Mono";font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.clock b{color:var(--ink);font-weight:600}
+
+/* ---- now panel ---- */
+.now{padding:34px 0 30px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+h1{font-size:clamp(30px,5.2vw,50px);line-height:1.03;letter-spacing:-.022em;font-weight:800;margin:10px 0 0}
+.sub{color:var(--ink-2);max-width:60ch;margin:12px 0 0}
+.nowgrid{display:grid;grid-template-columns:1.35fr 1fr;gap:20px;margin-top:26px}
+@media(max-width:760px){.nowgrid{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--rule);border-radius:6px;box-shadow:var(--shadow)}
+.panel-h{display:flex;align-items:baseline;gap:10px;padding:13px 18px;border-bottom:1px solid var(--rule)}
+.panel-h h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink-2)}
+.panel-b{padding:18px}
+.happening{font-family:Archivo;font-size:clamp(20px,3vw,27px);font-weight:700;letter-spacing:-.015em;line-height:1.15}
+.happening.idle{color:var(--ink-3);font-weight:600}
+.since{color:var(--ink-2);font-size:13.5px;margin-top:8px}
+.upnext{margin-top:16px;padding-top:14px;border-top:1px dashed var(--rule-2);display:flex;gap:12px;align-items:baseline}
+.upnext .t{font-size:13px;color:var(--accent);font-weight:600}
+.upnext .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-family:"IBM Plex Mono"}
+.cd{font-family:"IBM Plex Mono";font-weight:600;font-size:clamp(30px,6vw,44px);letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;line-height:1;color:var(--ink)}
+.cd.urgent{color:var(--crit)}
+.cd-cap{color:var(--ink-2);font-size:13.5px;margin-top:10px}
+.cd-cap b{color:var(--ink);font-weight:600}
+
+/* ---- standing tiles ---- */
+.standing{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:20px}
+.tile{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--rule-2);
+  border-radius:5px;padding:13px 15px;box-shadow:var(--shadow)}
+.tile.bad{border-left-color:var(--crit)}
+.tile.good{border-left-color:var(--ok)}
+.tile.wait{border-left-color:var(--warn)}
+.tile dt{font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.tile dd{margin:5px 0 0;font-family:Archivo;font-weight:700;font-size:17px;letter-spacing:-.01em}
+.tile.bad dd{color:var(--crit)} .tile.good dd{color:var(--ok)} .tile.wait dd{color:var(--warn)}
+.tile small{display:block;color:var(--ink-3);font-size:12px;margin-top:4px;font-family:"IBM Plex Sans"}
+
+/* ---- generic sections ---- */
+section{padding:34px 0;border-bottom:1px solid var(--rule)}
+.sec-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.sec-h h2{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.sec-h p{margin:0;color:var(--ink-3);font-size:13.5px}
+.cols{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:start}
+@media(max-width:860px){.cols{grid-template-columns:1fr}}
+
+/* ---- timeline ---- */
+.day+.day{margin-top:22px}
+.day-h{font-family:"IBM Plex Mono";font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-2);font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--rule-2)}
+.row{display:grid;grid-template-columns:62px 1fr auto;gap:14px;align-items:baseline;
+  padding:9px 0 9px 0;border-bottom:1px solid var(--rule);position:relative}
+.row .t{font-size:13.5px;color:var(--ink-2);font-weight:500}
+.row .what{font-size:14.5px}
+.row.done{opacity:.42}
+.row.done .what{text-decoration:line-through;text-decoration-color:var(--rule-2)}
+.row.live{background:var(--accent-soft);border-radius:4px;padding-left:12px;padding-right:12px;
+  margin-left:-12px;margin-right:-12px;border-bottom-color:transparent}
+.row.live .t,.row.live .what{color:var(--accent);font-weight:600}
+.row.hard .what::after{content:"HARD";font-family:"IBM Plex Mono";font-size:9.5px;letter-spacing:.1em;
+  margin-left:9px;padding:2px 5px;border-radius:3px;background:var(--crit-soft);color:var(--crit);
+  vertical-align:2px;font-weight:600}
+.pip{font-family:"IBM Plex Mono";font-size:11px;color:var(--ink-3);white-space:nowrap}
+.row.live .pip{color:var(--accent)}
+
+/* ---- fact list ---- */
+.facts{display:grid;gap:0}
+.fact{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.fact dt{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding-top:3px}
+.fact dd{margin:0;font-size:14.5px}
+.fact dd small{display:block;color:var(--ink-3);font-size:12.5px;margin-top:1px}
+
+/* ---- flags ---- */
+.flag{border:1px solid var(--rule);border-left:3px solid var(--warn);border-radius:5px;
+  background:var(--card);padding:15px 17px;box-shadow:var(--shadow)}
+.flag+.flag{margin-top:12px}
+.flag.crit{border-left-color:var(--crit)}
+.flag h3{font-size:15px;font-weight:700;letter-spacing:-.005em;line-height:1.3}
+.flag p{margin:7px 0 0;color:var(--ink-2);font-size:13.5px;max-width:72ch}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Mono";font-size:10.5px;
+  letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:3px;
+  background:var(--warn-soft);color:var(--warn);margin-bottom:9px}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.acc{background:var(--accent-soft);color:var(--accent)}
+.filed{margin-top:12px;padding-top:11px;border-top:1px dashed var(--rule-2);font-size:12.5px;color:var(--ink-3)}
+.filed code{color:var(--ink-2);background:var(--sunk);padding:1.5px 5px;border-radius:3px;font-size:11.5px}
+
+/* ---- changelog ---- */
+.log{border:1px solid var(--rule);border-radius:5px;background:var(--card);overflow:hidden}
+.log-row{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:12px 16px;border-bottom:1px solid var(--rule);font-size:13.5px}
+.log-row:last-child{border-bottom:0}
+.log-row .t{font-size:12px;color:var(--ink-3)}
+.log-row .lbl{font-weight:600}
+.log-row .delta{color:var(--ink-2);font-size:12.5px;margin-top:3px;word-break:break-word}
+.log-row .delta i{font-style:normal;color:var(--ink-3)}
+.quiet{padding:22px 18px;color:var(--ink-3);font-size:13.5px;text-align:center;
+  border:1px dashed var(--rule-2);border-radius:5px}
+
+/* ---- code ---- */
+pre{margin:0;background:var(--sunk);border:1px solid var(--rule);border-radius:5px;padding:14px 16px;
+  overflow-x:auto;font-family:"IBM Plex Mono";font-size:12.5px;line-height:1.6;color:var(--ink)}
+pre b{color:var(--accent);font-weight:600}
+.hint{color:var(--ink-3);font-size:12.5px;margin:9px 0 0}
+
+/* ---- rubric ---- */
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:420px}
+th,td{text-align:left;padding:8px 12px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+td.w{font-family:"IBM Plex Mono";font-weight:600;color:var(--accent);width:52px;font-variant-numeric:tabular-nums}
+
+footer{padding:26px 0 44px;color:var(--ink-3);font-size:12.5px}
+footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:baseline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+</style>
+
+<div class="bar"><div class="wrap">
+  <div class="brand">Agent Natives <span>/ watch</span></div>
+  <span class="dot" id="livedot" aria-hidden="true"></span>
+  <span class="clock" id="daytag"></span>
+  <div class="spacer"></div>
+  <span class="clock"><b id="clock">--:--:--</b> PDT</span>
+  <span class="clock" id="lastcheck"></span>
+</div></div>
+
+<main>
+<div class="now"><div class="wrap">
+  <p class="eyebrow" id="phasetag">Live</p>
+  <h1 id="headline">The Agent Natives Builders Hackathon</h1>
+  <p class="sub" id="venue"></p>
+
+  <div class="nowgrid">
+    <div class="panel">
+      <div class="panel-h"><h2>Happening now</h2></div>
+      <div class="panel-b">
+        <div class="happening" id="nowitem">—</div>
+        <div class="since" id="nowsince"></div>
+        <div class="upnext"><span class="lbl">Up next</span>
+          <span class="t" id="nexttime"></span><span id="nextitem"></span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2 id="cdlabel">Countdown</h2></div>
+      <div class="panel-b">
+        <div class="cd" id="countdown">—</div>
+        <div class="cd-cap" id="cdcap"></div>
+      </div>
+    </div>
+  </div>
+  <div class="standing" id="standing"></div>
+</div></div>
+
+<section><div class="wrap">
+  <div class="sec-h"><h2>What the page is telling people</h2>
+    <p>Read straight off the live page each poll.</p></div>
+  <div class="cols">
+    <div id="flags"></div>
+    <div class="panel"><div class="panel-h"><h2>Current banner</h2></div>
+      <div class="panel-b">
+        <p class="eyebrow">Hero status</p>
+        <p style="margin:6px 0 0;font-size:15px" id="bannertext"></p>
+        <p class="eyebrow" style="margin-top:16px">Applications</p>
+        <p style="margin:6px 0 0;font-size:13.5px;color:var(--ink-2)" id="phaseline"></p>
+      </div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-h"><h2>Run of show</h2><p>All times PDT. The building clears at 8:30pm both nights.</p></div>
+  <div class="cols">
+    <div id="timeline"></div>
+    <div>
+      <div class="panel"><div class="panel-h"><h2>At a glance</h2></div>
+        <div class="panel-b"><dl class="facts" id="facts"></dl></div></div>
+      <div class="panel" style="margin-top:20px"><div class="panel-h"><h2>The rubric</h2>
+        <p style="margin:0;color:var(--ink-3);font-size:11.5px">100 pts · same weights both tracks</p></div>
+        <div class="panel-b"><div class="tbl-wrap"><table>
+          <thead><tr><th>Wt</th><th>External</th><th>Internal</th></tr></thead>
+          <tbody>
+            <tr><td class="w">30</td><td>Cold-start success</td><td>Real work across a real boundary</td></tr>
+            <tr><td class="w">25</td><td colspan="2">It runs — a gate, not just a criterion</td></tr>
+            <tr><td class="w">20</td><td>Surface quality</td><td>Coordination design</td></tr>
+            <tr><td class="w">15</td><td colspan="2">Lands in the product</td></tr>
+            <tr><td class="w">10</td><td colspan="2">Demo</td></tr>
+          </tbody></table></div>
+          <p class="hint">A submission a judge cannot trigger live cannot place, whatever else it scores.</p>
+        </div></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-h"><h2>Changes since this watch started</h2>
+    <p id="pollnote"></p></div>
+  <div id="log"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-h"><h2>On the table</h2>
+    <p>Six winners, three per track. Most of it lands for showing up, not for placing.</p></div>
+  <div class="cols">
+    <div id="awards"></div>
+    <div class="panel"><div class="panel-h"><h2>Sponsor challenge</h2></div>
+      <div class="panel-b" id="challenge"></div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-h"><h2>If your agent is working the event</h2>
+    <p>Scopes freeze at mint — ask for all of them in one go.</p></div>
+  <div class="cols">
+    <div>
+      <pre>npx -y @immersivecommons/cli auth --scopes \
+  <b>hack:read,hack:register,hack:team,hack:submit,keys:request</b></pre>
+      <p class="hint">MCP endpoint <code>https://www.immersivecommons.com/api/mcp</code> · event id <code>anb-hack-01</code>. <code>keys:request</code> is the one people forget; it's what asks for the model key on the day.</p>
+    </div>
+    <div class="panel"><div class="panel-h"><h2>Calls that matter today</h2></div>
+      <div class="panel-b"><dl class="facts">
+        <div class="fact"><dt>Where I stand</dt><dd><code>ic_hack_me</code><small>Re-run it whenever unsure.</small></dd></div>
+        <div class="fact"><dt>Submit</dt><dd><code>ic_hack_submit</code><small>Idempotent per team. Submit early, overwrite later.</small></dd></div>
+        <div class="fact"><dt>Model key</dt><dd><code>ic_request_workshop_key</code><small>Then poll <code>ic_get_my_workshop_key</code>.</small></dd></div>
+        <div class="fact"><dt>Stuck</dt><dd><code>ic_feedback_submit</code><small>Reaches the operator at public tier.</small></dd></div>
+      </dl>
+      <p class="hint">A 200 is not success here — business failures return HTTP 200 with <code>ok:false</code>. Read the envelope.</p>
+      </div></div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <span id="built"></span><span>Polls <code>immersivecommons.com/events/hackathon</code> every 20 min.</span>
+  <span id="checks"></span>
+</div></footer>
+
+<script>
+const D = {"state": {"checked_at": "2026-08-26T21:05:02.269475+00:00", "checked_at_pdt": "2026-08-26 14:05:02 PDT", "http_status": 200, "reachable": true, "page_bytes": 323028, "status_banner": "Building now", "phase_line": "Building now", "kicker": "August 26-27, 2026 · Cloudflare SF, 101 Townsend St · 50 builder seats", "late_door": false, "event": {"name": "The Agent Natives Builders Hackathon", "startDate": "2026-08-26T10:00:00-07:00", "endDate": "2026-08-27T20:30:00-07:00", "eventStatus": "EventScheduled", "location": "Cloudflare San Francisco", "organizers": ["Immersive Commons", "Runtype", "Cotal.ai", "Nebius"], "sponsors": ["Tenki", "Tavily", "Mitosis Labs", "Hacker Bob", "HUD"]}, "people": {"Community Partner": ["Alex Marin", "Balázs Némethi", "Cheryl Yang", "Devinder Sodhi", "Soji Lee", "Steven Etchman", "Walter Wu"], "Judge": ["Axel Cassou", "Barton Rhodes", "Fabio Roma", "Michalis Vasileiadis", "Vidya Bodepudi"], "Organizer": ["David Farah", "Nate Stewart", "Nathan Booker", "Rayyan Zahid", "Sven Jonscher"], "Sponsor": ["Alex Morris", "Colin Lowenberg", "Prakshal Jain"], "Sponsor Co-host": ["Sujee Maniyam"]}, "run_of_show": {"day1": [{"time": "10:00", "item": "Doors, check in, badge pickup"}, {"time": "10:30", "item": "Kickoff: rules, tracks, judging rubric"}, {"time": "11:30", "item": "Team formation, build begins"}, {"time": "13:00", "item": "Lunch, catered"}, {"time": "18:30", "item": "Dinner, catered"}, {"time": "19:30", "item": "Wind down, teardown"}, {"time": "20:00", "item": "Floor clear"}], "day2": [{"time": "10:00", "item": "Doors, build resumes"}, {"time": "10:30", "item": "Day two brief"}, {"time": "13:00", "item": "Lunch, catered"}, {"time": "15:00", "item": "Submissions lock"}, {"time": "15:30", "item": "Demos, two tracks in parallel"}, {"time": "18:00", "item": "Results, awards, closing"}, {"time": "19:00", "item": "Wind down, teardown"}, {"time": "20:00", "item": "Floor clear"}]}, "awards": ["Runtype: $500 cash for the best use of Runtype.", "Cotal: $300 cash for the best use of Cotal.", "Sandbox VR: $330 in experiences, one winner per track — a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.", "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.", "Hacker Bob: a security scan for every builder, and a month of the product for every winner.", "Tenki: $100 in credits for every builder.", "AIsa: $100 in credits for every builder.", "Nebius: $75 in Builder Program credits for every builder.", "Tavily: 8,000 credits for every builder, on top of the 1,000 a free account starts with, so 9,000 in total.", "Runtype: $50 in credits for every builder.", "Credits are claimed on each vendor’s own site, not from us. How to claim each one ."], "sponsor_challenges": ["Runtype", "Best use of Runtype", "Build your project on Runtype: agents, flows, tools, product evals, model routing and integrations already wired together, so a prompt that works becomes a product without rebuilding auth, multi tenancy and evals first. The strongest use of the platform takes the prize, judged alongside the main rubric. Separately, every builder gets $50 in Runtype credits just for turning up. Those are yours already and are not something you compete for.", "$500 cash"], "registered": true, "role": {"roles": ["participant", "team_lead"], "nda_signed": true, "checked_in": false}, "team": {"eid": "anb-hack-01", "team_id": "t_5a903ee708c64f1e", "name": "Climatico", "lead": "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC", "members": ["user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC"], "recruiting": true, "created_at": "2026-08-26T21:04:53.122Z", "updated_at": "2026-08-26T21:04:53.122Z"}, "submission": null, "api_phase": "BUILD", "applied": false, "api_seats_used": 4, "api_seats_remaining": 46, "bounty_count": 1, "team_count": 3, "teams": ["Climatico", "Physical Capability Cloud", "Showtonic"], "body_hash": "e5ed4a09916e7bd5", "checks_run": 12, "change_events": 9}, "sched": [{"day": "day1", "dayLabel": "Wednesday, August 26", "time": "10:00", "item": "Doors, check in, badge pickup", "iso": "2026-08-26T10:00:00-07:00", "hard": false}, {"day": "day1", "dayLabel": "Wednesday, August 26", "time": "10:30", "item": "Kickoff: rules, tracks, judging rubric", "iso": "2026-08-26T10:30:00-07:00", "hard": false}, {"day": "day1", "dayLabel": "Wednesday, August 26", "time": "11:30", "item": "Team formation, build begins", "iso": "2026-08-26T11:30:00-07:00", "hard": false}, {"day": "day1", "dayLabel": "Wednesday, August 26", "time": "13:00", "item": "Lunch, catered", "iso": "2026-08-26T13:00:00-07:00", "hard": false}, {"day": "day1", "dayLabel": "Wednesday, August 26", "time": "18:30", "item": "Dinner, catered", "iso": "2026-08-26T18:30:00-07:00", "hard": false}, {"day": "day1", "dayLabel": "Wednesday, August 26", "time": "19:30", "item": "Wind down, teardown", "iso": "2026-08-26T19:30:00-07:00", "hard": false}, {"day": "day1", "dayLabel": "Wednesday, August 26", "time": "20:00", "item": "Floor clear", "iso": "2026-08-26T20:00:00-07:00", "hard": true}, {"day": "day2", "dayLabel": "Thursday, August 27", "time": "10:00", "item": "Doors, build resumes", "iso": "2026-08-27T10:00:00-07:00", "hard": false}, {"day": "day2", "dayLabel": "Thursday, August 27", "time": "10:30", "item": "Day two brief", "iso": "2026-08-27T10:30:00-07:00", "hard": false}, {"day": "day2", "dayLabel": "Thursday, August 27", "time": "13:00", "item": "Lunch, catered", "iso": "2026-08-27T13:00:00-07:00", "hard": false}, {"day": "day2", "dayLabel": "Thursday, August 27", "time": "15:00", "item": "Submissions lock", "iso": "2026-08-27T15:00:00-07:00", "hard": true}, {"day": "day2", "dayLabel": "Thursday, August 27", "time": "15:30", "item": "Demos, two tracks in parallel", "iso": "2026-08-27T15:30:00-07:00", "hard": false}, {"day": "day2", "dayLabel": "Thursday, August 27", "time": "18:00", "item": "Results, awards, closing", "iso": "2026-08-27T18:00:00-07:00", "hard": true}, {"day": "day2", "dayLabel": "Thursday, August 27", "time": "19:00", "item": "Wind down, teardown", "iso": "2026-08-27T19:00:00-07:00", "hard": false}, {"day": "day2", "dayLabel": "Thursday, August 27", "time": "20:00", "item": "Floor clear", "iso": "2026-08-27T20:00:00-07:00", "hard": true}], "history": [{"at": "2026-08-26T21:05:02.269475+00:00", "at_pdt": "2026-08-26 14:05:02 PDT", "changes": [{"field": "registered", "label": "YOUR roster status", "from": false, "to": true}, {"field": "role", "label": "Your event role", "from": null, "to": {"roles": ["participant", "team_lead"], "nda_signed": true, "checked_in": false}}, {"field": "team", "label": "Your team", "from": null, "to": {"eid": "anb-hack-01", "team_id": "t_5a903ee708c64f1e", "name": "Climatico", "lead": "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC", "members": ["user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC"], "recruiting": true, "created_at": "2026-08-26T21:04:53.122Z", "updated_at": "2026-08-26T21:04:53.122Z"}}, {"field": "api_seats_used", "label": "Seats used (API)", "from": 3, "to": 4}, {"field": "team_count", "label": "Teams that exist", "from": 2, "to": 3}, {"field": "teams", "label": "Team names", "from": ["Physical Capability Cloud", "Showtonic"], "to": ["Climatico", "Physical Capability Cloud", "Showtonic"]}]}, {"at": "2026-08-26T21:02:24.996643+00:00", "at_pdt": "2026-08-26 14:02:24 PDT", "changes": [{"field": "body_hash", "label": "Page prose changed (no tracked field moved)", "from": "4e068bdabd76f781", "to": "e5ed4a09916e7bd5"}]}, {"at": "2026-08-26T21:01:38.569663+00:00", "at_pdt": "2026-08-26 14:01:38 PDT", "changes": [{"field": "body_hash", "label": "Page prose changed (no tracked field moved)", "from": "569859de9f597e34", "to": "4e068bdabd76f781"}]}, {"at": "2026-08-26T20:42:30.371621+00:00", "at_pdt": "2026-08-26 13:42:30 PDT", "changes": [{"field": "awards", "label": "Awards", "from": ["Runtype: $500 cash for the best use of Runtype.", "Cotal: $300 cash for the best use of Cotal.", "Sandbox VR: $330 in experiences, one winner per track — a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.", "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.", "Hacker Bob: a security scan for every builder, and a month of the product for every winner.", "Tenki: $100 in credits for every builder.", "AIsa: $100 in credits for every builder.", "Nebius: $75 in Builder Program credits for every builder.", "Tavily: 8,000 credits for every builder.", "Runtype: $50 in credits for every builder.", "Credits are claimed on each vendor’s own site, not from us. How to claim each one ."], "to": ["Runtype: $500 cash for the best use of Runtype.", "Cotal: $300 cash for the best use of Cotal.", "Sandbox VR: $330 in experiences, one winner per track — a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.", "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.", "Hacker Bob: a security scan for every builder, and a month of the product for every winner.", "Tenki: $100 in credits for every builder.", "AIsa: $100 in credits for every builder.", "Nebius: $75 in Builder Program credits for every builder.", "Tavily: 8,000 credits for every builder, on top of the 1,000 a free account starts with, so 9,000 in total.", "Runtype: $50 in credits for every builder.", "Credits are claimed on each vendor’s own site, not from us. How to claim each one ."]}, {"field": "api_seats_used", "label": "Seats used (API)", "from": 0, "to": 3}, {"field": "team_count", "label": "Teams that exist", "from": 0, "to": 2}, {"field": "teams", "label": "Team names", "from": [], "to": ["Physical Capability Cloud", "Showtonic"]}]}, {"at": "2026-08-26T20:22:26.470550+00:00", "at_pdt": "2026-08-26 13:22:26 PDT", "changes": [{"field": "awards", "label": "Awards", "from": ["Runtype: $500 cash to first place.", "Cotal: $300 cash to first place.", "Sandbox VR: $330 in experiences, one winner per track — a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.", "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.", "Hacker Bob: a security scan for every builder, and a month of the product for every winner.", "Tenki: $100 in credits for every builder.", "AIsa: $100 in credits for every builder.", "Nebius: $75 in Builder Program credits for every builder.", "Tavily: 8,000 credits for every builder.", "Runtype: $50 in credits for every builder.", "Credits are claimed on each vendor’s own site, not from us. How to claim each one ."], "to": ["Runtype: $500 cash for the best use of Runtype.", "Cotal: $300 cash for the best use of Cotal.", "Sandbox VR: $330 in experiences, one winner per track — a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.", "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.", "Hacker Bob: a security scan for every builder, and a month of the product for every winner.", "Tenki: $100 in credits for every builder.", "AIsa: $100 in credits for every builder.", "Nebius: $75 in Builder Program credits for every builder.", "Tavily: 8,000 credits for every builder.", "Runtype: $50 in credits for every builder.", "Credits are claimed on each vendor’s own site, not from us. How to claim each one ."]}]}, {"at": "2026-08-26T20:06:59.046390+00:00", "at_pdt": "2026-08-26 13:06:59 PDT", "changes": [{"field": "body_hash", "label": "Page prose changed (no tracked field moved)", "from": "47623c01c7f2f283", "to": "278c84778a04dec9"}]}, {"at": "2026-08-26T20:04:59.908846+00:00", "at_pdt": "2026-08-26 13:04:59 PDT", "changes": [{"field": "status_banner", "label": "Status banner", "from": "Building now · 50 of 50 builder seats left", "to": "Building now"}, {"field": "registration_state", "label": "Registration state", "from": "Building now", "to": null}, {"field": "seats_left", "label": "Seats left", "from": 50, "to": null}, {"field": "seats_total", "label": "Seats total", "from": 50, "to": null}, {"field": "registered", "label": "YOUR roster status", "from": null, "to": false}, {"field": "applied", "label": "Your application", "from": null, "to": false}, {"field": "api_phase", "label": "API phase", "from": null, "to": "BUILD"}, {"field": "api_seats_used", "label": "Seats used (API)", "from": null, "to": 0}, {"field": "team_count", "label": "Teams that exist", "from": null, "to": 0}, {"field": "teams", "label": "Team names", "from": null, "to": []}, {"field": "bounty_count", "label": "Sponsor bounties", "from": null, "to": 1}]}, {"at": "2026-08-26T19:44:52.693739+00:00", "at_pdt": "2026-08-26 12:44:52 PDT", "changes": [{"field": "status_banner", "label": "Status banner", "from": "Registration open · 50 of 50 builder seats left", "to": "Building now · 50 of 50 builder seats left"}, {"field": "registration_state", "label": "Registration state", "from": "Registration open", "to": "Building now"}, {"field": "phase_line", "label": "Phase line", "from": "The builder application is closed and the name list has gone to Cloudflare for badges. You can still request a spot on Luma, and an organiser reads every request, but this late a yes is a decision rather than an automatic seat.", "to": "Building now"}, {"field": "late_door", "label": "Late door open", "from": true, "to": false}]}, {"at": "2026-08-26T19:43:22.275582+00:00", "at_pdt": "2026-08-26 12:43:22 PDT", "changes": [{"field": "awards", "label": "Awards", "from": ["Runtype: $500 cash for the best use of Runtype.", "HUD: $3,000 in training credits for the winners overall.", "Hacker Bob: a security scan for every builder, and a month of the product for every winner.", "Tenki: $100 in credits for every builder.", "Nebius: $75 in Builder Program credits for every builder.", "Tavily: 8,000 credits for every builder.", "Runtype: $50 in credits for every builder."], "to": ["Runtype: $500 cash to first place.", "Cotal: $300 cash to first place.", "Sandbox VR: $330 in experiences, one winner per track — a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.", "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.", "Hacker Bob: a security scan for every builder, and a month of the product for every winner.", "Tenki: $100 in credits for every builder.", "AIsa: $100 in credits for every builder.", "Nebius: $75 in Builder Program credits for every builder.", "Tavily: 8,000 credits for every builder.", "Runtype: $50 in credits for every builder.", "Credits are claimed on each vendor’s own site, not from us. How to claim each one ."]}]}], "flags": [], "ticket": "fb_2026-08-26T19-29-16_30e1bd9e4450", "newFlags": [], "builtAt": "2026-08-26T21:05:06.636065+00:00"};
+const S = D.state, PDT_OFF = -7*60;
+
+const pad = n => String(n).padStart(2,'0');
+// Work in real epoch ms; schedule rows carry explicit -07:00 offsets.
+const nowMs = () => Date.now();
+const sched = D.sched.map(r => ({...r, ts: new Date(r.iso).getTime()}));
+
+function fmtDur(ms){
+  if (ms < 0) ms = 0;
+  const s = Math.floor(ms/1000), d = Math.floor(s/86400), h = Math.floor(s%86400/3600),
+        m = Math.floor(s%3600/60), sec = s%60;
+  if (d > 0) return d+'d '+pad(h)+':'+pad(m)+':'+pad(sec);
+  return pad(h)+':'+pad(m)+':'+pad(sec);
+}
+function pdtClock(){
+  return new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour12:false,
+    hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date());
+}
+function pdtDay(){
+  return new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',
+    weekday:'long',month:'long',day:'numeric'}).format(new Date());
+}
+
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- static fill ---------- */
+const ev = S.event || {};
+document.getElementById('headline').textContent = ev.name || 'The Agent Natives Builders Hackathon';
+document.getElementById('venue').textContent =
+  (ev.location||'Cloudflare San Francisco') + ', 101 Townsend St · two days, fifty builder seats, judged at 3:30pm Thursday.';
+document.getElementById('bannertext').textContent = S.status_banner || '—';
+document.getElementById('phaseline').textContent = S.phase_line || '—';
+document.getElementById('lastcheck').textContent = 'checked ' + (S.checked_at_pdt||'').slice(11,16);
+document.getElementById('checks').textContent = S.checks_run + ' checks · ' + (S.change_events||0) + ' change events';
+document.getElementById('built').textContent = 'Snapshot ' + (S.checked_at_pdt || '');
+document.getElementById('pollnote').textContent =
+  'Tracked: banner, seat count, phase line, run of show, judges, sponsors, awards, bounties — plus a whole-page hash to catch anything else.';
+
+document.getElementById('facts').innerHTML = [
+  ['When','August 26–27, 2026<small>Doors 10:00am PDT both days</small>'],
+  ['Where', esc(ev.location||'Cloudflare SF') + '<small>101 Townsend St, San Francisco</small>'],
+  ['Seats', (S.seats_left!=null ? esc(S.seats_left)+' of '+esc(S.seats_total)+' left' : '50 builder seats')
+     + '<small>Per the live page — see the flag above</small>'],
+  ['Cost','Free<small>Meals both days, covered</small>'],
+  ['Hosted by','Cloudflare<small>Room, badges and venue NDA — not a sponsor</small>'],
+  ['Organisers', esc((ev.organizers||[]).join(', '))],
+  ['Sponsors', esc((ev.sponsors||[]).join(', '))],
+  ['Judges', esc(((S.people||{})['Judge']||[]).join(', ')) + '<small>Judging Thursday from 3:30pm</small>'],
+].map(([k,v])=>`<div class="fact"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+
+/* ---------- flags ---------- */
+const fl = document.getElementById('flags');
+if (D.flags.length){
+  fl.innerHTML = D.flags.map(f=>`<div class="flag ${f.sev==='crit'?'crit':''}">
+    <span class="chip">Looks wrong</span>
+    <h3>${esc(f.title)}</h3><p>${esc(f.body)}</p>
+    ${f.ticket?`<div class="filed">Reported to the operator — ticket <code>${esc(D.ticket)}</code></div>`:''}
+  </div>`).join('');
+} else {
+  fl.innerHTML = `<div class="flag" style="border-left-color:var(--ok)">
+    <span class="chip ok">Consistent</span><h3>Nothing on the page contradicts itself</h3>
+    <p>The status banner, the seat count and the application phase all agree as of the last check.</p></div>`;
+}
+
+/* ---------- changelog ---------- */
+const log = document.getElementById('log');
+const short = v => { const s = (typeof v==='object' && v!==null) ? JSON.stringify(v) : String(v);
+  return s.length>150 ? s.slice(0,150)+'…' : s; };
+if (D.history.length){
+  log.innerHTML = '<div class="log">' + D.history.map(h=>`<div class="log-row">
+    <div class="t">${esc(h.at_pdt||h.at)}</div><div>` +
+    h.changes.map(c=>`<div class="lbl">${esc(c.label)}</div>
+      <div class="delta"><i>was</i> ${esc(short(c.from))} <i>→ now</i> ${esc(short(c.to))}</div>`).join('') +
+    `</div></div>`).join('') + '</div>';
+} else {
+  log.innerHTML = `<div class="quiet">No changes yet. The page has read identically on every check since this watch started.</div>`;
+}
+
+/* ---------- your standing ---------- */
+const tiles = [];
+const yn = (v, good, bad) => v ? good : bad;
+if (S.registered !== undefined){
+  tiles.push(['Roster', S.registered ? 'Registered' : 'Not on it',
+    S.registered ? 'good' : 'bad',
+    S.registered ? 'ic_hack_me says you are seated.' : 'ic_hack_submit will refuse until this flips.']);
+  tiles.push(['Your team', S.team ? String(S.team) : 'None',
+    S.team ? 'good' : (S.registered ? 'wait' : 'bad'),
+    S.registered ? 'ic_hack_team_create or _join.' : 'Blocked until you are on the roster.']);
+  tiles.push(['Submission', S.submission ? 'Filed' : 'None',
+    S.submission ? 'good' : 'wait',
+    'Locks 3:00pm Thursday. Submit a stub early, overwrite it.']);
+  tiles.push(['Seats used (API)',
+    (S.api_seats_used!=null? S.api_seats_used : '—') + ' of ' + (S.seats_total ?? 50),
+    S.api_seats_used === 0 ? 'bad' : 'good',
+    S.api_seats_used === 0 ? 'Nobody is registered, not just you.' : 'Roster is populating.']);
+  tiles.push(['Teams in system', String(S.team_count ?? '—'),
+    (S.team_count ? 'good' : 'bad'), 'ic_hack_team_list']);
+}
+document.getElementById('standing').innerHTML = tiles.map(([k,v,cls,note])=>
+  `<dl class="tile ${cls}"><dt>${esc(k)}</dt><dd>${esc(v)}</dd><small>${esc(note)}</small></dl>`).join('');
+
+/* ---------- awards ---------- */
+const awards = (S.awards||[]).filter(a=>a.trim());
+const isNote = a => !/^[^:]{1,28}:/.test(a);
+document.getElementById('awards').innerHTML = awards.length
+  ? '<div class="panel"><div class="panel-b"><dl class="facts">' +
+    awards.filter(a=>!isNote(a)).map(a=>{
+      const i=a.indexOf(':');
+      return `<div class="fact"><dt>${esc(a.slice(0,i))}</dt><dd>${esc(a.slice(i+1).trim())}</dd></div>`;
+    }).join('') + '</dl>' +
+    awards.filter(isNote).map(a=>`<p class="hint">${esc(a)}</p>`).join('') +
+    '</div></div>'
+  : '<div class="quiet">No awards listed on the page.</div>';
+
+const sc = (S.sponsor_challenges||[]).filter(x=>x.trim());
+document.getElementById('challenge').innerHTML = sc.length
+  ? `<p class="eyebrow">${esc(sc[0])}</p>
+     <p style="margin:6px 0 0;font-family:Archivo;font-weight:700;font-size:17px">${esc(sc[1]||'')}</p>
+     <p style="margin:9px 0 0;color:var(--ink-2);font-size:13.5px">${esc(sc[2]||'')}</p>
+     ${sc[3]?`<p style="margin:12px 0 0"><span class="chip acc">${esc(sc[3])}</span></p>`:''}`
+  : '<p class="hint">No sponsor challenge posted yet. Bounties appear here the moment one is real.</p>';
+
+/* ---------- live tick ---------- */
+function tick(){
+  const t = nowMs();
+  document.getElementById('clock').textContent = pdtClock();
+  document.getElementById('daytag').textContent = pdtDay();
+
+  // current + next
+  let cur=null, next=null;
+  for (let i=0;i<sched.length;i++){
+    if (sched[i].ts <= t) cur = sched[i];
+    else { next = sched[i]; break; }
+  }
+  const first = sched[0], last = sched[sched.length-1];
+  const started = t >= first.ts, over = t > last.ts;
+
+  const ni = document.getElementById('nowitem');
+  if (!started){ ni.textContent='Not started yet'; ni.classList.add('idle'); }
+  else if (over){ ni.textContent='Wrapped'; ni.classList.add('idle'); }
+  else { ni.textContent = cur ? cur.item : '—'; ni.classList.remove('idle'); }
+
+  document.getElementById('nowsince').textContent =
+    (started && !over && cur) ? ('Since ' + cur.time + ' · ' + fmtDur(t-cur.ts).replace(/^00:/,'') + ' in')
+    : (!started ? 'Doors open ' + first.time + ' PDT on Wednesday' : 'Floor cleared ' + last.time + ' PDT Thursday');
+
+  document.getElementById('nexttime').textContent = next ? next.time : '—';
+  document.getElementById('nextitem').textContent = next ? next.item : 'nothing after this';
+
+  // countdown targets the next hard stop that still matters
+  const lock = sched.find(r=>r.item.toLowerCase().startsWith('submissions lock'));
+  const target = (lock && lock.ts > t) ? lock : next;
+  const cd = document.getElementById('countdown');
+  if (target){
+    const left = target.ts - t;
+    cd.textContent = fmtDur(left);
+    cd.classList.toggle('urgent', left < 60*60*1000);
+    document.getElementById('cdlabel').textContent = (target===lock) ? 'Until submissions lock' : 'Until next';
+    document.getElementById('cdcap').innerHTML = 'until <b>' + esc(target.item) + '</b>, ' +
+      esc(target.dayLabel.split(',')[0]) + ' ' + esc(target.time) + ' PDT' +
+      (target===lock ? ' — after that, further <code>ic_hack_submit</code> calls return locked.' : '.');
+  } else {
+    cd.textContent = '—';
+    document.getElementById('cdlabel').textContent = 'Countdown';
+    document.getElementById('cdcap').textContent = 'Both days are done.';
+  }
+
+  document.getElementById('phasetag').textContent =
+    !started ? 'Before doors' : over ? 'Event over' : (cur && cur.day==='day1' ? 'Day one · live' : 'Day two · live');
+  document.getElementById('livedot').style.background =
+    (started && !over) ? 'var(--ok)' : 'var(--ink-3)';
+
+  // timeline
+  const byDay = {};
+  sched.forEach(r=>{ (byDay[r.day] ||= []).push(r); });
+  document.getElementById('timeline').innerHTML = Object.entries(byDay).map(([k,rows])=>
+    `<div class="day"><div class="day-h">${esc(rows[0].dayLabel)}</div>` +
+    rows.map(r=>{
+      const isCur = cur && r.iso===cur.iso && started && !over;
+      const done = r.ts <= t && !isCur;
+      const away = r.ts > t ? fmtDur(r.ts-t).replace(/:\d\d$/,'') : '';
+      return `<div class="row ${done?'done':''} ${isCur?'live':''} ${r.hard?'hard':''}">
+        <span class="t">${esc(r.time)}</span><span class="what">${esc(r.item)}</span>
+        <span class="pip">${isCur?'now':(away?'in '+away:'')}</span></div>`;
+    }).join('') + '</div>').join('');
+}
+tick(); setInterval(tick,1000);
+</script>

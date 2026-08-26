@@ -1,0 +1,332 @@
+[
+ {
+  "at": "2026-08-26T19:43:22.275582+00:00",
+  "at_pdt": "2026-08-26 12:43:22 PDT",
+  "changes": [
+   {
+    "field": "awards",
+    "label": "Awards",
+    "from": [
+     "Runtype: $500 cash for the best use of Runtype.",
+     "HUD: $3,000 in training credits for the winners overall.",
+     "Hacker Bob: a security scan for every builder, and a month of the product for every winner.",
+     "Tenki: $100 in credits for every builder.",
+     "Nebius: $75 in Builder Program credits for every builder.",
+     "Tavily: 8,000 credits for every builder.",
+     "Runtype: $50 in credits for every builder."
+    ],
+    "to": [
+     "Runtype: $500 cash to first place.",
+     "Cotal: $300 cash to first place.",
+     "Sandbox VR: $330 in experiences, one winner per track \u2014 a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.",
+     "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.",
+     "Hacker Bob: a security scan for every builder, and a month of the product for every winner.",
+     "Tenki: $100 in credits for every builder.",
+     "AIsa: $100 in credits for every builder.",
+     "Nebius: $75 in Builder Program credits for every builder.",
+     "Tavily: 8,000 credits for every builder.",
+     "Runtype: $50 in credits for every builder.",
+     "Credits are claimed on each vendor\u2019s own site, not from us. How to claim each one ."
+    ]
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T19:44:52.693739+00:00",
+  "at_pdt": "2026-08-26 12:44:52 PDT",
+  "changes": [
+   {
+    "field": "status_banner",
+    "label": "Status banner",
+    "from": "Registration open \u00b7 50 of 50 builder seats left",
+    "to": "Building now \u00b7 50 of 50 builder seats left"
+   },
+   {
+    "field": "registration_state",
+    "label": "Registration state",
+    "from": "Registration open",
+    "to": "Building now"
+   },
+   {
+    "field": "phase_line",
+    "label": "Phase line",
+    "from": "The builder application is closed and the name list has gone to Cloudflare for badges. You can still request a spot on Luma, and an organiser reads every request, but this late a yes is a decision rather than an automatic seat.",
+    "to": "Building now"
+   },
+   {
+    "field": "late_door",
+    "label": "Late door open",
+    "from": true,
+    "to": false
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T20:04:59.908846+00:00",
+  "at_pdt": "2026-08-26 13:04:59 PDT",
+  "changes": [
+   {
+    "field": "status_banner",
+    "label": "Status banner",
+    "from": "Building now \u00b7 50 of 50 builder seats left",
+    "to": "Building now"
+   },
+   {
+    "field": "registration_state",
+    "label": "Registration state",
+    "from": "Building now",
+    "to": null
+   },
+   {
+    "field": "seats_left",
+    "label": "Seats left",
+    "from": 50,
+    "to": null
+   },
+   {
+    "field": "seats_total",
+    "label": "Seats total",
+    "from": 50,
+    "to": null
+   },
+   {
+    "field": "registered",
+    "label": "YOUR roster status",
+    "from": null,
+    "to": false
+   },
+   {
+    "field": "applied",
+    "label": "Your application",
+    "from": null,
+    "to": false
+   },
+   {
+    "field": "api_phase",
+    "label": "API phase",
+    "from": null,
+    "to": "BUILD"
+   },
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": null,
+    "to": 0
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": null,
+    "to": 0
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": null,
+    "to": []
+   },
+   {
+    "field": "bounty_count",
+    "label": "Sponsor bounties",
+    "from": null,
+    "to": 1
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T20:06:59.046390+00:00",
+  "at_pdt": "2026-08-26 13:06:59 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "47623c01c7f2f283",
+    "to": "278c84778a04dec9"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T20:22:26.470550+00:00",
+  "at_pdt": "2026-08-26 13:22:26 PDT",
+  "changes": [
+   {
+    "field": "awards",
+    "label": "Awards",
+    "from": [
+     "Runtype: $500 cash to first place.",
+     "Cotal: $300 cash to first place.",
+     "Sandbox VR: $330 in experiences, one winner per track \u2014 a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.",
+     "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.",
+     "Hacker Bob: a security scan for every builder, and a month of the product for every winner.",
+     "Tenki: $100 in credits for every builder.",
+     "AIsa: $100 in credits for every builder.",
+     "Nebius: $75 in Builder Program credits for every builder.",
+     "Tavily: 8,000 credits for every builder.",
+     "Runtype: $50 in credits for every builder.",
+     "Credits are claimed on each vendor\u2019s own site, not from us. How to claim each one ."
+    ],
+    "to": [
+     "Runtype: $500 cash for the best use of Runtype.",
+     "Cotal: $300 cash for the best use of Cotal.",
+     "Sandbox VR: $330 in experiences, one winner per track \u2014 a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.",
+     "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.",
+     "Hacker Bob: a security scan for every builder, and a month of the product for every winner.",
+     "Tenki: $100 in credits for every builder.",
+     "AIsa: $100 in credits for every builder.",
+     "Nebius: $75 in Builder Program credits for every builder.",
+     "Tavily: 8,000 credits for every builder.",
+     "Runtype: $50 in credits for every builder.",
+     "Credits are claimed on each vendor\u2019s own site, not from us. How to claim each one ."
+    ]
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T20:42:30.371621+00:00",
+  "at_pdt": "2026-08-26 13:42:30 PDT",
+  "changes": [
+   {
+    "field": "awards",
+    "label": "Awards",
+    "from": [
+     "Runtype: $500 cash for the best use of Runtype.",
+     "Cotal: $300 cash for the best use of Cotal.",
+     "Sandbox VR: $330 in experiences, one winner per track \u2014 a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.",
+     "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.",
+     "Hacker Bob: a security scan for every builder, and a month of the product for every winner.",
+     "Tenki: $100 in credits for every builder.",
+     "AIsa: $100 in credits for every builder.",
+     "Nebius: $75 in Builder Program credits for every builder.",
+     "Tavily: 8,000 credits for every builder.",
+     "Runtype: $50 in credits for every builder.",
+     "Credits are claimed on each vendor\u2019s own site, not from us. How to claim each one ."
+    ],
+    "to": [
+     "Runtype: $500 cash for the best use of Runtype.",
+     "Cotal: $300 cash for the best use of Cotal.",
+     "Sandbox VR: $330 in experiences, one winner per track \u2014 a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.",
+     "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.",
+     "Hacker Bob: a security scan for every builder, and a month of the product for every winner.",
+     "Tenki: $100 in credits for every builder.",
+     "AIsa: $100 in credits for every builder.",
+     "Nebius: $75 in Builder Program credits for every builder.",
+     "Tavily: 8,000 credits for every builder, on top of the 1,000 a free account starts with, so 9,000 in total.",
+     "Runtype: $50 in credits for every builder.",
+     "Credits are claimed on each vendor\u2019s own site, not from us. How to claim each one ."
+    ]
+   },
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 0,
+    "to": 3
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 0,
+    "to": 2
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [],
+    "to": [
+     "Physical Capability Cloud",
+     "Showtonic"
+    ]
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:01:38.569663+00:00",
+  "at_pdt": "2026-08-26 14:01:38 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "569859de9f597e34",
+    "to": "4e068bdabd76f781"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:02:24.996643+00:00",
+  "at_pdt": "2026-08-26 14:02:24 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "4e068bdabd76f781",
+    "to": "e5ed4a09916e7bd5"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:05:02.269475+00:00",
+  "at_pdt": "2026-08-26 14:05:02 PDT",
+  "changes": [
+   {
+    "field": "registered",
+    "label": "YOUR roster status",
+    "from": false,
+    "to": true
+   },
+   {
+    "field": "role",
+    "label": "Your event role",
+    "from": null,
+    "to": {
+     "roles": [
+      "participant",
+      "team_lead"
+     ],
+     "nda_signed": true,
+     "checked_in": false
+    }
+   },
+   {
+    "field": "team",
+    "label": "Your team",
+    "from": null,
+    "to": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "name": "Climatico",
+     "lead": "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC",
+     "members": [
+      "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC"
+     ],
+     "recruiting": true,
+     "created_at": "2026-08-26T21:04:53.122Z",
+     "updated_at": "2026-08-26T21:04:53.122Z"
+    }
+   },
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 3,
+    "to": 4
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 2,
+    "to": 3
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "Physical Capability Cloud",
+     "Showtonic"
+    ],
+    "to": [
+     "Climatico",
+     "Physical Capability Cloud",
+     "Showtonic"
+    ]
+   }
+  ]
+ }
+]

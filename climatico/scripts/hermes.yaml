@@ -1,0 +1,15 @@
+# Drop into ~/.hermes/config.yaml (merge, don't replace).
+# 1. Mint a token: curl -sS http://127.0.0.1:5173/v1/credentials -H 'content-type: application/json' -d '{"subject":"hermes","scopes":["climatico:read","climatico:transact"]}'
+# 2. Put the token in ~/.hermes/.env as CLIMATICO_TOKEN=...
+
+mcp_servers:
+  climatico:
+    url: "http://127.0.0.1:8787/mcp"
+    headers:
+      Authorization: "Bearer ${CLIMATICO_TOKEN}"
+
+a2a_agents:
+  climatico:
+    url: "http://127.0.0.1:8787/a2a"
+    auth: { type: bearer, token: "${CLIMATICO_TOKEN}" }
+    capabilities: [climate, transact, receipts]

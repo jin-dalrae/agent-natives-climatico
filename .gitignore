@@ -1,0 +1,15 @@
+.DS_Store
+.claude/
+**/.dev.vars
+**/.env
+**/.env.*
+!**/.env.example
+!**/.dev.vars.example
+**/.ic_token
+**/node_modules/
+**/.wrangler/
+**/dist/
+**/worker-configuration.d.ts
+*.log
+.idea/
+.vscode/

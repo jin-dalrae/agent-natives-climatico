@@ -1,0 +1,1133 @@
+<title>Climatico Agent Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  color-scheme: light;
+  --paper:   #f2f5ee;
+  --panel:   #ffffff;
+  --panel-2: #e8eee2;
+  --line:    #c9d7bf;
+  --line-2:  #dce6d4;
+  --ink:     #101a12;
+  --muted:   #55684f;
+  --accent:  #3f6b2a;
+  --accent-2:#7fb84f;
+  --ok:      #1e7a4c;
+  --ok-bg:   rgba(30,122,76,.10);
+  --refuse:  #b83c1c;
+  --refuse-bg: rgba(184,60,28,.10);
+  --warn:    #8a6208;
+  --warn-bg: rgba(138,98,8,.10);
+  --shadow:  0 1px 0 rgba(16,26,18,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper:   #0c1410;
+    --panel:   #132018;
+    --panel-2: #16281c;
+    --line:    #1f3a28;
+    --line-2:  #1a3022;
+    --ink:     #e8f0e3;
+    --muted:   #8aa08a;
+    --accent:  #b6f05a;
+    --accent-2:#7fb84f;
+    --ok:      #7ad9a0;
+    --ok-bg:   rgba(122,217,160,.12);
+    --refuse:  #ef6b4a;
+    --refuse-bg: rgba(239,107,74,.13);
+    --warn:    #e8b44c;
+    --warn-bg: rgba(232,180,76,.13);
+    --shadow:  none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper:   #0c1410;
+  --panel:   #132018;
+  --panel-2: #16281c;
+  --line:    #1f3a28;
+  --line-2:  #1a3022;
+  --ink:     #e8f0e3;
+  --muted:   #8aa08a;
+  --accent:  #b6f05a;
+  --accent-2:#7fb84f;
+  --ok:      #7ad9a0;
+  --ok-bg:   rgba(122,217,160,.12);
+  --refuse:  #ef6b4a;
+  --refuse-bg: rgba(239,107,74,.13);
+  --warn:    #e8b44c;
+  --warn-bg: rgba(232,180,76,.13);
+  --shadow:  none;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 {
+  font-family: Newsreader, Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- deck chrome ---------- */
+.progress {
+  position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+  background: var(--accent); z-index: 40; transition: width .25s ease;
+}
+.rail {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 88px;
+  border-right: 1px solid var(--line);
+  background: var(--paper);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 16px 12px; z-index: 30;
+}
+.rail-mark { display: flex; align-items: center; gap: 8px; }
+.rail-mark svg { display: block; }
+.rail-name {
+  font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted);
+}
+.rail-count { font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rail-count b { color: var(--ink); font-weight: 600; }
+.rail-dots { display: flex; flex-direction: column; gap: 5px; }
+.rail-dots a {
+  width: 14px; height: 3px; background: var(--line);
+  display: block; text-decoration: none;
+}
+.rail-dots a[aria-current="true"] { background: var(--accent); }
+.rail-dots a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.deck { margin-left: 88px; scroll-snap-type: y proximity; }
+.slide {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 40px 44px;
+  border-bottom: 1px solid var(--line-2);
+}
+.inner { width: 100%; max-width: 1000px; margin: 0 auto; }
+
+.eyebrow {
+  font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); display: flex; align-items: center; gap: 9px;
+  margin-bottom: 11px;
+}
+.eyebrow::before {
+  content: ""; width: 22px; height: 1px; background: var(--accent); flex: none;
+}
+h2.slide-title { font-size: clamp(21px, 2.5vw, 31px); line-height: 1.12; }
+.lede {
+  font-family: Newsreader, Georgia, serif; font-size: clamp(13.5px, 1.25vw, 16px);
+  line-height: 1.45; color: var(--muted); max-width: 66ch; margin-top: 10px;
+}
+
+/* ---------- primitives ---------- */
+.grid { display: grid; gap: 12px; margin-top: 22px; }
+.g2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.g3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.g4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.card {
+  background: var(--panel); border: 1px solid var(--line);
+  padding: 14px 15px; box-shadow: var(--shadow);
+}
+.card h3 { font-size: 15px; margin-bottom: 5px; line-height: 1.2; }
+.card p { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.55; }
+.card p + p { margin-top: 7px; }
+.kicker {
+  font-size: 9px; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px; display: block;
+}
+.tag {
+  display: inline-block; font-size: 9.5px; letter-spacing: .08em;
+  border: 1px solid var(--line); padding: 2px 6px; color: var(--muted);
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase;
+  padding: 2px 7px; font-weight: 600;
+}
+.chip.ok { color: var(--ok); background: var(--ok-bg); }
+.chip.no { color: var(--refuse); background: var(--refuse-bg); }
+.chip.wa { color: var(--warn); background: var(--warn-bg); }
+
+pre {
+  margin: 0; overflow-x: auto; font-size: 10.5px; line-height: 1.6;
+  background: var(--panel-2); border: 1px solid var(--line);
+  padding: 10px 12px; color: var(--ink);
+}
+pre .c { color: var(--muted); }
+pre .k { color: var(--accent); }
+pre .g { color: var(--ok); }
+pre .r { color: var(--refuse); }
+code { font-size: .93em; }
+.inline { background: var(--panel-2); border: 1px solid var(--line-2); padding: 1px 5px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 11px; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+th {
+  font-size: 9px; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--line);
+}
+td.mono-k { color: var(--accent); white-space: nowrap; }
+.scroller { overflow-x: auto; margin-top: 20px; border: 1px solid var(--line); background: var(--panel); }
+.scroller table { min-width: 640px; }
+.scroller th, .scroller td { padding-left: 13px; padding-right: 13px; }
+
+figure { margin: 18px 0 0; }
+figure svg { display: block; width: 100%; max-width: 100%; height: auto; color: var(--ink); }
+figcaption { margin-top: 9px; font-size: 10.5px; color: var(--muted); max-width: 70ch; }
+
+.steps { display: grid; gap: 0; margin-top: 20px; border-top: 1px solid var(--line); }
+.step {
+  display: grid; grid-template-columns: 38px 195px 1fr; gap: 16px;
+  padding: 9px 3px; border-bottom: 1px solid var(--line-2); align-items: start;
+}
+.step-n { color: var(--accent); font-size: 10.5px; font-weight: 600; padding-top: 2px; font-variant-numeric: tabular-nums; }
+.step-t { font-weight: 600; font-size: 11.5px; line-height: 1.35; }
+.step-d { color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+
+.stat { display: flex; flex-direction: column; gap: 2px; }
+.stat b { font-family: Newsreader, Georgia, serif; font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+ul.ticks { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+ul.ticks li { position: relative; padding-left: 22px; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+ul.ticks li::before {
+  content: "\2192"; position: absolute; left: 0; top: 0;
+  color: var(--accent); font-weight: 600;
+}
+ul.ticks li b { color: var(--ink); font-weight: 600; }
+
+.hairline { height: 1px; background: var(--line); margin: 20px 0; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* cover */
+.cover-mark { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+.cover h1 { font-size: clamp(32px, 4.9vw, 64px); line-height: 1.02; letter-spacing: -0.03em; }
+.cover h1 em { font-style: normal; color: var(--accent); }
+.cover-meta {
+  margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 14px 34px; font-size: 10.5px; color: var(--muted);
+}
+.cover-meta div span { display: block; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+.cover-meta div b { color: var(--ink); font-weight: 500; }
+
+.hint {
+  position: fixed; right: 18px; bottom: 16px; z-index: 30;
+  pointer-events: none; transition: opacity .3s ease;
+  font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+  background: var(--paper); padding: 3px 7px; border: 1px solid var(--line-2);
+}
+
+@media (max-width: 900px) {
+  .rail { display: none; }
+  .deck { margin-left: 0; }
+  .slide { padding: 34px 20px; min-height: auto; }
+  .g2, .g3, .g4 { grid-template-columns: 1fr; }
+  .step { grid-template-columns: 28px 1fr; }
+  .step-d { grid-column: 2; }
+  .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+
+<div class="progress" id="progress"></div>
+
+<nav class="rail" aria-label="Slides">
+  <div class="rail-mark">
+    <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M50 44.6A24 24 0 1 1 50 19.4l-8.17 5.71a14 14 0 1 0 0 13.78Z" fill="var(--accent)"/>
+      <path d="M33.15 33.28C48.1 29.24 54.7 19.49 51.2 9.41c-11.87 5.04-17.59 12.1-18.05 23.87Z" fill="var(--accent-2)"/>
+    </svg>
+  </div>
+  <div class="rail-dots" id="dots"></div>
+  <div>
+    <div class="rail-name" id="railName">Cover</div>
+    <div class="rail-count"><b id="railNum">01</b> / 17</div>
+  </div>
+</nav>
+
+<div class="hint">&uarr; &darr; to move</div>
+
+<main class="deck" id="deck">
+
+<!-- 01 -------- COVER -->
+<section class="slide cover" data-name="Cover">
+  <div class="inner">
+    <div class="cover-mark">
+      <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M50 44.6A24 24 0 1 1 50 19.4l-8.17 5.71a14 14 0 1 0 0 13.78Z" fill="var(--accent)"/>
+        <path d="M33.15 33.28C48.1 29.24 54.7 19.49 51.2 9.41c-11.87 5.04-17.59 12.1-18.05 23.87Z" fill="var(--accent-2)"/>
+      </svg>
+      <span class="tag">Agent Edition &middot; v0.1.0</span>
+    </div>
+    <h1>Which emissions are<br>yours &mdash; and <em>how much?</em><br>Nobody built that layer.</h1>
+    <p class="lede">Not a total. A composition, and an attribution: seven kinds of emission, each with a source and an error bar, each traced to the activity that caused it. Climatico is that layer &mdash; and it is a write surface an agent can call, because the companies that need it most already run through agents.</p>
+    <div class="cover-meta">
+      <div><span>Built for</span><b>Agent Natives Builders Hackathon</b></div>
+      <div><span>Host</span><b>Cloudflare, San Francisco</b></div>
+      <div><span>Dates</span><b>26&ndash;27 August 2026</b></div>
+      <div><span>Runtime</span><b>One Worker &middot; Durable Object SQLite</b></div>
+      <div><span>Surfaces</span><b>Agent Card &middot; MCP &middot; A2A &middot; REST</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 -------- THE GAP -->
+<section class="slide" data-name="The gap">
+  <div class="inner">
+    <div class="eyebrow">The problem</div>
+    <h2 class="slide-title">For the companies growing fastest, this layer does not exist. Not badly &mdash; at all.</h2>
+    <p class="lede">A twelve-person company whose emissions are overwhelmingly inference has three options, and none of them is a product they can use.</p>
+    <div class="grid g3">
+      <div class="card">
+        <span class="kicker">Option 01</span>
+        <h3>Enterprise ESG suites</h3>
+        <p>Priced, scoped and sold for organisations that already employ a sustainability lead. Seed-stage teams are not the customer and never were &mdash; they are told to come back at Series&nbsp;C.</p>
+        <p><span class="chip no">wrong customer</span></p>
+      </div>
+      <div class="card">
+        <span class="kicker">Option 02</span>
+        <h3>The cloud provider&rsquo;s dashboard</h3>
+        <p>One vendor&rsquo;s slice, on that vendor&rsquo;s methodology. No hardware, no vendors, no travel, no logistics &mdash; and no way to say which part of it belongs to which product line. Partial by construction.</p>
+        <p><span class="chip no">one number, one vendor</span></p>
+      </div>
+      <div class="card">
+        <span class="kicker">Option 03</span>
+        <h3>A consultant&rsquo;s PDF</h3>
+        <p>Twice a year, stale on arrival, reconstructed from invoices months after the activity. Nothing can query it, nothing can update it, and no system that caused the emissions ever sees it.</p>
+        <p><span class="chip no">unqueryable</span></p>
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <ul class="ticks">
+      <li><b>The gap is not a quality problem.</b> Each of these does its own job competently. None of them is built for this customer, at this composition, on this cadence &mdash; and there is no fourth option to fall back on.</li>
+      <li><b>And the form now matters as much as the substance.</b> The teams in this gap are building agent-native products and running their operations through agents. A layer that only a human can reach is a layer they will not use.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 03 -------- WHICH EMISSIONS -->
+<section class="slide" data-name="Which emissions">
+  <div class="inner">
+    <div class="eyebrow">Substance &mdash; part one</div>
+    <h2 class="slide-title">&ldquo;Your carbon footprint&rdquo; is seven different questions.</h2>
+    <p class="lede">A single tCO<sub>2</sub>e total tells a founder nothing they can act on. The composition does: which activity, which GHG&nbsp;Protocol scope and category, what the default rests on, and how wrong it might be.</p>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:190px;">Emission class</th>
+            <th style="width:250px;">Scope &amp; category</th>
+            <th style="width:120px;">Modeled default</th>
+            <th style="width:90px;">Uncertainty</th>
+            <th>What the number rests on</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono-k">Cloud &amp; AI compute</td><td>Scope 3 &middot; Cat 1 Purchased goods</td><td>8.5 tCO2e/yr</td><td>&plusmn; 30%</td><td>GHG Protocol ICT guidance + Software Carbon Intensity (ISO/IEC 21031:2024)</td></tr>
+          <tr><td class="mono-k">Hardware &amp; electronics</td><td>Scope 3 &middot; Cat 2 Capital goods</td><td>3.2 tCO2e/yr</td><td>&plusmn; 40%</td><td>OEM product carbon footprints, embodied device carbon over a 4-year life</td></tr>
+          <tr><td class="mono-k">Travel &amp; commuting</td><td>Scope 3 &middot; Cat 6 &amp; 7</td><td>4.8 tCO2e/yr</td><td>&plusmn; 25%</td><td>UK DESNZ/DEFRA + US EPA conversion factors, distance &times; mode</td></tr>
+          <tr><td class="mono-k">Vendors &amp; SaaS</td><td>Scope 3 &middot; Cat 1 Purchased services</td><td>2.1 tCO2e/yr</td><td>&plusmn; 50%</td><td>US EPA USEEIO v2 spend-based intensity. Coarse by design, and it says so</td></tr>
+          <tr><td class="mono-k">Logistics</td><td>Scope 3 &middot; Cat 4 &amp; 9</td><td>12.0 tCO2e/yr</td><td>&plusmn; 35%</td><td>GLEC Framework / ISO 14083, tonne-km &times; mode</td></tr>
+          <tr><td class="mono-k">Purchased electricity</td><td>Scope 2 &middot; location-based</td><td>5.6 tCO2e/yr</td><td>&plusmn; 15%</td><td>US EPA eGRID + IEA grid intensity. A utility bill makes this measured</td></tr>
+          <tr><td class="mono-k">Direct emissions</td><td>Scope 1 &middot; combustion &amp; fugitive</td><td>1.5 tCO2e/yr</td><td>&plusmn; 20%</td><td>DESNZ factors + IPCC AR6 GWP100. Near zero for cloud-only teams</td></tr>
+          <tr><td class="mono-k" style="color:var(--ok);">Avoided (3 classes)</td><td>Handprint &middot; reported separately</td><td style="color:var(--ok);">0 until proven</td><td>&mdash;</td><td>GHG Protocol Project Protocol + Project Frame. Gated on additionality</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="ticks">
+      <li><b>Beyond carbon, four more dimensions.</b> Energy in kWh, water in m&sup3; at ~1.8&nbsp;L per kWh, waste and e-waste in kg, and land &amp; biodiversity as a qualitative materiality flag &mdash; because for a data-centre-heavy business, water belongs in the headline, not an appendix.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 04 -------- HOW MUCH IS YOURS -->
+<section class="slide" data-name="Attribution">
+  <div class="inner">
+    <div class="eyebrow">Substance &mdash; part two</div>
+    <h2 class="slide-title">And then the harder question: how much of it is <em>yours?</em></h2>
+    <p class="lede">Composition without attribution is trivia. The boundary &mdash; what this business is responsible for, versus what it merely touches &mdash; is where the honesty lives, and where every ESG tool quietly guesses.</p>
+    <div class="grid g3">
+      <div class="card">
+        <span class="kicker">Attribution 01</span>
+        <h3>Scaled to this business, not a sector average</h3>
+        <p>Defaults are per-FTE and scale to actual headcount; grid-linked activities are multiplied by the real hosting region and energy source. A ten-person team in a coal-heavy region does not get the same number as one on hydro.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Attribution 02</span>
+        <h3>Every figure carries its own error bar</h3>
+        <p>Uncertainty is per-activity and propagated in quadrature, so the total arrives as a range. Spend-based vendor estimates are &plusmn; 50% and are labelled as such &mdash; the model tells you which of its own numbers to distrust.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Attribution 03</span>
+        <h3>Modeled is never printed as measured</h3>
+        <p>Every default is tagged modeled until a utility bill, a billing export or a disposal record replaces it. The maturity ladder L0&ndash;L5 is literally the path from estimated to evidenced, one binding action per level.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Attribution 04</span>
+        <h3>Avoided emissions start at zero</h3>
+        <p>A handprint claim counts only once a conservative counterfactual baseline exists and additionality is demonstrated &mdash; the test that the reduction would not have happened anyway. Until then the number is 0, not a marketing figure.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Attribution 05</span>
+        <h3>Netting is described, never sold</h3>
+        <p>Footprint and handprint use separate accounting baselines. Subtracting one from the other is descriptive and is labelled that way; it is not an offset, and calling it one is the claim we refuse.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Attribution 06</span>
+        <h3>Efficiency gains are discounted for rebound</h3>
+        <p>Making inference cheaper lowers the price of running more of it. The Jevons rebound is flagged against every compute-efficiency claim, with the UKERC evidence base attached, instead of being counted as a clean win.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 -------- WHY AGENTIC -->
+<section class="slide" data-name="Why agentic">
+  <div class="inner">
+    <div class="eyebrow">Why it has to be an agent interface</div>
+    <h2 class="slide-title">Attribution is a moment-of-activity problem. Forms arrive months late.</h2>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Where the answer actually lives</h3>
+        <p>&ldquo;How much of this is ours&rdquo; is answerable at exactly one moment: when the spend happens, in a known region, against a known product line. An hour later it is an invoice line; a quarter later it is a reconstruction.</p>
+        <p>The systems standing at that moment are not people. They are the agents already watching the cloud bill, approving the vendor, booking the travel, running the inference.</p>
+      </div>
+      <div class="card">
+        <h3>Where these companies are moving</h3>
+        <p>The teams in this gap are building agent-native products and wiring their own operations to agents. Their interface convention is a card, a scoped token, a tool call &mdash; not a login and a six-step form.</p>
+        <p>An impact layer they have to visit is a layer they will visit twice a year, under duress. One their agents can call is a layer that gets a record every time something happens.</p>
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <div class="grid g3" style="margin-top:0;">
+      <div class="card" style="border-color: var(--accent);">
+        <span class="kicker">So the shape is</span>
+        <h3>A write surface, not a dashboard</h3>
+        <p>Discovery card &rarr; self-minted scoped credential &rarr; grounded write &rarr; durable receipt. The screen is the optional part.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Which forces</span>
+        <h3>Policy that runs before the write</h3>
+        <p>If a machine can file a claim, the boundary rules have to be executable, not printed in a methodology appendix nobody reads.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">And gives us</span>
+        <h3>Provenance attached at the source</h3>
+        <p>Evidence, subject, scope and timestamp travel with the claim from the moment it is made, instead of being reconstructed for a disclosure cycle two years later.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 -------- THE RULE -->
+<section class="slide" data-name="The rule">
+  <div class="inner">
+    <div class="eyebrow">The one rule</div>
+    <h2 class="slide-title">A refusal is a receipt.</h2>
+    <p class="lede">Both of these are rows in the same SQLite table, with the same shape, the same id, and the same permanence. That symmetry is what makes an unattended write surface safe to hand a stranger.</p>
+    <div class="grid g2">
+      <div class="card" style="border-color: var(--ok);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span class="chip ok">committed</span><span class="tag">HTTP 201</span>
+        </div>
+<pre><span class="c">POST /v1/actions</span>
+{
+  <span class="k">"intent"</span>: <span class="g">"offset"</span>,
+  <span class="k">"location"</span>: <span class="g">"Oakland port"</span>,
+  <span class="k">"amountCents"</span>: 2500,
+  <span class="k">"status"</span>: <span class="g">"committed"</span>,
+  <span class="k">"evidence"</span>: [ <span class="c">/* 5 live sources */</span> ],
+  <span class="k">"subject"</span>: <span class="g">"judge-agent"</span>,
+  <span class="k">"tokenId"</span>: <span class="g">"b1c4&hellip;"</span>
+}</pre>
+      </div>
+      <div class="card" style="border-color: var(--refuse);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span class="chip no">refused</span><span class="tag">HTTP 422</span>
+        </div>
+<pre><span class="c">POST /v1/actions</span>
+{
+  <span class="k">"intent"</span>: <span class="r">"greenwash"</span>,
+  <span class="k">"location"</span>: <span class="r">"everywhere"</span>,
+  <span class="k">"status"</span>: <span class="r">"refused"</span>,
+  <span class="k">"refusalCode"</span>: <span class="r">"forbidden_intent"</span>,
+  <span class="k">"refusalReason"</span>: <span class="r">"&hellip;the desk files climate
+    actions; it does not move money off-product,
+    delete accounts, or mint unverified claims."</span>
+}</pre>
+      </div>
+    </div>
+    <div class="grid g2" style="margin-top:18px;">
+      <div class="card">
+        <span class="kicker">Refused outright</span>
+        <p><span class="chip no">payout</span> <span class="chip no">wire_transfer</span> <span class="chip no">delete_account</span> <span class="chip no">greenwash</span> <span class="chip no">admin_override</span> <span class="chip no">exfiltrate</span></p>
+      </div>
+      <div class="card">
+        <span class="kicker">Also refused, and stored</span>
+        <p>Unknown intents. Any write without a location &mdash; attribution needs a place. Briefs that live web search cannot ground. Offsets above the token&rsquo;s own ceiling. <b>The policy runs before the write, never after.</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 -------- ARCHITECTURE -->
+<section class="slide" data-name="Architecture">
+  <div class="inner">
+    <div class="eyebrow">What we built</div>
+    <h2 class="slide-title">Four ways in. One policy. One ledger.</h2>
+    <figure>
+      <svg viewBox="0 0 1020 400" role="img" aria-label="Any agent discovers the agent card, mints a scoped bearer token, and reaches Climatico through MCP, A2A, REST or the clerk chat; all four surfaces converge on a single policy graph and evidence check, which writes one receipt into the Durable Object ledger.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+          <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+        <g font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.4" fill="currentColor" opacity=".55">
+          <text x="10" y="22">CALLER</text>
+          <text x="182" y="22">COLD START</text>
+          <text x="398" y="22">SURFACES</text>
+          <text x="608" y="22">DECISION</text>
+          <text x="824" y="22">RECORD</text>
+        </g>
+
+        <!-- caller -->
+        <rect x="10" y="180" width="132" height="64" fill="none" stroke="currentColor" stroke-width="1.25"/>
+        <text x="76" y="206" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor">Any agent</text>
+        <text x="76" y="224" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".6">never seen us before</text>
+
+        <!-- cold start -->
+        <rect x="182" y="120" width="176" height="64" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
+        <text x="270" y="145" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">/.well-known/</text>
+        <text x="270" y="160" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">agent-card.json</text>
+        <text x="270" y="175" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">public, no auth</text>
+
+        <rect x="182" y="224" width="176" height="76" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
+        <text x="270" y="248" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">POST /v1/credentials</text>
+        <text x="270" y="265" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">HMAC token, TTL &le; 24h</text>
+        <text x="270" y="280" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">scopes freeze at mint</text>
+
+        <g stroke="var(--accent)" fill="none" stroke-width="1.25" color="var(--accent)">
+          <path d="M142,198 C164,198 162,152 180,152" marker-end="url(#ar-a)"/>
+          <path d="M142,226 C164,226 162,262 180,262" marker-end="url(#ar-a)"/>
+        </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--accent)">
+          <text x="152" y="172">1 discover</text>
+          <text x="152" y="300">2 mint</text>
+        </g>
+
+        <!-- token spine to surfaces -->
+        <g stroke="currentColor" fill="none" stroke-width="1.25">
+          <path d="M358,262 H378"/>
+          <path d="M378,110 V334"/>
+          <path d="M378,110 H396" marker-end="url(#ar)"/>
+          <path d="M378,166 H396" marker-end="url(#ar)"/>
+          <path d="M378,222 H396" marker-end="url(#ar)"/>
+          <path d="M378,278 H396" marker-end="url(#ar)"/>
+          <path d="M378,334 H396" marker-end="url(#ar)"/>
+        </g>
+        <text x="366" y="352" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".7">3 Bearer</text>
+
+        <!-- surfaces -->
+        <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor">
+          <rect x="398" y="88" width="170" height="44" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="412" y="108">MCP  /mcp</text>
+          <text x="412" y="122" font-size="9" opacity=".6">8 tools, remote</text>
+
+          <rect x="398" y="144" width="170" height="44" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="412" y="164">A2A  /a2a</text>
+          <text x="412" y="178" font-size="9" opacity=".6">SendMessage &middot; message/send</text>
+
+          <rect x="398" y="200" width="170" height="44" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="412" y="220">REST /v1/actions</text>
+          <text x="412" y="234" font-size="9" opacity=".6">plain JSON, curl-able</text>
+
+          <rect x="398" y="256" width="170" height="44" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="412" y="276">POST /v1/fleet/run</text>
+          <text x="412" y="290" font-size="9" opacity=".6">ingest &rarr; audit &rarr; settle</text>
+
+          <rect x="398" y="312" width="170" height="44" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="412" y="332">Clerk (chat)</text>
+          <text x="412" y="346" font-size="9" opacity=".6">Workers AI &middot; Kimi K2.6</text>
+        </g>
+
+        <!-- converge to policy -->
+        <g stroke="currentColor" fill="none" stroke-width="1.25">
+          <path d="M568,110 H588"/><path d="M568,166 H588"/><path d="M568,222 H588"/>
+          <path d="M568,278 H588"/><path d="M568,334 H588"/>
+          <path d="M588,110 V334"/>
+          <path d="M588,156 H606" marker-end="url(#ar)"/>
+        </g>
+        <text x="596" y="76" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".7">4 write</text>
+
+        <!-- policy -->
+        <rect x="608" y="120" width="176" height="72" fill="none" stroke="currentColor" stroke-width="1.25"/>
+        <text x="696" y="146" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="currentColor">evaluatePolicy()</text>
+        <text x="696" y="163" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">intent &middot; scope &middot; location</text>
+        <text x="696" y="178" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">&middot; amount ceiling</text>
+
+        <rect x="608" y="236" width="176" height="72" fill="none" stroke="currentColor" stroke-width="1.25"/>
+        <text x="696" y="262" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="currentColor">Tavily live search</text>
+        <text x="696" y="279" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">5 sources or the brief</text>
+        <text x="696" y="294" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">does not happen</text>
+
+        <g stroke="currentColor" fill="none" stroke-width="1.25">
+          <path d="M666,192 V234" marker-end="url(#ar)"/>
+          <path d="M726,234 V194" marker-end="url(#ar)"/>
+        </g>
+        <text x="640" y="216" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="currentColor" opacity=".65">ground</text>
+        <text x="752" y="216" font-family="IBM Plex Mono, monospace" font-size="9" fill="currentColor" opacity=".65">evidence</text>
+
+        <!-- ledger -->
+        <rect x="824" y="120" width="186" height="188" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="917" y="150" text-anchor="middle" font-family="Newsreader, serif" font-size="15" fill="var(--accent)">Ledger</text>
+        <text x="917" y="167" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">Durable Object &middot; SQLite</text>
+        <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".85">
+          <text x="844" y="196">receipts</text>
+          <text x="844" y="214">credentials</text>
+          <text x="844" y="232">watches</text>
+          <text x="844" y="250">handoffs</text>
+          <text x="844" y="268">fleet_runs</text>
+        </g>
+        <text x="917" y="294" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="currentColor" opacity=".55">survives the laptop closing</text>
+
+        <g stroke="var(--accent)" fill="none" stroke-width="1.5" color="var(--accent)">
+          <path d="M784,156 C804,156 802,180 822,180" marker-end="url(#ar-a)"/>
+        </g>
+        <text x="804" y="132" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--accent)">5 receipt</text>
+      </svg>
+      <figcaption>Every entry point converges on the same policy check and writes the same receipt shape. Adding a surface never adds a way around the rules &mdash; and the refusal path writes to the ledger exactly like the commit path does.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 08 -------- WHO -->
+<section class="slide" data-name="Who uses it">
+  <div class="inner">
+    <div class="eyebrow">Who uses it</div>
+    <h2 class="slide-title">Four callers, none of whom share a login.</h2>
+    <p class="lede">The same policy and the same ledger serve a stranger, a company&rsquo;s own operations, a founder typing a sentence, and whoever is probing the endpoint. None of them needs an account.</p>
+    <div class="grid g4">
+      <div class="card">
+        <span class="kicker">Caller 01</span>
+        <h3>An agent that has never met us</h3>
+        <p>A judge&rsquo;s, or anyone&rsquo;s, arriving with only a URL. Reads the card, mints <span class="inline">climatico:transact</span>, files a grounded brief for Houston. <b>Zero prior knowledge, zero human in the loop.</b></p>
+        <p style="margin-top:12px;"><span class="tag">Agent Card &rarr; REST</span></p>
+      </div>
+      <div class="card">
+        <span class="kicker">Caller 02</span>
+        <h3>A company&rsquo;s own agents</h3>
+        <p>Already watching cloud, SaaS and travel spend &mdash; the three places most of a startup&rsquo;s emissions are actually created. One trigger runs <b>ingest &rarr; audit &rarr; settle</b> and assigns the spike to a place and a budget while it is still fresh.</p>
+        <p style="margin-top:12px;"><span class="tag">MCP run_fleet</span></p>
+      </div>
+      <div class="card">
+        <span class="kicker">Caller 03</span>
+        <h3>A founder, in words</h3>
+        <p>The Clerk is a Workers AI agent holding the same three tools. &ldquo;Open a heat watch on Lahaina&rdquo; goes through the identical policy &mdash; and gets refused on the same grounds a raw POST would.</p>
+        <p style="margin-top:12px;"><span class="tag">Clerk chat</span></p>
+      </div>
+      <div class="card">
+        <span class="kicker">Caller 04</span>
+        <h3>Whoever is probing us</h3>
+        <p>Scanners and auditors. Auth is mandatory on every write path, and a rejected attempt is not silence &mdash; it is a stored row with a code, a subject, and a token id.</p>
+        <p style="margin-top:12px;"><span class="tag">401 / 422, logged</span></p>
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <div class="grid g4" style="margin-top:0;">
+      <div class="stat"><b>4</b><span>allowed intents</span></div>
+      <div class="stat"><b>3</b><span>scopes, frozen at mint</span></div>
+      <div class="stat"><b>10</b><span>refusal conditions</span></div>
+      <div class="stat"><b>1</b><span>ledger, always</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 -------- COLD START -->
+<section class="slide" data-name="Cold start">
+  <div class="inner">
+    <div class="eyebrow">How to use it &mdash; cold start</div>
+    <h2 class="slide-title">Five calls from a URL to a durable write.</h2>
+    <p class="lede">No signup, no dashboard, no API key emailed to a human. The credential is minted by the caller, for the caller, with the ceiling baked in.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-t">Read the card</div>
+        <div class="step-d"><span class="inline">GET /.well-known/agent-card.json</span> &mdash; name, skills, auth scheme, and the MCP, credential and policy URLs.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-t">Mint your own credential</div>
+        <div class="step-d"><span class="inline">POST /v1/credentials</span> with a subject and the scopes you want. Scopes freeze at mint; the offset ceiling comes with them.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-t">Carry the bearer</div>
+        <div class="step-d">The same token authenticates <span class="inline">/mcp</span>, <span class="inline">/a2a</span> and <span class="inline">/v1/*</span>. Unauthenticated writes get 401 before any work happens.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <div class="step-t">Write</div>
+        <div class="step-d">MCP <span class="inline">complete_action</span>, REST <span class="inline">POST /v1/actions</span>, or A2A <span class="inline">SendMessage</span>. Pick your protocol; the policy is the same.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">05</div>
+        <div class="step-t">Keep the receipt</div>
+        <div class="step-d">A UUID that resolves for as long as the object lives. Retry with the same <span class="inline">idempotencyKey</span> and you get the original row back, not a second commit.</div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <span class="kicker">Mint</span>
+<pre><span class="c"># nothing but the base URL is needed</span>
+curl -X POST $BASE<span class="k">/v1/credentials</span> \
+  -H <span class="g">'content-type: application/json'</span> \
+  -d <span class="g">'{"subject":"judge-agent",
+       "scopes":["climatico:read",
+                 "climatico:transact"]}'</span></pre>
+      </div>
+      <div class="card">
+        <span class="kicker">Write</span>
+<pre>curl -X POST $BASE<span class="k">/v1/actions</span> \
+  -H <span class="g">"authorization: Bearer $TOKEN"</span> \
+  -H <span class="g">'content-type: application/json'</span> \
+  -d <span class="g">'{"intent":"brief",
+       "location":"Houston, TX"}'</span>
+<span class="c"># &rarr; 201, receipt with 5 cited sources</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -------- TOOLS -->
+<section class="slide" data-name="Tool surface">
+  <div class="inner">
+    <div class="eyebrow">How to use it &mdash; the tool surface</div>
+    <h2 class="slide-title">Eight MCP tools. Three of them are just honesty.</h2>
+    <p class="lede">A caller can find out what we are, what we refuse, and who it is talking as &mdash; before it risks a write. That is not overhead; it is what makes the write safe to attempt.</p>
+    <div class="scroller">
+      <table>
+        <thead><tr><th style="width:190px;">Tool</th><th style="width:96px;">Kind</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td class="mono-k">discover_climatico</td><td><span class="chip wa">read</span></td><td>What this desk is, which writes it accepts, how credentials work. Call it first.</td></tr>
+          <tr><td class="mono-k">get_policy</td><td><span class="chip wa">read</span></td><td>Allowed intents, the ten refusal conditions, scope ceilings, fleet roles and channels.</td></tr>
+          <tr><td class="mono-k">whoami</td><td><span class="chip wa">read</span></td><td>The scoped identity on this request &mdash; subject, scopes, ceiling, expiry. Never the secret.</td></tr>
+          <tr><td class="mono-k">complete_action</td><td><span class="chip ok">write</span></td><td><span class="inline">brief</span> &middot; <span class="inline">watch</span> &middot; <span class="inline">offset</span> &middot; <span class="inline">assess</span>. Location required. Offsets need an amount. Refusals persist.</td></tr>
+          <tr><td class="mono-k">run_fleet</td><td><span class="chip ok">write</span></td><td>Ingest a usage spike, audit it against a monthly budget, settle an offset if it is over.</td></tr>
+          <tr><td class="mono-k">get_receipt</td><td><span class="chip wa">read</span></td><td>One receipt by id &mdash; including the ones that were refused.</td></tr>
+          <tr><td class="mono-k">list_receipts</td><td><span class="chip wa">read</span></td><td>Recent history, newest first. Proof of what was committed and what was not.</td></tr>
+          <tr><td class="mono-k">list_handoffs</td><td><span class="chip wa">read</span></td><td>The coordination log: which role told which role what, on which channel.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="ticks">
+      <li><b>Same capability, three dialects.</b> Everything above is reachable over plain REST for a script, and over A2A <span class="inline">SendMessage</span> for an agent that speaks that instead.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 11 -------- FLEET -->
+<section class="slide" data-name="The fleet">
+  <div class="inner">
+    <div class="eyebrow">Client case 01 &mdash; compute-heavy</div>
+    <h2 class="slide-title">Attribution at the moment it happens, not at the quarter&rsquo;s end.</h2>
+    <p class="lede">This is the whole argument compressed into one trigger: a spike is caught where it occurs, assigned to a region and a business, scored against that business&rsquo;s own budget, and settled &mdash; with every step written down as it is decided.</p>
+    <figure>
+      <svg viewBox="0 0 1020 300" role="img" aria-label="A 420 dollar cloud spike in SJC is parsed by the ingest agent, scored by the audit agent as 189 kilograms of CO2e putting the month 179 kilograms over its 50 kilogram budget, and settled by the settle agent as a 35 dollar 80 cent offset receipt; each handoff is written to a durable channel.">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <!-- trigger -->
+        <rect x="6" y="70" width="150" height="72" fill="none" stroke="currentColor" stroke-width="1.25" stroke-dasharray="4 3"/>
+        <text x="81" y="98" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor">cloud spend, SJC</text>
+        <text x="81" y="120" text-anchor="middle" font-family="Newsreader, serif" font-size="20" fill="var(--accent)">+ $420</text>
+        <path d="M156,106 H200" stroke="currentColor" fill="none" stroke-width="1.25" marker-end="url(#ar2)"/>
+
+        <!-- three roles -->
+        <g font-family="IBM Plex Mono, monospace">
+          <rect x="204" y="56" width="220" height="100" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="220" y="80" font-size="12" fill="var(--accent)">ingest</text>
+          <text x="220" y="100" font-size="10" fill="currentColor" opacity=".75">parses spike &rarr; location</text>
+          <text x="220" y="116" font-size="10" fill="currentColor" opacity=".75">+ spendUsd</text>
+          <text x="220" y="140" font-size="10" fill="currentColor" opacity=".55">refuses if no region</text>
+
+          <rect x="464" y="56" width="220" height="100" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="480" y="80" font-size="12" fill="var(--accent)">audit</text>
+          <text x="480" y="100" font-size="10" fill="currentColor" opacity=".75">189.0 kg vs 50 kg budget</text>
+          <text x="480" y="116" font-size="10" fill="currentColor" opacity=".75">&rarr; 179.0 kg over</text>
+          <text x="480" y="140" font-size="10" fill="currentColor" opacity=".55">refuses if ungrounded</text>
+
+          <rect x="724" y="56" width="220" height="100" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="740" y="80" font-size="12" fill="var(--accent)">settle</text>
+          <text x="740" y="100" font-size="10" fill="currentColor" opacity=".75">3 580&cent; offset, capped at</text>
+          <text x="740" y="116" font-size="10" fill="currentColor" opacity=".75">the token's own ceiling</text>
+          <text x="740" y="140" font-size="10" fill="currentColor" opacity=".55">no over-budget, no spend</text>
+        </g>
+
+        <g stroke="currentColor" fill="none" stroke-width="1.25">
+          <path d="M424,106 H462" marker-end="url(#ar2)"/>
+          <path d="M684,106 H722" marker-end="url(#ar2)"/>
+          <path d="M944,106 H986 V196" marker-end="url(#ar2)"/>
+        </g>
+
+        <!-- channels -->
+        <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor">
+          <path d="M314,156 V196" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+          <path d="M574,156 V196" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+          <path d="M834,156 V196" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+          <path d="M204,196 H986" stroke="currentColor" stroke-width="1.25" fill="none"/>
+          <text x="314" y="216" text-anchor="middle" opacity=".7">fleet.ingest</text>
+          <text x="574" y="216" text-anchor="middle" opacity=".7">fleet.audit</text>
+          <text x="834" y="216" text-anchor="middle" opacity=".7">fleet.settle</text>
+        </g>
+        <rect x="204" y="238" width="782" height="46" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
+        <text x="595" y="258" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">durable handoff log + offset receipt</text>
+        <text x="595" y="274" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity=".6">every message replayable via list_handoffs &middot; shaped for a Cotal mesh, runs without one</text>
+      </svg>
+      <figcaption>One trigger, three roles, a written record at every handoff. Today the audit scores one emission class &mdash; compute &mdash; against a live-grounded factor; the same pipeline is where the other six classes and their error bars land. The identical run with a $12 spike stops at audit (45.4&nbsp;kg projected against a 50&nbsp;kg budget) and settles nothing, which is also a receipt.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 12 -------- CASE 02 &middot; PROFILE -->
+<section class="slide" data-name="Hardware">
+  <div class="inner">
+    <div class="eyebrow">Client case 02 &mdash; hardware</div>
+    <h2 class="slide-title">A client who makes a physical thing is not the same client at 10&times; the number.</h2>
+    <p class="lede">Our second client type builds devices. Almost none of their footprint is inference, their hotspot sits in a factory they do not own, and a peer range borrowed from SaaS would be off by an order of magnitude.</p>
+    <figure>
+      <svg viewBox="0 0 1000 292" role="img" aria-label="Indicative peer footprint ranges per full-time employee per year: SaaS 1.5 to 4.0 tonnes CO2e, Pet Services 8 to 24, Biotech 10 to 30, Food and Beverage 12 to 35, and Hardware 15 to 45 &mdash; roughly ten times the SaaS range.">
+        <!-- grid -->
+        <g stroke="currentColor" stroke-width="1" opacity=".16">
+          <line x1="356.25" y1="34" x2="356.25" y2="246"/>
+          <line x1="512.5"  y1="34" x2="512.5"  y2="246"/>
+          <line x1="668.75" y1="34" x2="668.75" y2="246"/>
+          <line x1="825"    y1="34" x2="825"    y2="246"/>
+        </g>
+        <line x1="200" y1="246" x2="950" y2="246" stroke="currentColor" stroke-width="1" opacity=".38"/>
+        <g font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".55" text-anchor="middle">
+          <text x="200" y="266">0</text>
+          <text x="356.25" y="266">10</text>
+          <text x="512.5" y="266">20</text>
+          <text x="668.75" y="266">30</text>
+          <text x="825" y="266">40</text>
+          <text x="575" y="286">tCO2e per full-time employee per year</text>
+        </g>
+
+        <g font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor">
+          <!-- SaaS -->
+          <text x="180" y="60" text-anchor="end">SaaS</text>
+          <rect x="223.4" y="50" width="39.1" height="12" rx="6" fill="currentColor" opacity=".5">
+            <title>SaaS &middot; 1.5&ndash;4.0 tCO2e/FTE/yr &middot; office operations and cloud compute</title>
+          </rect>
+          <text x="282" y="60" font-size="11" opacity=".75">1.5&ndash;4.0</text>
+
+          <!-- Pet services -->
+          <text x="180" y="100" text-anchor="end">Pet services</text>
+          <rect x="325" y="90" width="250" height="12" rx="6" fill="currentColor" opacity=".26">
+            <title>Pet Services &middot; 8&ndash;24 tCO2e/FTE/yr &middot; organic waste processing, operations, retail logistics</title>
+          </rect>
+          <text x="595" y="100" font-size="11" opacity=".6">8&ndash;24</text>
+
+          <!-- Biotech -->
+          <text x="180" y="140" text-anchor="end">Biotech</text>
+          <rect x="356.25" y="130" width="312.5" height="12" rx="6" fill="currentColor" opacity=".26">
+            <title>Biotech &middot; 10&ndash;30 tCO2e/FTE/yr &middot; high-power lab equipment, clinical waste, diagnostics shipping</title>
+          </rect>
+          <text x="689" y="140" font-size="11" opacity=".6">10&ndash;30</text>
+
+          <!-- Food & beverage -->
+          <text x="180" y="180" text-anchor="end">Food &amp; beverage</text>
+          <rect x="387.5" y="170" width="359.4" height="12" rx="6" fill="currentColor" opacity=".26">
+            <title>Food and Beverage &middot; 12&ndash;35 tCO2e/FTE/yr &middot; supply-chain agriculture, raw ingredients, logistics, processing</title>
+          </rect>
+          <text x="767" y="180" font-size="11" opacity=".6">12&ndash;35</text>
+
+          <!-- Hardware (emphasised) -->
+          <text x="180" y="220" text-anchor="end" font-weight="600">Hardware</text>
+          <rect x="434.4" y="210" width="468.7" height="12" rx="6" fill="var(--accent)">
+            <title>Hardware &middot; 15&ndash;45 tCO2e/FTE/yr &middot; physical prototyping facilities and outsourced Scope 3 supply-chain manufacturing</title>
+          </rect>
+          <text x="923" y="220" font-size="11" font-weight="600">15&ndash;45</text>
+        </g>
+      </svg>
+      <figcaption>Indicative peer ranges, derived per-FTE and labelled as such &mdash; SaaS from DESNZ/EPA digital-first SME factors, hardware from product-lifecycle LCA and OEM averages under the GHG&nbsp;Protocol Scope&nbsp;3 Standard. These are transparent derived bands, not a proprietary peer dataset, which is exactly why we show the width instead of a point.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 13 -------- CASE 02 &middot; WORKFLOW -->
+<section class="slide" data-name="Workflow">
+  <div class="inner">
+    <div class="eyebrow">Client case 02 &mdash; their workflow</div>
+    <h2 class="slide-title">Their emissions are created by purchase orders and freight bookings, so that is what gets filed.</h2>
+    <p class="lede">The compute client&rsquo;s trigger is a billing spike. This client&rsquo;s triggers are operational decisions made by people and agents in ops, procurement and logistics &mdash; each one a moment where attribution is still cheap.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-t">A supplier PO is cut</div>
+        <div class="step-d">The ops agent files component class, supplier region and spend as it happens. This lands in Scope&nbsp;3 Cat&nbsp;1 or Cat&nbsp;2 the day the commitment is made &mdash; not in a reconstruction from invoices next March.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-t">A shipment is booked</div>
+        <div class="step-d">Tonne-kilometres and mode, scored on the GLEC Framework / ISO&nbsp;14083. When a delayed line forces sea&nbsp;&rarr;&nbsp;air, the agent files the mode change at the moment of the decision, while someone can still weigh it.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-t">A prototype or assembly run completes</div>
+        <div class="step-d">Scrap, packaging and e-waste against a modeled 250&nbsp;kg-per-FTE facility default &mdash; explicitly provisional, and replaced the moment real disposal records exist.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <div class="step-t">A meter is read, a refrigerant is topped up</div>
+        <div class="step-d">Scope&nbsp;1 and Scope&nbsp;2 come back for anyone with a building. Utility kWh and fugitive refrigerant convert two whole classes from modeled to measured in one write.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">05</div>
+        <div class="step-t">An enterprise buyer asks for supplier data</div>
+        <div class="step-d">Their customer&rsquo;s procurement agent gets a <span class="inline">climatico:read</span> token and pulls receipts with sources attached. It can read what was committed; it cannot see the bill of materials, and it cannot write.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">06</div>
+        <div class="step-t">The handprint claim goes in the deck</div>
+        <div class="step-d">&ldquo;Our device displaces a dirtier one.&rdquo; Refused as <span class="inline">ungrounded</span> until a conservative counterfactual baseline exists and additionality is demonstrated. The refusal is stored, with the reason, so the next attempt starts from it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 -------- CASE 02 &middot; CONSIDERATIONS -->
+<section class="slide" data-name="Concerns">
+  <div class="inner">
+    <div class="eyebrow">Client case 02 &mdash; what they weigh</div>
+    <h2 class="slide-title">Six things this client worries about that a compute client never mentions.</h2>
+    <div class="grid g3">
+      <div class="card">
+        <span class="kicker">Concern 01</span>
+        <h3>The peer range is an order of magnitude off</h3>
+        <p>Benchmarked against SaaS they look catastrophic; benchmarked against nothing they look fine. 15&ndash;45 against 1.5&ndash;4.0 tCO<sub>2</sub>e per FTE is not a rounding difference, and a tool that does not know which one they are is worse than no tool.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Concern 02</span>
+        <h3>Procurement sets the deadline, not the regulator</h3>
+        <p>The request arrives from an enterprise customer pulling suppliers into its own value-chain reporting &mdash; on the buyer&rsquo;s timeline, in the buyer&rsquo;s format. For a hardware startup selling into large accounts, the footprint becomes a condition of the sale.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Concern 03</span>
+        <h3>The hotspot is in a factory they do not own</h3>
+        <p>Most of the number sits with a contract manufacturer they cannot meter. Until supplier-specific factors arrive, the fallback is a spend-based proxy at &plusmn; 50% &mdash; usable, but only if the tool says out loud how coarse it is.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Concern 04</span>
+        <h3>Freight mode is the live lever</h3>
+        <p>A single air expedite can outweigh a year of office electricity. It is decided mid-week under schedule pressure by someone who will never open a sustainability dashboard &mdash; which is precisely the argument for an interface their systems can call.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Concern 05</span>
+        <h3>The boundary has to be declared, not implied</h3>
+        <p>Cradle-to-gate and cradle-to-grave give different numbers for the same device. At L3 the top hotspot needs a real ISO&nbsp;14040/14044 or GHG&nbsp;Protocol Product Standard lifecycle assessment &mdash; and a spend-based estimate must never be allowed to describe itself as one.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Concern 06</span>
+        <h3>Water, waste and land stop being footnotes</h3>
+        <p>Scope&nbsp;1 combustion and refrigerant leakage return, prototyping and assembly waste is material, and land &amp; biodiversity rises from negligible to a medium materiality flag on raw-material extraction. Carbon alone stops describing the business.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px;border-color:var(--accent);">
+      <span class="kicker">And the one that shapes the architecture</span>
+      <h3>The bill of materials is the most confidential thing they own</h3>
+      <p>Supplier identities and part costs are the crown jewels &mdash; in our founder sessions, privacy drew the strongest reaction of any topic, and stealth-stage teams refused document upload outright. Scoped credentials are the answer we already ship: a supplier&rsquo;s agent can be given a token that writes one activity and reads nothing, and a buyer&rsquo;s agent one that reads receipts and writes nothing. Scopes freeze at mint, so neither can widen its own reach.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -------- GUARDRAILS -->
+<section class="slide" data-name="Guardrails">
+  <div class="inner">
+    <div class="eyebrow">What holds it together</div>
+    <h2 class="slide-title">The boring parts are the demo.</h2>
+    <div class="grid g3">
+      <div class="card">
+        <span class="kicker">Credentials</span>
+        <h3>Scopes freeze at mint</h3>
+        <p>HMAC-SHA256 over a payload the caller cannot edit; TTL clamped to 24 hours; every token recorded by hash so it can be revoked. <span class="inline">climatico:read</span> can look but never write. Thirty mints a minute, then a 429.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Money</span>
+        <h3>A ceiling the caller can&rsquo;t raise</h3>
+        <p>A standard token commits at most 5 000&cent;. Asking for more is <span class="inline">amount_exceeds_scope</span>, refused and stored. The fleet caps its own settlement at the same ceiling rather than splitting the difference.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Truth</span>
+        <h3>Grounded, or it does not exist</h3>
+        <p>A brief or assessment with no live sources behind it comes back <span class="inline">ungrounded</span>. We would rather return nothing than a plausible climate paragraph. The audit refuses to score emissions on an unverifiable factor.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Replays</span>
+        <h3>Retry is safe</h3>
+        <p>An <span class="inline">idempotencyKey</span> returns the original receipt instead of committing twice. Agents retry; the ledger should not double-spend because of it.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Memory</span>
+        <h3>Nothing lives in RAM</h3>
+        <p>Receipts, credentials, watches, handoffs and fleet runs are SQLite rows inside a Durable Object. A watch opened during the demo is still there tomorrow.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Integrity</span>
+        <h3>No decorative integrations</h3>
+        <p>Every dependency in the write path does real work: Workers, Durable Objects, Workers AI, Tavily. Nothing is called to put a logo on a slide, and nothing is stubbed to look busy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 -------- VISION -->
+<section class="slide" data-name="Vision">
+  <div class="inner">
+    <div class="eyebrow">Our vision</div>
+    <h2 class="slide-title">Every company will have to answer this. Almost none of them will do it by hand.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">NOW</div>
+        <div class="step-t">The write surface exists</div>
+        <div class="step-d">Shipped this weekend: discovery, self-minted scoped credentials, four protocols, a policy that refuses before it writes, and a durable receipt for both outcomes. An agent that has never met us completes a real write in five calls &mdash; and the compute class is scored against live evidence or not at all.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">NEXT</div>
+        <div class="step-t">All seven classes, continuously, with their error bars</div>
+        <div class="step-d">The taxonomy and the attribution model are already built and sourced. The work is moving them from a report a founder reads to a policy the ledger enforces: every write lands in a named GHG&nbsp;Protocol category, carries its uncertainty, and is tagged modeled or measured. Handprint claims get the additionality test applied automatically &mdash; and are refused <em>with a citation</em> when they cannot pass it.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">THEN</div>
+        <div class="step-t">The attribution layer for agent-native companies</div>
+        <div class="step-d">Many agents writing, any auditor reading, provenance attached at the moment of the claim instead of reconstructed two years later in a disclosure cycle. And a refusal corpus worth as much as the commits: the public record of what autonomous systems keep trying to claim about the climate, and exactly where the line held.</div>
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <p class="lede" style="max-width:72ch;">Disclosure pressure is arriving faster than the people available to satisfy it, and the companies feeling it first are the ones whose emissions are made of inference. They will not answer &ldquo;which emissions are yours, and how much&rdquo; with a spreadsheet. They will answer it with an agent &mdash; and the agent needs somewhere honest to file.</p>
+  </div>
+</section>
+
+<!-- 17 -------- TRY IT -->
+<section class="slide" data-name="Try it">
+  <div class="inner">
+    <div class="eyebrow">Try it</div>
+    <h2 class="slide-title">Point an agent at it.</h2>
+    <div class="grid g2">
+      <div class="card">
+        <span class="kicker">Run the desk</span>
+<pre>cd climatico
+cp .dev.vars.example .dev.vars
+<span class="c"># paste openssl rand -hex 32 &rarr; TOKEN_SECRET</span>
+npm install &amp;&amp; npx wrangler types
+npm run dev        <span class="c"># 127.0.0.1:8787</span>
+npm run demo       <span class="c"># full cold-start walkthrough</span></pre>
+        <p style="margin-top:14px;">The demo script mints a token, proves the 401, files a grounded brief, commits an offset, gets refused on <span class="inline">greenwash</span>, and runs the fleet both under and over budget.</p>
+      </div>
+      <div class="card">
+        <span class="kicker">Surfaces</span>
+        <table style="font-size:12.5px;">
+          <tr><td class="mono-k">/.well-known/agent-card.json</td><td>discovery</td></tr>
+          <tr><td class="mono-k">/v1/credentials</td><td>mint a scoped token</td></tr>
+          <tr><td class="mono-k">/v1/policy</td><td>what we refuse</td></tr>
+          <tr><td class="mono-k">/mcp</td><td>8 tools, bearer required</td></tr>
+          <tr><td class="mono-k">/a2a</td><td>SendMessage &middot; message/send</td></tr>
+          <tr><td class="mono-k">/v1/actions</td><td>the write</td></tr>
+          <tr><td class="mono-k">/v1/fleet/run</td><td>ingest &rarr; audit &rarr; settle</td></tr>
+          <tr><td class="mono-k">/v1/receipts</td><td>the record, refusals included</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M50 44.6A24 24 0 1 1 50 19.4l-8.17 5.71a14 14 0 1 0 0 13.78Z" fill="var(--accent)"/>
+        <path d="M33.15 33.28C48.1 29.24 54.7 19.49 51.2 9.41c-11.87 5.04-17.59 12.1-18.05 23.87Z" fill="var(--accent-2)"/>
+      </svg>
+      <p style="margin:0;font-family:Newsreader,Georgia,serif;font-size:19px;">Climatico &mdash; Agent Edition. We will not invent climate. We will always tell you why not.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var dots = document.getElementById('dots');
+  var railName = document.getElementById('railName');
+  var railNum = document.getElementById('railNum');
+  var progress = document.getElementById('progress');
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+
+  slides.forEach(function (s, i) {
+    s.id = 'slide-' + (i + 1);
+    var a = document.createElement('a');
+    a.href = '#slide-' + (i + 1);
+    a.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + s.dataset.name);
+    dots.appendChild(a);
+  });
+  var links = Array.prototype.slice.call(dots.children);
+  document.querySelector('.rail-count').innerHTML = '<b id="railNum">01</b> / ' + pad(slides.length);
+  railNum = document.getElementById('railNum');
+
+  var current = 0;
+  function setCurrent(i) {
+    if (i === current) return;
+    current = i;
+    links.forEach(function (l, n) { l.setAttribute('aria-current', n === i ? 'true' : 'false'); });
+    railName.textContent = slides[i].dataset.name;
+    railNum.textContent = pad(i + 1);
+    progress.style.width = ((i + 1) / slides.length * 100) + '%';
+    if (hint) hint.style.opacity = i === 0 ? '1' : '0';
+  }
+  var hint = document.querySelector('.hint');
+  links[0].setAttribute('aria-current', 'true');
+  progress.style.width = (1 / slides.length * 100) + '%';
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) setCurrent(slides.indexOf(e.target));
+      });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    slides.forEach(function (s) { io.observe(s); });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    var next = null;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') next = current + 1;
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp') next = current - 1;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = slides.length - 1;
+    if (next === null) return;
+    if (next < 0 || next >= slides.length) return;
+    e.preventDefault();
+    slides[next].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+})();
+</script>

@@ -1,0 +1,37 @@
+{
+  "name": "climatico",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "start": "vite dev",
+    "build": "vite build",
+    "deploy": "vite build && wrangler deploy",
+    "types": "wrangler types",
+    "check": "wrangler types && tsc --noEmit",
+    "demo": "bash scripts/demo.sh"
+  },
+  "dependencies": {
+    "@cloudflare/ai-chat": "^0.10.2",
+    "@cloudflare/shell": "^0.4.3",
+    "@cloudflare/think": "^0.16.0",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "agents": "^0.21.0",
+    "ai": "^7.0.82",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "workers-ai-provider": "^4.0.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.54.0",
+    "@cloudflare/workers-types": "^5.20260826.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "@vitejs/plugin-react": "^6.1.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "wrangler": "^4.126.0"
+  }
+}

@@ -1,0 +1,185 @@
+{
+ "checked_at": "2026-08-26T21:05:02.269475+00:00",
+ "checked_at_pdt": "2026-08-26 14:05:02 PDT",
+ "http_status": 200,
+ "reachable": true,
+ "page_bytes": 323028,
+ "status_banner": "Building now",
+ "phase_line": "Building now",
+ "kicker": "August 26-27, 2026 \u00b7 Cloudflare SF, 101 Townsend St \u00b7 50 builder seats",
+ "late_door": false,
+ "event": {
+  "name": "The Agent Natives Builders Hackathon",
+  "startDate": "2026-08-26T10:00:00-07:00",
+  "endDate": "2026-08-27T20:30:00-07:00",
+  "eventStatus": "EventScheduled",
+  "location": "Cloudflare San Francisco",
+  "organizers": [
+   "Immersive Commons",
+   "Runtype",
+   "Cotal.ai",
+   "Nebius"
+  ],
+  "sponsors": [
+   "Tenki",
+   "Tavily",
+   "Mitosis Labs",
+   "Hacker Bob",
+   "HUD"
+  ]
+ },
+ "people": {
+  "Community Partner": [
+   "Alex Marin",
+   "Bal\u00e1zs N\u00e9methi",
+   "Cheryl Yang",
+   "Devinder Sodhi",
+   "Soji Lee",
+   "Steven Etchman",
+   "Walter Wu"
+  ],
+  "Judge": [
+   "Axel Cassou",
+   "Barton Rhodes",
+   "Fabio Roma",
+   "Michalis Vasileiadis",
+   "Vidya Bodepudi"
+  ],
+  "Organizer": [
+   "David Farah",
+   "Nate Stewart",
+   "Nathan Booker",
+   "Rayyan Zahid",
+   "Sven Jonscher"
+  ],
+  "Sponsor": [
+   "Alex Morris",
+   "Colin Lowenberg",
+   "Prakshal Jain"
+  ],
+  "Sponsor Co-host": [
+   "Sujee Maniyam"
+  ]
+ },
+ "run_of_show": {
+  "day1": [
+   {
+    "time": "10:00",
+    "item": "Doors, check in, badge pickup"
+   },
+   {
+    "time": "10:30",
+    "item": "Kickoff: rules, tracks, judging rubric"
+   },
+   {
+    "time": "11:30",
+    "item": "Team formation, build begins"
+   },
+   {
+    "time": "13:00",
+    "item": "Lunch, catered"
+   },
+   {
+    "time": "18:30",
+    "item": "Dinner, catered"
+   },
+   {
+    "time": "19:30",
+    "item": "Wind down, teardown"
+   },
+   {
+    "time": "20:00",
+    "item": "Floor clear"
+   }
+  ],
+  "day2": [
+   {
+    "time": "10:00",
+    "item": "Doors, build resumes"
+   },
+   {
+    "time": "10:30",
+    "item": "Day two brief"
+   },
+   {
+    "time": "13:00",
+    "item": "Lunch, catered"
+   },
+   {
+    "time": "15:00",
+    "item": "Submissions lock"
+   },
+   {
+    "time": "15:30",
+    "item": "Demos, two tracks in parallel"
+   },
+   {
+    "time": "18:00",
+    "item": "Results, awards, closing"
+   },
+   {
+    "time": "19:00",
+    "item": "Wind down, teardown"
+   },
+   {
+    "time": "20:00",
+    "item": "Floor clear"
+   }
+  ]
+ },
+ "awards": [
+  "Runtype: $500 cash for the best use of Runtype.",
+  "Cotal: $300 cash for the best use of Cotal.",
+  "Sandbox VR: $330 in experiences, one winner per track \u2014 a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.",
+  "HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.",
+  "Hacker Bob: a security scan for every builder, and a month of the product for every winner.",
+  "Tenki: $100 in credits for every builder.",
+  "AIsa: $100 in credits for every builder.",
+  "Nebius: $75 in Builder Program credits for every builder.",
+  "Tavily: 8,000 credits for every builder, on top of the 1,000 a free account starts with, so 9,000 in total.",
+  "Runtype: $50 in credits for every builder.",
+  "Credits are claimed on each vendor\u2019s own site, not from us. How to claim each one ."
+ ],
+ "sponsor_challenges": [
+  "Runtype",
+  "Best use of Runtype",
+  "Build your project on Runtype: agents, flows, tools, product evals, model routing and integrations already wired together, so a prompt that works becomes a product without rebuilding auth, multi tenancy and evals first. The strongest use of the platform takes the prize, judged alongside the main rubric. Separately, every builder gets $50 in Runtype credits just for turning up. Those are yours already and are not something you compete for.",
+  "$500 cash"
+ ],
+ "registered": true,
+ "role": {
+  "roles": [
+   "participant",
+   "team_lead"
+  ],
+  "nda_signed": true,
+  "checked_in": false
+ },
+ "team": {
+  "eid": "anb-hack-01",
+  "team_id": "t_5a903ee708c64f1e",
+  "name": "Climatico",
+  "lead": "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC",
+  "members": [
+   "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC"
+  ],
+  "recruiting": true,
+  "created_at": "2026-08-26T21:04:53.122Z",
+  "updated_at": "2026-08-26T21:04:53.122Z"
+ },
+ "submission": null,
+ "api_phase": "BUILD",
+ "applied": false,
+ "api_seats_used": 4,
+ "api_seats_remaining": 46,
+ "bounty_count": 1,
+ "team_count": 3,
+ "teams": [
+  "Climatico",
+  "Physical Capability Cloud",
+  "Showtonic"
+ ],
+ "body_hash": "e5ed4a09916e7bd5",
+ "checks_run": 12,
+ "change_events": 9
+}

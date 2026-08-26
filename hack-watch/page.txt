@@ -1,0 +1,634 @@
+The Agent Natives Builders Hackathon · Aug 26-27, Cloudflare SF · Immersive Commons
+Skip to main content
+IMMERSIVE COMMONS
+/ FT10
+☀
+Welcome
+Discover
+▾
+Projects Startups Events Hackathons Communities Members
+Read
+▾
+News Signal Research Brain Presentations Press What's New
+Members
+▾
+Floor 10 Board Membership Funko Me My Startup Headsets Library Prints Resources Workshop GLM Keys Guests
+Build
+▾
+Immersive Commons API documentation Agent Console Agent Submissions UI/UX Lab
+About
+▾
+About IC Advisory Board Contact Privacy
+Donate
+August 26-27, 2026 · Cloudflare SF, 101 Townsend St · 50 builder seats
+Building now
+The Agent Natives
+Builders Hackathon
+Two days where fifty builders from startups that already ship make their products legible to AI agents. Not chatbots bolted onto human websites, but products designed for a web where agents are first-class users. And rarely one agent at a time: they arrive as fleets that discover each other, hand work off, and finish a job without a human relaying between them.
+Applications are closed
+See what’s next on the floor Let your agent apply
+Building now
+For agents
+Mint a token, then hand your agent the MCP endpoint
+Copied!
+Copy
+npx -y @immersivecommons/cli auth --scopes hack:read,hack:register,hack:team,hack:submit,keys:request
+ic_hack_application_form
+→
+ic_hack_apply
+The whole agent surface, one table
+At a glance
+When
+Aug 26-27
+Two days, 10:00am PDT
+Where
+Cloudflare SF
+101 Townsend St
+Seats
+50
+builder seats
+*
+Why the room is bigger than the seat count
+Cost
+Free
+Meals both days
+Format
+In person
+This page keeps changing while the event runs. See what changed and when .
+Hosted at Cloudflare
+Hosted at
+Cloudflare
+cloudflare.com
+Organised by
+immersivecommons.com
+runtype.com
+cotal.ai
+nebius.com
+Sponsors
+Tenki
+tenki.cloud
+tavily.com
+mitosislabs.ai
+Hacker Bob
+hackerbob.ai
+hud.ai
+Community partners
+Agent Community
+agentcommunity.org
+Learning Layer Labs
+learninglayer.ai
+clawcamp.org
+dablclub.com
+Web A
+weba.network
+HiRey
+hirey.ai
+nerdconf.com
+Cloudflare gives us the room, an employee on site for the whole event, printed badges and the venue NDA. They are not a sponsor and they are not paying for anything, and that is worth saying because half the collateral in this space blurs the two.
+What agent-native actually means
+The front door
+An agent that has never seen your product, found it alone, with nobody briefing it, gets a credential and completes a real transaction.
+The colleague
+Your product stops being a place people visit. Other people's agents delegate to it, negotiate with it, and pick up tomorrow where they left off today.
+The receipt
+It acts on someone's behalf, so the build is the proof: what it may do, what it refused to do, and what actually happened.
+The stack you build on
+Cloudflare
+Workers, Durable Objects, Workers AI, AI Gateway, Agents SDK, remote MCP hosting
+Runtype
+Agents, flows and evals. Bind a capability to an MCP surface and the tools generate themselves
+Cotal
+Agent-to-agent presence, multicast and durable delivery
+Immersive Commons
+The worked example. Tools mirrored on A2A, token scopes frozen at mint
+Mitosis Labs
+The source of truth your agents read from. Memory that survives the session instead of a confident stranger every morning
+Hacker Bob
+Security testing for web apps, smart contracts and source code. Point it at the surface you just opened to agents
+Tavily
+Real-time web search and content extraction built for agents and RAG, behind one API
+Nebius
+GPU cloud engineered from silicon to API, for when the model you need will not run on a laptop
+Tenki
+Disposable Linux sandboxes that boot in under two seconds and bill by the second
+AIsa
+A transaction network for agents. Five thousand APIs, models and data sources behind one key, billed per call, with machine payments underneath
+HUD
+Build and test your own reinforcement-learning environments, then evaluate models against them
+Not sponsors. Cloudflare hosts us and the organisers run three of these outright, so the core of it waits on nobody; the rest are partners who said yes. Bring your own agent and your own keys; we supply the brief, the context and a model key.
+Two tracks
+Track 01
+External · Customer facing
+By 5:00 PM on day two: can an agent nobody on your team briefed, arriving with nothing but your domain name, discover what your product does, get a credential, and complete a real transaction in it?
+What fails it: an MCP server that only reads, because reading is not using. Or a surface that is perfectly agent-callable and completely unauthenticated.
+Track 02
+Internal · Team facing
+By 5:00 PM on day two: can the tooling your own company runs on get real work done through an agent, across systems it does not own, and pick the job back up tomorrow where it left off today?
+What fails it: a wrapper around one internal API that only your own agent can call, which is a function call with extra latency.
+The rubric
+One hundred points, the same five weights in every track. Tell us which track is yours in your build plan. You may switch once, up to the day two lock.
+The judging rubric: one hundred points, the same five weights in every track, with the criterion each weight buys per track.
+Weight
+External
+Internal
+Weight
+30
+External
+Cold-start success
+Internal
+Real work across a real boundary
+Weight
+25
+External
+It runs
+Internal
+It runs
+Weight
+20
+External
+Surface quality
+Internal
+Coordination design
+Weight
+15
+External
+Lands in the product
+Internal
+Lands in the product
+Weight
+10
+External
+Demo
+Internal
+Demo
+“It runs” is a gate as well as a criterion. A submission a judge cannot trigger live on the day cannot place, whatever it scores everywhere else.
+Bring a product that already exists.
+Leave with one an agent can use.
+A person reads every application. Applying does not hold a seat, and the seat is yours when a reviewer says yes.
+Applications are closed
+See what’s next on the floor Let your agent apply
+Building now
+The panel
+Five judges, each of whom has personally shipped the kind of work they are scoring. The two tracks demo at the same time, each to its own judges , and standings rank by the mean across judges rather than the sum, so a team seen by two is not quietly beaten by a weaker team seen by four.
+Michalis Vasileiadis
+Hacker Bob
+Axel Cassou
+HUD
+Barton Rhodes
+bci.place
+Fabio Roma
+impossibl
+Vidya Bodepudi
+White Rabbit
+Judging runs Thursday August 27 only, from 3:30 PM, and a judge does not spend a builder seat. You demo to your own track, so you are not sitting through the other one. Want to judge? Apply at the same door and pick judge at the top of the form.
+Who is behind it
+The marks in the wall above are the record of which companies agreed. These are the people who agreed for them.
+Organised by
+Rayyan Zahid
+Immersive Commons
+Nate Stewart
+Runtype
+Nathan Booker
+Runtype
+David Farah
+Cotal
+Sven Jonscher
+Cotal
+Sujee Maniyam
+Nebius
+Sponsors
+Colin Lowenberg
+Tenki
+Alex Morris
+Mitosis Labs
+Prakshal Jain
+Mitosis Labs
+Tavily
+tavily.com
+Community partners
+Balázs Némethi
+Agent Community
+Devinder Sodhi
+Learning Layer Labs
+Walter Wu
+HiRey
+Cheryl Yang
+HiRey
+Alex Marin
+NERDCONF
+Soji Lee and Steven Etchman
+ClawCamp
+Not every partner has a card of their own. Web A is in and has been since 2026-08-17 ; they appear on the wall above and have not sent a portrait, which is a fact about photography and not about their involvement. Dabl Club is Colin Lowenberg , who is up there under Tenki, the sponsor he introduced. Hacker Bob and HUD show up as sponsors on the wall and as judges in the panel, because they are both.
+The rest of the room
+Fifty seats are for builders. The judges, mentors, sponsors, volunteers and press who make the two days work are held separately and do not spend a builder seat , so applying in one of these roles never takes a chair from someone coming to build. Same door, same queue, same person reading it: pick the role at the top of the form.
+Judge
+Thursday afternoon only, 3:30 to 6:00. You score one track, not all twenty teams. Declare conflicts and we reassign.
+Mentor
+Name the hours you can actually hold and the stack you can actually unblock. A window you commit to beats a title.
+Sponsor
+Own a challenge or a track. Bounties post through ic_hack_bounty_post and appear on this page the moment one is real.
+Volunteer
+Check-in, floor, food, teardown. Needs the venue's background attestation for building access.
+Press
+Shoot the floor and the demos. Nothing readable on a participant's screen gets published without their say-so.
+Coming as a community partner’s delegate is a builder application. A partner nomination gets you read fairly, but an approval spends one of the fifty, so bring something to build. Every role here signs the same venue NDA and locks the same legal name on Monday, August 24 .
+→ Applications are closed
+Building now
+Two days, and a hard stop
+Wednesday, August 26
+Run of show, Wednesday, August 26
+10:00
+Doors, check in, badge pickup
+10:30
+Kickoff: rules, tracks, judging rubric
+11:30
+Team formation, build begins
+13:00
+Lunch, catered
+18:30
+Dinner, catered
+19:30
+Wind down, teardown
+20:00
+Floor clear
+Thursday, August 27
+Run of show, Thursday, August 27
+10:00
+Doors, build resumes
+10:30
+Day two brief
+13:00
+Lunch, catered
+15:00
+Submissions lock
+15:30
+Demos, two tracks in parallel
+18:00
+Results, awards, closing
+19:00
+Wind down, teardown
+20:00
+Floor clear
+All times PDT. Flagged rows are constraints, not agenda. The building’s own limit is 8:30pm both nights, so we schedule to be clear by 8:00. No overnight: whatever your product cannot do after being shut down and restarted, it cannot do for a customer either.
+→ Applications are closed
+Building now
+Awards
+Six winners, three in each track.
+Runtype: $500 cash for the best use of Runtype.
+Cotal: $300 cash for the best use of Cotal.
+Sandbox VR: $330 in experiences, one winner per track — a full room of six on a weekend at the SF Flagship, or eight of you midweek. First place also gets beta access to Deadwood Origins.
+HUD: $3,000 in training credits for the winners overall, plus an interview at HUD.
+Hacker Bob: a security scan for every builder, and a month of the product for every winner.
+Tenki: $100 in credits for every builder.
+AIsa: $100 in credits for every builder.
+Nebius: $75 in Builder Program credits for every builder.
+Tavily: 8,000 credits for every builder, on top of the 1,000 a free account starts with, so 9,000 in total.
+Runtype: $50 in credits for every builder.
+Credits are claimed on each vendor’s own site, not from us. How to claim each one .
+Every line is a number the company paying it named. Most of it reaches you for showing up rather than for placing: the credits above are per builder, and only the cash, the HUD credits and the Hacker Bob subscriptions are winner-only.
+Sponsor challenges
+Runtype
+Best use of Runtype
+Build your project on Runtype: agents, flows, tools, product evals, model routing and integrations already wired together, so a prompt that works becomes a product without rebuilding auth, multi tenancy and evals first. The strongest use of the platform takes the prize, judged alongside the main rubric. Separately, every builder gets $50 in Runtype credits just for turning up. Those are yours already and are not something you compete for.
+$500 cash
+Cloudflare San Francisco
+101
+Townsend St
+San Francisco, CA
+101 Townsend St · San Francisco, CA
+Doors 10:00am PDT both days.
+The building clears by 8:30pm both nights. Hard, not soft.
+Every attendee signs the venue NDA. Cloudflare sends it to the confirmed roster 48 hours ahead. Unsigned means you cannot be checked in , and that is enforced by the check-in tool rather than by goodwill at the door.
+Badges print in advance from legal names, so every name locks on Monday, August 24 . Apply with the name on your ID.
+Meals both days are covered.
+Travel, parking, wifi and accessibility land here once the venue answers. We would rather not know yet than guess.
+The same event, from the other side
+Everything above is also a tool call
+Not a mirror of the page. The page is a client of the same API your agent uses.
+Every fact on this page and the tool call that returns it.
+What you read above
+Tool
+Scope
+Dates, venue, phase
+Tool
+ic_hack_get
+Scope
+hack:read
+Seats remaining
+Tool
+ic_hack_get
+Scope
+hack:read
+The rubric
+Tool
+ic_hack_get
+Scope
+hack:read
+Sponsor challenges
+Tool
+ic_hack_get
+Scope
+hack:read
+Who is judging, organising and sponsoring
+Tool
+ItemList JSON-LD on this page
+Scope
+none
+The questions we ask
+Tool
+ic_hack_application_form
+Scope
+hack:read
+Applying
+Tool
+ic_hack_apply
+Scope
+hack:register
+Where your application stands
+Tool
+ic_hack_application_status
+Scope
+hack:read
+Your team
+Tool
+ic_hack_team_*
+Scope
+hack:team
+Your submission
+Tool
+ic_hack_submit
+Scope
+hack:submit
+The context pack
+Tool
+signed folder link
+Scope
+none
+The whole catalogue
+Tool
+ic_capabilities
+Scope
+read:public
+Give your agent this command
+Copied!
+Copy
+npx -y @immersivecommons/cli auth --scopes hack:read,hack:register,hack:team,hack:submit,keys:request
+Ask for every scope in one go: a token’s scopes are fixed when it is minted. keys:request is the one people forget, and it is what asks for the model-access key on the day. Then hand your agent https://www.immersivecommons.com/api/mcp and the event id anb-hack-01 .
+Claiming your credits
+There is no single button. Every credit redeems on the vendor’s own site, there is no central claim endpoint, and nothing on our MCP surface redeems vendor credits. An agent built on the assumption of one claim call will fail on all of them.
+Tavily — 9,000 API credits. Live and self-serve. Free account at tavily.com , then app.tavily.com → Overview → Coupon → enter 26HACK → Apply, and copy your key from API Keys on the same page. That is 8,000 on top of the 1,000 a free account starts with. No plan, no card. The code is valid for these two days only. Docs at docs.tavily.com , support on their Discord at community.tavily.com .
+Tenki — $100 in credits. Dedicated page they built for this event: tenki.cloud/events/agent-native . Colin and Guzman are here today and have a booth.
+Nebius — Builder Program credits. Sign up through nebius.builders . Ask an organiser if you need more than the link gives you.
+AIsa — $100 in credits. Collected by list. Give an organiser the email address you want the credits on. No self-serve page yet.
+Runtype — $50 in credits. Ask Nathan or Nate directly. No written redemption path yet.
+Hacker Bob — one security scan. Ask Michalis. No written redemption path yet.
+Cotal — no credits, and none to wait for. Their hosted product has not launched, so there is nothing to redeem and no code to enter. What they built for this event instead is hack.cotal.ai , a live mesh where you team up and connect your coding agents with the stock cotal CLI, on one shared graph of who is working on what. Docs at docs.cotal.ai , and David and Sven are both here today. The $300 is a prize for the best use of Cotal, judged at the end, not a credit you claim now.
+Your model key is the one thing that does come from us: ic_request_workshop_key , then poll ic_get_my_workshop_key . Both need the keys:request scope, which is in the mint command below, and both work at the tier a fresh signup gives you.
+Hand your agent the whole event
+One block. It covers connecting, minting a token with the right scopes, applying, forming a team, submitting, and getting unstuck. Paste it and your agent has the rest of this page.
+Paste this into your agent
+Copied!
+Copy
+You are my agent for the Agent Natives Builders Hackathon (Aug 26-27 2026, Cloudflare SF).
+CONNECT
+MCP server: https://www.immersivecommons.com/api/mcp
+Event id: anb-hack-01
+Do the TOKEN step below FIRST. ic_health and ic_capabilities both need one.
+Call ic_health, then ic_capabilities. ic_capabilities tells you which tools
+MY token can reach right now, and which answer needs_scope:<scope>. Plan from
+that output, never from a guess about what should work.
+TOKEN — get this right the first time
+npx -y @immersivecommons/cli auth --scopes hack:read,hack:register,hack:team,hack:submit,keys:request
+SCOPES FREEZE AT MINT. They cannot be widened later, so a missing scope means
+a whole new token and another human approval. keys:request is the one people
+forget and it is what asks for the model-access key on the day.
+ORIENT
+ic_hack_get { eid: "anb-hack-01" } -> phase, seats, NDA, rubric, bounties
+ic_hack_me { eid: "anb-hack-01" } -> my roles, NDA, check-in, team, submission
+ic_hack_me is the one call that answers "where do I stand". Re-run it when unsure.
+APPLY (if ic_hack_me says registered: false)
+ic_hack_application_form { applicant_type: "solo_builder" } then ic_hack_apply.
+Every question carries a why field. Answer to the why, not to the prompt.
+Applying does NOT hold a seat — a person reads it and the seat is consumed at
+approval, so a full queue never locks out the room. Re-applying while pending
+updates the same application, so retrying after a timeout is safe.
+If I give a project URL we fetch it and record which agent surfaces it serves.
+"none yet" is a normal answer. A claim the probe contradicts is worse than none.
+TEAM
+ic_hack_team_list, then ic_hack_team_create or ic_hack_team_join.
+One team per person. Pass startup_slug to attach the work to something that
+outlives the weekend.
+BUILD
+Two tracks, split by AUDIENCE: EXTERNAL (customer facing), INTERNAL (team facing).
+100 points, same five bands both tracks:
+30 the track's agent-native criterion 25 it runs
+20 surface quality / coordination 15 it lands in the product
+10 the demo
+SUBMIT
+ic_hack_submit { title, blurb, repo_url, demo_url, agent_surface, folder_id? }
+Idempotent per team — calling again overwrites. Submit something EARLY and
+overwrite it; do not hold the only submission until it is finished.
+agent_surface is what the 30-point band actually scores. Name the surface
+(MCP server, ai-agent.json, A2A endpoint, machine auth, agent payments)
+rather than re-describing what the product does.
+Submissions LOCK 3:00pm Thursday and further calls return locked.
+MODEL ACCESS
+ic_request_workshop_key, then poll ic_get_my_workshop_key.
+Both work at public tier and need the keys:request scope minted above.
+SPONSOR CREDITS — there is NO single claim call
+Roughly $456 per builder is waiting, and none of it redeems through this
+MCP surface. Every credit is claimed on the vendor's own site. Do not write
+a loop that expects one endpoint; it will fail on all six, and late.
+Tavily 9,000 credits (8,000 granted on top of the 1,000 a free account
+starts with). app.tavily.com -> Overview -> Coupon -> 26HACK
+-> Apply, then copy the key. Valid these two days only.
+Tenki tenki.cloud/events/agent-native
+Nebius nebius.builders
+AIsa no self-serve page — give an organiser your email
+Runtype ask Nathan or Nate
+HackerBob ask Michalis
+Full detail: immersivecommons.com/events/hackathon#credits
+GET HELP
+ic_feedback_submit reaches the operator, works at public tier
+ic_feedback_get_status follow it up
+Rooms, the agent inbox, the member directory and the research corpus need a
+HIGHER tier than a fresh signup carries. Call ic_request_tier on day one and
+an operator approves it; until then do not route help through those tools,
+they will refuse. ic_capabilities is the authority on what is open to me.
+RULES YOU ENFORCE ON YOURSELF
+Never apply, submit, send or spend without showing me the exact payload first.
+Reads run freely. Writes you propose and I approve.
+{ ok: false, error_kind: "no_token" } -> the fix is a token, not a retry.
+{ ok: false, error_kind: "rate_limited" } -> back off. Do not hammer.
+A 200 is not a success here: business failures come back HTTP 200 with
+ok:false in the body, so read the envelope rather than the status code.
+It names the tier wall on purpose. A token minted at signup is public , which reaches every hack:* tool and the model-key request. Rooms, the agent inbox and the research corpus sit above it, so the block tells your agent to ask for the upgrade rather than discover the refusal at 9:05am.
+§
+01
+/
+03
+APPLY
+Two doors, one queue.
+Your agent calls ic_hack_application_form for the questions, each carrying a why field saying what the reviewer is looking for, then ic_hack_apply with the answers. Or use the form and a person reads the same thing. Applying does not hold a seat.
+If you give a product URL we fetch it and record which agent surfaces it actually serves. Finding none is not a mark against you. For most of this cohort that is the honest answer and the reason to come.
+for agents
+· idempotent; re-applying while applied updates in place
+MCP tool
+ic_hack_apply
+Endpoint
+POST
+/api/mcp
+Scope
+hack:register
+Sample
+{ "ok": true, "application": { "status": "applied", "evidence": [{ "found": ["ai-agent.json", "mcp"] }] } }
+§
+02
+/
+03
+BUILD AND SUBMIT
+One submission per team, overwritten until it locks.
+You overwrite it as often as you like until 3:00pm Thursday, which is what “I fixed the demo link at 2:55” actually means. The field that carries the most weight is not what your product does, it is what makes it agent-native .
+for agents
+· idempotent per team
+MCP tool
+ic_hack_submit
+Endpoint
+POST
+/api/mcp
+Scope
+hack:submit
+Sample
+{ "ok": true, "submission": { "locked": false } }
+§
+03
+/
+03
+JUDGING
+Scoring is a tool call. Deciding is not.
+The two tracks demo in parallel, each to its own judges. Standings rank by the mean across judges rather than the sum. Judge notes come back to you after results. Agent pre-reads may help the panel triage; they do not decide.
+for agents
+· granted by an organizer, not self-declared
+MCP tool
+ic_hack_judge_score
+Endpoint
+POST
+/api/mcp
+Scope
+hack:judge
+Sample
+{ "ok": true, "score": { "total": 87 } }
+What the floor has already run
+VCN #33 Total Recall — 2026-05-20, Frontier Tower Floor 10
+Fine-tune Gemma 4 on your data — 2026-05-05, Frontier Tower Floor 10
+Members
+300+
+Startups in the directory
+10
+See the floor
+Questions
+Who is this for?
+Startups with a product already in market and real users. This is an invited cohort, not an open call. Solo builders with a live product are welcome, because the bar is a working thing, not a headcount. It is not for individuals looking for a team to join, and it is not a co-working day.
+What does agent-native actually mean?
+That an agent which has never seen your product, found it on its own, with no human beside it, can discover what it does, get a credential, and complete a real transaction. Then that it can do consequential work across a boundary you do not control, and prove afterwards exactly what it did.
+How many seats are there, and why is the room bigger?
+Fifty builder seats. The room holds more than that, because judges, mentors, partner engineers and the Cloudflare employee who stays on site both days take chairs without spending a builder seat. Fifty is the number that is real if you are coming to build.
+When do I hear back?
+Applications close Monday, August 24, or sooner if the seats fill. A person reads every one and the decision clears within a day of applying, so there is no batch decision day to wait for. Both of those are set by one date rather than chosen: on Monday, August 24 the name list freezes, because Cloudflare prints badges and sends the venue NDA from a frozen roster, and nobody can be added after it. We do not send a decision email. Your agent reads where you stand at any time with ic_hack_application_status, and the application page shows you the same thing.
+Do I need an agent token to apply?
+No. Create an Immersive Commons account and use the form. It is generated from the same question catalog an agent fetches and it calls the same code, so a reviewer cannot tell which door an application came through. Mint a token later if you want your agent to form your team and submit on the day.
+What am I NOT getting?
+Three things, said now rather than discovered on Wednesday. No hosted mentor agents you can summon into your build. No sandboxed shell on our infrastructure. No access to the floor's agent rooms or its research corpus, because the honest way to open those for two days is to open them permanently to anyone who signs up.
+What happens to my product URL?
+We fetch it and record which agent surfaces it actually serves. Finding none is not a mark against you. For most of this cohort none yet is the honest answer and the reason to come. A claim the fetch contradicts is worse than an honest gap.
+Can I come as a judge, mentor, volunteer or press?
+Yes, and none of those spends a builder seat. Apply at the same door and pick that role at the top of the form. Judging is Thursday afternoon only, and the two tracks demo in parallel, so a judge sees one track rather than every team. Those roles are granted by an organizer and come with their own tools.
+Do I need a team?
+No. There is no seat reservation for a team either: teammates apply individually and group by team name, so a team lead cannot hold seats for people who have not applied yet.
+What if I am full time somewhere, is this open to me?
+That is most of this room. Bring the product you already ship, whether you founded it or work on it. Engineers are asked whether their employer is fine with it, because two days spent on your company's product is a conversation worth having before Wednesday rather than after.
+Is there an NDA?
+Yes. Everyone entering the building signs the venue NDA. Cloudflare sends it to the confirmed roster 48 hours ahead. Unsigned means you cannot be checked in, and that is enforced by the check-in tool rather than by goodwill at the door.
+What if the seats fill before I apply?
+Applying does not hold a seat, so a full queue never locks out the room. A person reads every application, there is no automatic approval and no queue position to game. Waitlisted means yes if someone drops, not a soft no. Past the name freeze the builder form is shut, but the Luma listing still takes requests and an organiser reads them; that late it is a decision rather than an automatic seat, because the list Cloudflare prints badges from is already closed.
+What has changed
+This page is edited while the event runs. Newest first, all times PDT.
+2026-08-26 1:00pm PDT The Cotal and Runtype cash prizes now say what wins them: the best use of that sponsor's product, not first place overall. Cotal has no credits to redeem, so its line in Claiming your credits points at hack.cotal.ai instead. Tavily now says 8,000 on top of the 1,000 a free account starts with, so 9,000 in total, which is the same grant this page was stating two ways.
+2026-08-26 12:44pm PDT The event moved to BUILD. Submissions are open and applications are closed, so the form and the API now refuse a late entry instead of filing it into a queue nobody is reading.
+2026-08-26 12:31pm PDT Every sponsor credit is now named with the path to claim it. Tavily is the only self-serve one, with the code 26HACK, and it stops working after these two days.
+2026-08-25 2:07pm PDT HUD's $3,000 in training credits is for the winners overall, not $3,000 in each track. The earlier reading doubled it.
+2026-08-25 1:12pm PDT Registration moved to the Luma listing, which takes requests with a person reading them. This page had been telling people the door was shut.
+2026-08-25 11:23am PDT Vidya Bodepudi is back on the judging panel, so the panel is five again.
+2026-08-25 10:54am PDT Doors move to 10:00am on both days, up from 9:00am. The building still clears at 8:30pm, so Wednesday's build starts at 11:30 and Thursday loses an hour ahead of the 3:00pm submissions lock.
+Older than the oldest line here means it has not moved since we started keeping this.
+50 builder seats.
+Bring a product that already exists. Leave with one an agent can use. Applications close Monday, August 24, or sooner if the seats fill , and a person reads every one.
+Judging, mentoring, volunteering or covering the event: apply here and pick that role at the top of the form. None of them spends a builder seat, and judging is Thursday afternoon rather than the whole two days. Sponsor enquiries: get in touch . Those roles are granted by an organizer and come with their own tools.
+Applications are closed
+See what’s next on the floor Let your agent apply
+Building now
+Applications are closed
+WIRE
+AI
+Hunch: Drive your Mac with any LLM: focus-free, in the background, over MCP
+◆
+AI
+Muse Image now available on AI Gateway
+◆
+AI
+Training and Finetuning Multi-Vector Embedding Models with Sentence Transformers
+◆
+AI
+MemMark: State-Evolution Attribution Watermarking for Agent Long-Term Memory Systems
+◆
+SIGNAL
+Issue 18 is live · 9 — 15 AUG 2026
+◆
+COMMITS
+David Farah leads the floor this week · 153 commits
+◆
+GLM
+Nicholas E burned 2.3M GLM tokens this week
+◆
+FLOOR
+26 members building here · immersivecommons.com/membership
+◆
+RULES
+Members only · ask a member for entry · don't tailgate · don't share access
+◆
+BUILD
+CC-PRO engine + Dimensional Chaos are open-source · MIT
+◆
+AI
+Hunch: Drive your Mac with any LLM: focus-free, in the background, over MCP
+◆
+AI
+Muse Image now available on AI Gateway
+◆
+AI
+Training and Finetuning Multi-Vector Embedding Models with Sentence Transformers
+◆
+AI
+MemMark: State-Evolution Attribution Watermarking for Agent Long-Term Memory Systems
+◆
+SIGNAL
+Issue 18 is live · 9 — 15 AUG 2026
+◆
+COMMITS
+David Farah leads the floor this week · 153 commits
+◆
+GLM
+Nicholas E burned 2.3M GLM tokens this week
+◆
+FLOOR
+26 members building here · immersivecommons.com/membership
+◆
+RULES
+Members only · ask a member for entry · don't tailgate · don't share access
+◆
+BUILD
+CC-PRO engine + Dimensional Chaos are open-source · MIT
+◆
+Immersive Commons · FT10 · San Francisco
+Immersive Commons API Documentation Immersive Commons Developer Portal Immersive Commons Auth Docs
+LinkedIn X GitHub Agent Skills Smithery

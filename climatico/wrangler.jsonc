@@ -1,0 +1,49 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "climatico",
+  "main": "src/server.ts",
+  "compatibility_date": "2026-08-26",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "PRODUCT_NAME": "Climatico",
+    "PUBLIC_BASE_URL": ""
+  },
+  "ai": {
+    "binding": "AI",
+    "remote": true
+  },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/health",
+      "/mcp",
+      "/mcp/*",
+      "/a2a",
+      "/a2a/*",
+      "/v1/*",
+      "/ai-agent.json",
+      "/robots.txt",
+      "/.well-known/*",
+      "/agents/*"
+    ]
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "Ledger", "class_name": "Ledger" },
+      { "name": "Clerk", "class_name": "Clerk" }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["Ledger", "Clerk"]
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 1 }
+  }
+}

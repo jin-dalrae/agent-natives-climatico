@@ -1,0 +1,9 @@
+# Copy to .dev.vars (gitignored). Generate TOKEN_SECRET with: openssl rand -hex 32
+TOKEN_SECRET=replace-with-openssl-rand-hex-32
+
+# Optional. Without it, Climatico uses Tavily keyless search for briefs.
+# Claim hackathon credits: app.tavily.com → Overview → Coupon → 26HACK
+# TAVILY_API_KEY=tvly-...
+
+# Optional. POST each fleet handoff as a Cotal-shaped channel message (hack.cotal.ai ingest).
+# COTAL_WEBHOOK_URL=https://...

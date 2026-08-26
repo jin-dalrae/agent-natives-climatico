@@ -1,0 +1,34 @@
+# Cotal mesh for the Climatico fleet. Launch: cotal up -f cotal.yaml
+# Event mesh: https://hack.cotal.ai  (David + Sven on site; $300 is best-use prize, not credits)
+apiVersion: cotal/v1
+kind: Mesh
+space: climatico
+agent: hermes
+
+agents:
+  ingest:
+    instructions: >
+      You parse usage spikes (cloud, SaaS, travel) into a location + spendUsd event.
+      Call Climatico MCP run_fleet or POST /v1/fleet/run. Never invent a region.
+  audit:
+    instructions: >
+      You score kgCO2e against the monthly budget. Refuse if Tavily cannot ground
+      the factor. Post the audit on channel fleet.audit.
+  settle:
+    instructions: >
+      You commit offsets only when audit says over_budget. Climatico ledger is the
+      settlement of record. AIsa is optional M2M rail if credits are applied.
+
+channels:
+  general:
+    subscribe: [ingest, audit, settle]
+    allowPublish: [ingest, audit, settle]
+  fleet.ingest:
+    subscribe: [ingest, audit]
+    allowPublish: [ingest]
+  fleet.audit:
+    subscribe: [audit, settle]
+    allowPublish: [audit]
+  fleet.settle:
+    subscribe: [settle, ingest]
+    allowPublish: [settle]

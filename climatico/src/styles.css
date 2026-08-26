@@ -1,0 +1,69 @@
+:root {
+  color-scheme: dark;
+  --ink: #e8f0e3;
+  --muted: #8aa08a;
+  --paper: #0c1410;
+  --panel: #132018;
+  --line: #1f3a28;
+  --lime: #b6f05a;
+  --warn: #e8b44c;
+  --refuse: #ef6b4a;
+  --ok: #7ad9a0;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; min-height: 100%; }
+body {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #1a3d24 0%, transparent 50%),
+    var(--paper);
+  color: var(--ink);
+}
+
+h1, h2, h3 { font-family: Newsreader, Georgia, serif; font-weight: 600; margin: 0; }
+a { color: var(--lime); }
+
+.app { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; }
+.top {
+  display: flex; justify-content: space-between; gap: 24px; align-items: flex-end;
+  border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 28px;
+}
+.eyebrow { color: var(--lime); letter-spacing: 0.16em; text-transform: uppercase; font-size: 11px; }
+.lede { color: var(--muted); max-width: 46ch; line-height: 1.5; margin-top: 8px; }
+.stats { display: flex; gap: 18px; font-size: 12px; color: var(--muted); }
+.stats b { color: var(--ink); font-size: 22px; display: block; font-family: Newsreader, serif; }
+
+.grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: color-mix(in srgb, var(--panel) 88%, black);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+}
+label { display: block; font-size: 11px; color: var(--muted); margin: 12px 0 6px; }
+input, select, textarea, button {
+  font: inherit; color: var(--ink); background: #0a120d; border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 12px; width: 100%;
+}
+button {
+  background: var(--lime); color: #10210f; font-weight: 600; cursor: pointer; width: auto;
+}
+button.ghost { background: transparent; color: var(--ink); }
+button.danger { background: var(--refuse); color: #1a0804; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+pre {
+  white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.45;
+  background: #07110b; border-radius: 12px; padding: 12px; border: 1px solid var(--line);
+  max-height: 420px; overflow: auto;
+}
+.pill {
+  display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 11px;
+  border: 1px solid var(--line);
+}
+.pill.ok { color: var(--ok); border-color: var(--ok); }
+.pill.no { color: var(--refuse); border-color: var(--refuse); }
+.hosts { margin-top: 28px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.hosts strong { color: var(--ink); }
