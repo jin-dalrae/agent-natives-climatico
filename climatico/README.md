@@ -1,9 +1,9 @@
-# Climatico — read this first (plain English)
+# Climatico
 
-> This file is written so a busy founder (or a middle-school student) can understand
-> what Climatico is, what actually works today, and what is still a promise.
-> Anything marked **DONE** is real, running code. Anything marked **left** is honest.
-> We would rather say "not yet" than pretend.
+> This file is written so you can understand what Climatico is, what actually
+> works today, and what is still a promise. Anything marked **DONE** is real,
+> running code. Anything marked **left** is honest. We would rather say "not
+> yet" than pretend.
 
 ---
 
