@@ -7,3 +7,7 @@ TOKEN_SECRET=replace-with-openssl-rand-hex-32
 
 # Optional. POST each fleet handoff as a Cotal-shaped channel message (hack.cotal.ai ingest).
 # COTAL_WEBHOOK_URL=https://...
+
+# Optional. Without it, POST /v1/sandbox/verify refuses — no key, no sandbox.
+# tenki.cloud/events/agent-native → $100 auto-applies
+# TENKI_API_KEY=tk_...

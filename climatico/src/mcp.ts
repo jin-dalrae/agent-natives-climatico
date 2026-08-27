@@ -177,6 +177,39 @@ export function mcpHandler(env: Env, principal: Principal) {
       );
 
       server.registerTool(
+        "start_sandbox_check",
+        {
+          description:
+            "Provision a real Tenki sandbox VM to independently verify a claim (e.g. re-derive an audit factor, fetch a source Climatico's own Worker cannot reach). Returns a real sessionId. The Worker cannot execute commands inside the sandbox itself — the caller must exec the command there (Tenki CLI/SDK) and report the real output back via complete_sandbox_check. Requires climatico:transact.",
+          inputSchema: {
+            command: z.string().describe("The command you intend to run in the sandbox, for the record."),
+          },
+        },
+        async ({ command }) => {
+          const ledger = await getLedger(env);
+          const check = await ledger.startSandboxCheck(command, principal);
+          return text(check, "error" in check);
+        },
+      );
+
+      server.registerTool(
+        "complete_sandbox_check",
+        {
+          description:
+            "Report the real output of a command you ran in a Tenki sandbox created by start_sandbox_check. Refused if sessionId was never created by this ledger, or if Tenki's control plane no longer recognizes it — this desk does not accept invented output.",
+          inputSchema: {
+            sessionId: z.string().describe("The sessionId returned by start_sandbox_check."),
+            output: z.string().describe("The real stdout/output from executing the command in that sandbox."),
+          },
+        },
+        async ({ sessionId, output }) => {
+          const ledger = await getLedger(env);
+          const check = await ledger.completeSandboxCheck(sessionId, output, principal);
+          return text(check, "error" in check);
+        },
+      );
+
+      server.registerTool(
         "get_insights",
         {
           description:

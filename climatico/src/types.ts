@@ -86,6 +86,18 @@ export type Handoff = {
   createdAt: number;
 };
 
+export type SandboxCheck = {
+  id: string;
+  sessionId: string;
+  command: string;
+  status: "pending" | "completed";
+  output: string | null;
+  subject: string;
+  receiptId: string | null;
+  createdAt: number;
+  completedAt: number | null;
+};
+
 export type FleetRun = {
   id: string;
   status: ActionStatus;

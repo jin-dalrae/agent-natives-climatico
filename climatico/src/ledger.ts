@@ -1,10 +1,20 @@
 import { Agent, callable, getAgentByName } from "agents";
-import { mintToken, verifyToken, type CredentialGrant } from "./auth";
+import { hasScope, mintToken, verifyToken, type CredentialGrant } from "./auth";
 import { runActionGraph } from "./graph";
 import { announceHandoff } from "./cotal";
 import { runFleet as executeFleet } from "./fleet";
+import { createSandboxSession, sandboxSessionState } from "./tenki";
 import { buildWorkspace, type WorkspaceView } from "./insights";
-import type { ActionInput, Dashboard, FleetRun, Handoff, Principal, Receipt, UsageEvent } from "./types";
+import type {
+  ActionInput,
+  Dashboard,
+  FleetRun,
+  Handoff,
+  Principal,
+  Receipt,
+  SandboxCheck,
+  UsageEvent,
+} from "./types";
 
 type LedgerState = Dashboard & {
   mintWindowStart: number;
@@ -99,6 +109,20 @@ export class Ledger extends Agent<Env, LedgerState> {
         created_at INTEGER NOT NULL
       )
     `;
+    this.sql`
+      CREATE TABLE IF NOT EXISTS sandbox_checks (
+        id TEXT PRIMARY KEY,
+        session_id TEXT NOT NULL,
+        command TEXT NOT NULL,
+        status TEXT NOT NULL,
+        output TEXT,
+        subject TEXT NOT NULL,
+        receipt_id TEXT,
+        created_at INTEGER NOT NULL,
+        completed_at INTEGER
+      )
+    `;
+    this.sql`CREATE INDEX IF NOT EXISTS sandbox_checks_session ON sandbox_checks(session_id)`;
   }
 
   async mintCredential(grant: CredentialGrant): Promise<{
@@ -196,6 +220,110 @@ export class Ledger extends Agent<Env, LedgerState> {
     return run;
   }
 
+  /**
+   * Step 1 of the sandbox verification write. The Worker creates a real Tenki sandbox
+   * (control-plane only — this genuinely calls api.tenki.cloud) and stores it pending.
+   * Running `command` inside the sandbox is a duplex-streaming RPC that cannot execute
+   * from a Worker, so a caller with a Node runtime (Hermes, a script) must exec it and
+   * report the real output back via completeSandboxCheck.
+   */
+  async startSandboxCheck(command: string, principal: Principal): Promise<SandboxCheck | { error: string }> {
+    if (!hasScope(principal, "climatico:transact")) {
+      return { error: "This credential has climatico:read only. Mint climatico:transact to write." };
+    }
+    const trimmed = command.trim();
+    if (!trimmed) return { error: "command is required." };
+    const result = await createSandboxSession(this.env, `climatico-verify-${Date.now()}`);
+    if ("error" in result) return { error: result.error };
+    const check: SandboxCheck = {
+      id: crypto.randomUUID(),
+      sessionId: result.sessionId,
+      command: trimmed,
+      status: "pending",
+      output: null,
+      subject: principal.subject,
+      receiptId: null,
+      createdAt: Date.now(),
+      completedAt: null,
+    };
+    this.sql`
+      INSERT INTO sandbox_checks (id, session_id, command, status, output, subject, receipt_id, created_at, completed_at)
+      VALUES (${check.id}, ${check.sessionId}, ${check.command}, ${check.status}, ${check.output}, ${check.subject}, ${check.receiptId}, ${check.createdAt}, ${check.completedAt})
+    `;
+    return check;
+  }
+
+  /**
+   * Step 2. Refuses unless sessionId matches a check this ledger actually created AND
+   * Tenki's control plane confirms that session really exists — a caller cannot invent
+   * a sessionId and claim fabricated output.
+   */
+  async completeSandboxCheck(sessionId: string, output: string, principal: Principal): Promise<SandboxCheck | { error: string }> {
+    if (!hasScope(principal, "climatico:transact")) {
+      return { error: "This credential has climatico:read only. Mint climatico:transact to write." };
+    }
+    const rows = [
+      ...this.sql<{
+        id: string;
+        session_id: string;
+        command: string;
+        status: string;
+        subject: string;
+        created_at: number;
+      }>`SELECT id, session_id, command, status, subject, created_at FROM sandbox_checks WHERE session_id = ${sessionId}`,
+    ];
+    const row = rows[0];
+    if (!row) return { error: "Unknown sandbox session. Call startSandboxCheck first — this desk does not accept invented session ids." };
+    if (row.status === "completed") return { error: "This sandbox session was already reported." };
+    const state = await sandboxSessionState(this.env, sessionId);
+    if (!state) {
+      return { error: "Tenki does not recognize this session id. Refusing to store unverifiable output." };
+    }
+    const completedAt = Date.now();
+    this.sql`
+      UPDATE sandbox_checks SET status = 'completed', output = ${output}, completed_at = ${completedAt}
+      WHERE session_id = ${sessionId}
+    `;
+    return {
+      id: row.id,
+      sessionId: row.session_id,
+      command: row.command,
+      status: "completed",
+      output,
+      subject: row.subject,
+      receiptId: null,
+      createdAt: row.created_at,
+      completedAt,
+    };
+  }
+
+  listSandboxChecks(limit = 10): SandboxCheck[] {
+    const rows = [
+      ...this.sql<{
+        id: string;
+        session_id: string;
+        command: string;
+        status: string;
+        output: string | null;
+        subject: string;
+        receipt_id: string | null;
+        created_at: number;
+        completed_at: number | null;
+      }>`SELECT * FROM sandbox_checks ORDER BY created_at DESC LIMIT ${Math.min(limit, 30)}`,
+    ];
+    return rows.map((row) => ({
+      id: row.id,
+      sessionId: row.session_id,
+      command: row.command,
+      status: row.status as SandboxCheck["status"],
+      output: row.output,
+      subject: row.subject,
+      receiptId: row.receipt_id,
+      createdAt: row.created_at,
+      completedAt: row.completed_at,
+    }));
+  }
+
   listHandoffs(limit = 30): Handoff[] {
     const rows = [
       ...this.sql<{
@@ -231,6 +359,7 @@ export class Ledger extends Agent<Env, LedgerState> {
       cotalWebhook: Boolean((this.env as Env & { COTAL_WEBHOOK_URL?: string }).COTAL_WEBHOOK_URL),
       nebiusKey: Boolean((this.env as Env & { NEBIUS_API_KEY?: string }).NEBIUS_API_KEY),
       aisaConfigured: Boolean((this.env as Env & { AISA_API_KEY?: string }).AISA_API_KEY?.trim()),
+      tenkiConfigured: Boolean((this.env as Env & { TENKI_API_KEY?: string }).TENKI_API_KEY?.trim()),
     });
   }
 
@@ -310,6 +439,11 @@ export class Ledger extends Agent<Env, LedgerState> {
         channels: ["fleet.ingest", "fleet.audit", "fleet.settle"],
         trigger: "POST /v1/fleet/run or MCP run_fleet",
         coordination: "Durable handoff log. Optional Cotal mesh via cotal.yaml / hack.cotal.ai.",
+      },
+      sandbox: {
+        provider: "Tenki",
+        trigger: "POST /v1/sandbox/verify then /v1/sandbox/complete, or MCP start_sandbox_check / complete_sandbox_check",
+        note: "Worker calls Tenki's control plane for real (create/get). Executing inside the sandbox is a duplex stream a Worker cannot open, so the caller execs it and reports real output back. A sessionId this ledger never created is refused.",
       },
       persistence: "Durable Object SQLite. A watch or fleet run opened today is still here after the laptop sleeps.",
     };
@@ -393,6 +527,9 @@ export type LedgerApi = {
   listHandoffs: Ledger["listHandoffs"];
   listFleetRuns: Ledger["listFleetRuns"];
   workspace: Ledger["workspace"];
+  startSandboxCheck: Ledger["startSandboxCheck"];
+  completeSandboxCheck: Ledger["completeSandboxCheck"];
+  listSandboxChecks: Ledger["listSandboxChecks"];
 };
 
 export function getLedger(env: Env): Promise<LedgerApi> {

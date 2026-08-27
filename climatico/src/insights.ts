@@ -77,6 +77,7 @@ export type WorkspaceView = {
   cotalWebhook: boolean;
   nebiusKey: boolean;
   aisaConfigured: boolean;
+  tenkiConfigured: boolean;
 };
 
 /** One user. Logistics is the agentic interface; compute is the write we can file today. */
@@ -263,10 +264,12 @@ export function buildWorkspace(input: {
   cotalWebhook: boolean;
   nebiusKey?: boolean;
   aisaConfigured?: boolean;
+  tenkiConfigured?: boolean;
 }): WorkspaceView {
   const { dashboard, receipts, handoffs, runs, tavilyKey, cotalWebhook } = input;
   const nebiusKey = Boolean(input.nebiusKey);
   const aisaConfigured = Boolean(input.aisaConfigured);
+  const tenkiConfigured = Boolean(input.tenkiConfigured);
   const lastRun = runs[0] ?? null;
   const lastCompute = lastRun?.audit?.kgCO2e ?? null;
 
@@ -473,9 +476,13 @@ export function buildWorkspace(input: {
       id: "tenki",
       name: "Tenki",
       role: "Sandbox / CI · $100 credits",
-      status: "booth",
-      insight: "Not weather. Disposable VMs for agents that write code.",
-      how: "Sign up via tenki.cloud/events/agent-native so $100 auto-applies.",
+      status: tenkiConfigured ? "live" : "booth",
+      insight: tenkiConfigured
+        ? "Worker calls Tenki's control plane for real (POST /v1/sandbox/verify). Exec is a duplex stream a Worker can't open, so a Node caller runs the command and reports real output back."
+        : "Not weather. Disposable VMs for agents that write code.",
+      how: tenkiConfigured
+        ? "POST /v1/sandbox/verify, exec the command, POST /v1/sandbox/complete."
+        : "Sign up via tenki.cloud/events/agent-native so $100 auto-applies.",
       href: "https://tenki.cloud/events/agent-native",
     },
     {
@@ -567,5 +574,6 @@ export function buildWorkspace(input: {
     cotalWebhook,
     nebiusKey,
     aisaConfigured,
+    tenkiConfigured,
   };
 }

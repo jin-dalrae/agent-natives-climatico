@@ -1450,7 +1450,16 @@ export function App() {
                     <td>
                       {row.modeledT} t <small>±{row.uncertaintyPct}%</small>
                     </td>
-                    <td>{row.upstream}</td>
+                    <td>
+                      {row.upstream}
+                      {(row.knockOns ?? [])
+                        .filter((k) => !k.scored)
+                        .map((k) => (
+                          <div key={k.category} className="sub">
+                            <span className="chip info">{k.category}</span> {k.lever}
+                          </div>
+                        ))}
+                    </td>
                     <td>{row.alternative}</td>
                     <td>{row.lever}</td>
                     <td>

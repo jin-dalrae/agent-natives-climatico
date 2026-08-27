@@ -190,6 +190,31 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     return json(request, { handoffs: await ledger.listHandoffs(40) });
   }
 
+  if (path === "/v1/sandbox/verify" && request.method === "POST") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const body = (await readJson<{ command?: string }>(request)) ?? {};
+    const ledger = await getLedger(env);
+    const check = await ledger.startSandboxCheck(body.command ?? "", principal);
+    return json(request, { check }, "error" in check ? 422 : 201);
+  }
+
+  if (path === "/v1/sandbox/complete" && request.method === "POST") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const body = (await readJson<{ sessionId?: string; output?: string }>(request)) ?? {};
+    const ledger = await getLedger(env);
+    const check = await ledger.completeSandboxCheck(body.sessionId ?? "", body.output ?? "", principal);
+    return json(request, { check }, "error" in check ? 422 : 200);
+  }
+
+  if (path === "/v1/sandbox/checks" && request.method === "GET") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const ledger = await getLedger(env);
+    return json(request, { checks: await ledger.listSandboxChecks(10) });
+  }
+
   if (path === "/a2a") {
     const token = bearerFrom(request);
     const principal = token ? await (await getLedger(env)).resolvePrincipal(token) : null;

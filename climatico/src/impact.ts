@@ -1,5 +1,12 @@
 /** Impact cascade per business source + modeled abatement path. Shared by the desk, get_insights, MCP, and the abate write. */
 
+export type KnockOn = {
+  category: string; // e.g. Water usage, Air (NOx/PM), E-waste / land, CO2e
+  note: string; // where it does its damage
+  lever: string; // modeled abatement lever
+  scored: boolean; // CO2e is the modeled core; water/air/waste stay named, not scored
+};
+
 export type ImpactRow = {
   id: string;
   name: string;
@@ -10,6 +17,7 @@ export type ImpactRow = {
   upstream: string; // where the impact is actually felt (water, NOx/PM, mining, e-waste…)
   alternative: string; // run the same business a different way
   lever: string; // modelled abatement lever
+  knockOns: KnockOn[];
 };
 
 export const IMPACT_ROWS: ImpactRow[] = [
@@ -23,6 +31,11 @@ export const IMPACT_ROWS: ImpactRow[] = [
     upstream: "datacentre power + cooling water",
     alternative: "carbon-aware scheduling; move batch to a low-carbon region",
     lever: "largest share of compute",
+    knockOns: [
+      { category: "CO2e", note: "grid-linked electricity · the modelled core", lever: "lower-carbon region", scored: true },
+      { category: "Water usage", note: "datacentre cooling", lever: "efficient / waterless cooling", scored: false },
+      { category: "E-waste", note: "server refresh", lever: "extend hardware life", scored: false },
+    ],
   },
   {
     id: "logistics",
@@ -34,6 +47,11 @@ export const IMPACT_ROWS: ImpactRow[] = [
     upstream: "freight diesel → local NOx & PM air",
     alternative: "Oakland → rail / intermodal; route optimisation",
     lever: "biggest lever · PO write next",
+    knockOns: [
+      { category: "CO2e", note: "freight fuel · the modelled core", lever: "rail / intermodal", scored: true },
+      { category: "Air (NOx/PM)", note: "truck & vessel exhaust near ports", lever: "cleaner modes, port electrification", scored: false },
+      { category: "Noise & land", note: "port & corridor footprint", lever: "route consolidation", scored: false },
+    ],
   },
   {
     id: "electricity",
@@ -45,6 +63,10 @@ export const IMPACT_ROWS: ImpactRow[] = [
     upstream: "location-based grid mix",
     alternative: "cleaner utility or on-site solar (a bill makes it measured)",
     lever: "moves class to measured",
+    knockOns: [
+      { category: "CO2e", note: "location-based grid · the modelled core", lever: "cleaner utility / on-site solar", scored: true },
+      { category: "Water usage", note: "hydro & thermal plant water", lever: "grid mix choice", scored: false },
+    ],
   },
   {
     id: "travel",
@@ -56,6 +78,10 @@ export const IMPACT_ROWS: ImpactRow[] = [
     upstream: "aviation contrails",
     alternative: "virtual-first; rail over air where it fits",
     lever: "per-trip cut",
+    knockOns: [
+      { category: "CO2e", note: "fuel burn · the modelled core", lever: "rail over air", scored: true },
+      { category: "Air (contrails)", note: "aviation water-vapour trails", lever: "avoid night / high-altitude routing", scored: false },
+    ],
   },
   {
     id: "hardware",
@@ -67,6 +93,11 @@ export const IMPACT_ROWS: ImpactRow[] = [
     upstream: "mining + e-waste end-of-life",
     alternative: "remanufactured units; extend refresh beyond 4 years",
     lever: "longer device life",
+    knockOns: [
+      { category: "CO2e", note: "embodied manufacture · the modelled core", lever: "remanufactured units", scored: true },
+      { category: "E-waste", note: "end-of-life", lever: "extend refresh cycle", scored: false },
+      { category: "Land / mining", note: "mineral extraction", lever: "recycled inputs", scored: false },
+    ],
   },
   {
     id: "saas",
@@ -78,6 +109,10 @@ export const IMPACT_ROWS: ImpactRow[] = [
     upstream: "supplier electricity upstream",
     alternative: "consolidate vendors; right-size licences",
     lever: "licence-led cut",
+    knockOns: [
+      { category: "CO2e", note: "supplier electricity · the modelled core", lever: "consolidate vendors", scored: true },
+      { category: "Water usage", note: "supplier datacentre cooling upstream", lever: "vendor selection", scored: false },
+    ],
   },
   {
     id: "direct",
@@ -89,6 +124,9 @@ export const IMPACT_ROWS: ImpactRow[] = [
     upstream: "combustion & fugitive",
     alternative: "near zero for a cloud-only team",
     lever: "—",
+    knockOns: [
+      { category: "CO2e", note: "on-site combustion · near zero for cloud-only", lever: "electrify / remove", scored: true },
+    ],
   },
 ];
 
