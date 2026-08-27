@@ -137,12 +137,12 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Fleet ingest → audit → settle | `POST /v1/fleet/run`, MCP `run_fleet`, handoff channels | Compute class only; heuristic 0.45 kg/$ , 20¢/kg over budget — **labelled heuristic**, not GHG Protocol ICT |
 | Assessment UI | Assess table, inbox, L0–L5, stack, clerk | Hardware PO/freight writes not implemented |
 | Clerk AI agent | Workers AI (`@cf/moonshotai/kimi-k2.6`) with tools for complete_action, run_fleet, get_insights, list_receipts | Claude-powered — answers questions, files writes, explains refusals |
-| AIsa M2M rail | `AISA_API_KEY` detected; offsets settle through the machine-payment rail when configured | Key is configured — offsets route through AIsa |
+| AIsa read | `GET /v1/aisa/balance` reads the real wallet balance (free, read-only) | M2M payment settlement is **not wired** — deliberate non-goal without a bounded, human-confirmed instruction |
 | Cotal-shaped handoffs | On-ledger; `cotal.yaml`; optional `COTAL_WEBHOOK_URL` | Not joined to [hack.cotal.ai](https://hack.cotal.ai) until you do it on the floor |
 | Seven classes with error bars | Table in UI + `GET /v1/workspace` | Six classes remain modeled |
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
 
-**Do not ship:** fake Mitosis memory, fake Hacker Bob scan, fake GHG Protocol engine. (Runtype is now wired — agent card exposed, best-use flow in deck)
+**Do not ship:** fake AIsa payment, fake Mitosis memory, fake Hacker Bob scan, fake GHG Protocol engine. (Runtype is now wired — agent card exposed, best-use flow in deck)
 
 ---
 
@@ -163,7 +163,7 @@ Any agent
 **Reads:** `discover_climatico`, `get_policy`, `whoami`, `get_receipt`, `list_receipts`, `list_handoffs`, `get_insights`  
 **Human UI:** `/` — Assess, Inbox, Agent, Onboard, Stack. Inbox text = `GET /v1/workspace` = clerk `get_insights`. Clerk AI agent (Claude via Workers AI) answers questions and files writes.
 
-**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, AIsa M2M rail active, Tenki sandbox ready, next actions.
+**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, AIsa wallet balance readable, Tenki sandbox ready, next actions.
 
 ---
 
@@ -179,7 +179,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
 | Hacker Bob | Scan every builder | Point at `/mcp` + `/v1/credentials`. Michalis judges. |
 | Tenki **$100** | Every builder | **Active** — sandboxes/CI for agent testing. Event signup URL auto-applies. |
-| AIsa **$100** | Every builder | **Active** — `AISA_API_KEY` configured. Offsets settle through the M2M rail. |
+| AIsa **$100** | Every builder | Not yet claimed — no self-serve page, give an organiser your email. Key is live for a free balance read only; M2M settlement not wired. |
 | Nebius **$75** | Builder Program | Clerk uses Workers AI; Nebius if the model is too small. |
 | Tavily **9,000** (8k + 1k free) | Self-serve `26HACK` | **On the write path.** Two days only. |
 | Runtype **$50** | Show-up | Ask. Separate from $500 bounty. |
@@ -196,7 +196,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Tavily | Sponsor | **Yes** — evidence |
 | Cotal | Organiser | Ledger handoffs **yes**; live mesh **optional** |
 | Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
-| AIsa | M2M payment rail | **Yes** — `AISA_API_KEY` set; offsets settle through it |
+| AIsa | Real balance read only | **Partial** — `GET /v1/aisa/balance` is real; the M2M payment rail itself is **not** in the write path |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
 | Runtype | A2A agent surface | **Yes** — agent card exposed; Exa flow for best use |
 | Mitosis, Hacker Bob, HUD, Nebius | Credits / prizes / booths | **No** until a real call exists |
