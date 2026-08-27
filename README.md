@@ -158,7 +158,13 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Hackathon submission filed (can still be overwritten until Thursday 15:00)
 - **AIsa** wallet balance read is real (`GET /v1/aisa/balance`) — the payment rail itself is not wired
 - **Tenki** used for sandboxes / testing agent workflows
-- Cotal-shaped handoffs (webhook ready if we want it)
+- Cotal-shaped handoffs (webhook ready if we want it) **and** the team is
+  actually live on the mesh — verified at hack.cotal.ai/graph: team
+  "Climatico" registered, `meshaudit` agent on the roster, `membership: live`,
+  `feed: connected`. This is the real join mechanism per Cotal's own docs
+  (a CLI agent joining the mesh); the Worker's `COTAL_WEBHOOK_URL` is a
+  separate, still-unset, optional path.
+- A `watch` write is filed (L5 onboarding step complete — a watch survives restart)
 - All 6 non-compute emission classes can be grounded live against real Tavily
   sources on demand (`assess` with `source` set to the class id, or the "Ground
   with Tavily" button in the Assess tab). They start modeled and stay modeled
@@ -179,16 +185,17 @@ questions, or ask it to file a write. It uses the same tools any agent would.
   exist yet. We are NOT faking it.
 - Tavily runs **keyless** right now (the `26HACK` coupon, which grants 8,000 extra
   credits, is not yet claimed — two days only).
-- Cotal live mesh not joined via the Worker's webhook — the shape is ready
-  (`announceHandoff` fires whenever `COTAL_WEBHOOK_URL` is set), it just needs a
-  real URL from the Cotal booth. The `meshaudit` resident bot is a separate,
-  already-live connection to the mesh.
-- Runtype $500: **not built.** Pulled the real setup from Runtype's own docs
-  (dashboard: New Agent → configure model/safety/system prompt → attach as a
-  Capability → attach to an MCP Surface, tool schemas auto-generate) — no code
-  needed to make the agent, only to build what calls into it. Blocked on
-  signing up for an API key, which is a human step we won't fake past. See the
-  demo-flow diagram in the deck for exactly where that boundary sits.
+- The Worker's own Cotal webhook (`COTAL_WEBHOOK_URL`) is still unset — the
+  code path (`announceHandoff`) fires automatically once it is, it just needs
+  a real URL from the Cotal booth. Mesh presence itself is real (see above).
+- Runtype $500: **in progress, not working end to end yet.** With a real API
+  key, we created a real Secret, a real `file_climate_action` Tool (its code
+  does an actual `fetch()` against `climatico.dalrae-jin-work.workers.dev/v1/actions`),
+  and a real Agent on `claude-sonnet-5` — all live on Runtype's platform via
+  their own API (`api.runtype.com/v1`), not the dashboard. Running the agent
+  works: it reasons correctly about calling the tool. What's still broken:
+  the capability's `toolId` isn't resolving (comes back `null`), so the tool
+  never actually fires yet — one more fix away, not faked past.
   `/.well-known/agent-card.json` is generic A2A, not a Runtype-specific flow.
 - Hacker Bob / HUD: **not** integrated. Booths, credits, or prizes only.
 
@@ -207,10 +214,10 @@ GHG Protocol engine, no invented climate numbers.
 | Tavily | Sponsor. Web search = evidence | YES — the write path |
 | AIsa | Sponsor. Machine payment rail | Partial — real balance read only; payment rail not wired |
 | Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
-| Cotal | Organiser. Agent mesh | Almost — handoffs shaped like Cotal, mesh join optional |
+| Cotal | Organiser. Agent mesh | YES — team live on the mesh graph (verified hack.cotal.ai/graph); Worker-side webhook still optional/unset |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
 | Nebius | Sponsor. Token Factory LLM | YES — writes the grounded summary on assess |
-| Runtype | Sponsor. Agent → Capability → MCP Surface | No, not yet — real path confirmed, blocked on signup for an API key |
+| Runtype | Sponsor. Agent → Capability → MCP Surface | Partial — real Agent/Tool/Secret live on their platform via API; tool-calling not firing yet |
 | Mitosis | Sponsor. Cortex agent memory | Partial — real, verified write/recall; team's own memory via MCP, not a Climatico API |
 | Hacker Bob, HUD | Credits / prizes / booths | No — not wired in, on purpose |
 
