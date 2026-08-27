@@ -6,7 +6,7 @@ Cloudflare SF, 26–27 Aug 2026. Track: **Internal** (fleet) with an External-re
 
 | Path | What |
 | --- | --- |
-| [`PRD.md`](PRD.md) | Product requirements (v0.3) |
+| [`PRD.md`](PRD.md) | Product requirements (v0.6) |
 | [`climatico/climatico.sh`](climatico/climatico.sh) | CLI — talk to the desk from your terminal |
 | [`climatico/`](climatico/) | Worker + 8 agents (Orepath, Provider, Fleet, Clerk, Scheduler, Abatement, Analysts) |
 | [`climatico/SUBMIT.md`](climatico/SUBMIT.md) | Hackathon submission payload |
@@ -19,11 +19,14 @@ Secrets stay local: `climatico/.dev.vars`, `hack-watch/.ic_token`. Copy `.dev.va
 
 ## What is Climatico?
 
-AI agents that measure a company's environmental impact — today and in the future.
-It breaks the impact down by business area (cloud compute, shipping, travel)
-and projects how it grows over time. Then it works to reduce it: running
-calculations, flagging hotspots, suggesting greener alternatives, and handling
-offset payments — all through agents that can act without a human in the loop.
+Climatico's own agents **investigate** a company's environmental impact — today
+and projected forward — and **follow up** on what they find, without a human
+asking first. They break impact down by business area (cloud compute,
+shipping, travel), flag hotspots, research greener alternatives, and settle
+offsets — all autonomously. Every finding and every follow-up is a permanent
+receipt. An outside agent can also file into the same ledger (a real freight
+booking, a climate brief) — but the point of Climatico is what it finds on
+its own, not a form other agents fill out for approval.
 
 ---
 
@@ -67,14 +70,20 @@ a human to approve it.
 | `brief` | Write a short, evidence-backed climate note | "Here's what climate risk looks like for Oakland port" |
 | `watch` | Keep an eye on a place over time | "Alert me about heat / air quality in Lahaina" |
 | `offset` | Pay to balance out emissions | "Commit $25 of offsets" (money is capped by token) |
-| `assess` | Score a site's climate risk | "Assess the Shenzhen factory" |
+| `assess` | Score a site's climate risk, or ground one of the 6 non-compute classes | "Assess the Shenzhen factory" |
+| `abate` | Record a reduction plan for a business source | "Move compute to a lower-carbon region" |
+| `freight` | File a real freight leg — a fact, always commits | "8,000kg by sea, Shenzhen → Oakland, 11,000km" |
+| `switch` | Log a transition to a greener solution | "We moved from X to Y" |
+| `refund` | Claim back the difference after a `switch` | "Refund the delta on the prior offset" |
 | `run_fleet` | Turn a spend spike into a receipt | "$420 cloud bill in SJC → how many kg → offset if over budget" |
 
 ### What gets refused (and stored)
 
 `payout`, `wire_transfer`, `delete_account`, `greenwash` (a climate claim with no
 evidence), `admin_override`, `exfiltrate`, unknown requests, requests with no
-location, and briefs with no real sources.
+location, and briefs/fleet audits with no real sources. **`freight` is never
+refused for a missing citation** — a real booking commits either way, tagged
+grounded or modeled.
 
 ---
 
@@ -116,10 +125,10 @@ script, not separately-running services.
 
 | Door | Who uses it | Status |
 | --- | --- | --- |
-| `/mcp` | AI agents (MCP protocol), 9 tools | **DONE** |
+| `/mcp` | AI agents (MCP protocol), 15 tools | **DONE** |
 | `/a2a` | AI agents (Agent-to-Agent protocol) | **DONE** |
-| `/v1/*` | Any program (REST API) — includes `/v1/report`, `/v1/agents/*`, `/v1/memory`, `/v1/dashboard` | **DONE** |
-| `/` (web page) | Humans — 9 tabs: Assess, Grow, Fleet Pipeline, Swarm, Ledger, Inbox, Clerk, Onboard, Stack | **DONE** |
+| `/v1/*` | Any program (REST API) — includes `/v1/report`, `/v1/observe`, `/v1/agents/*`, `/v1/memory`, `/v1/dashboard` | **DONE** |
+| `/` (web page) | Humans — 8 tabs: Assess, Grow, Fleet Pipeline, 3-Sided Swarm, Impact & Abate, Ledger & Receipts, Inbox, Agent Clerk | **DONE** |
 | `climatico.sh` | CLI — 23 commands from your terminal | **DONE** |
 
 All four read and write the **same** notebook: one Durable Object running SQLite
@@ -143,7 +152,7 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Receipt viewer, inbox, assessment tabs, sponsor-stack honesty in the UI
 - Tavily web search on the write path (grounds briefs/audits; refuses if no evidence)
 - Clerk AI chat agent
-- Hackathon submission filed (can still be overwritten until Thursday 15:00)
+- Hackathon submission filed and current — repo/demo URLs match the deployed Worker
 - ✅ **Orepath compute-watcher agent** — DO alarm, files fleet runs every 15 min during working hours. `/v1/agents/orepath`
 - ✅ **3rd-party provider agent** — `green-offset-co` fulfills offsets, reviews receipts. `/v1/agents/provider`
 - ✅ **Scheduled fleet** — cron every 30 min runs ingest→audit→settle with random location/spend
@@ -272,6 +281,7 @@ cd climatico
 ./climatico.sh mint judge        # Mint a bearer token
 export CLIMATICO_TOKEN="<token>"
 ./climatico.sh fleet SJC 420     # Ingest → audit → settle
+./climatico.sh freight "Shenzhen -> Oakland" sea 8000 11000  # File a real freight leg
 ./climatico.sh report            # Plain-English progress report
 ./climatico.sh refuse            # Test a forbidden claim
 ./climatico.sh orepath           # Check Orepath agent status
@@ -310,11 +320,13 @@ The CLI prints the exact JSON payload before sending and supports `--dry-run` to
 
 ## More (deep dives, for when you have energy)
 
-- [`PRD.md`](PRD.md) — the full product contract (v0.3)
+- [`PRD.md`](PRD.md) — the full product contract (v0.6)
 - [`deck/climatico-agent-edition.html`](deck/climatico-agent-edition.html) — the pitch deck
 - [`climatico/SUBMIT.md`](climatico/SUBMIT.md) — hackathon submission payload
 - [`hack-watch/`](hack-watch/) — what's happening on the event floor right now
 
-**Shortest honest summary:** Climatico is a notebook that AI agents can write to.
-Yes = receipt. No = receipt too. One write pipeline (compute) works today; the
+**Shortest honest summary:** Climatico's own agents investigate a company on
+their own and follow up — that's the point, not a form other agents fill out
+for approval. Everything they find or do lands as a permanent receipt, whether
+it's a commit or a refusal. Compute and freight are real pipelines today; the
 rest is honestly labelled as estimation. We ship what runs, and we say what we haven't.

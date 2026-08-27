@@ -1,8 +1,8 @@
 # Climatico PRD
 
-**Version:** 0.5 · **Date:** 27 August 2026, ~14:30 PDT  
+**Version:** 0.6 · **Date:** 27 August 2026, ~15:30 PDT  
 **Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF  
-**Sources:** shipped Worker (`climatico/`), Agent Edition deck (`deck/climatico-agent-edition.html`), live watch (`http://127.0.0.1:8791/hackathon-watch.html` / Immersive Commons page poll 14:46 PDT)
+**Sources:** shipped Worker (`climatico/`), live `ic_hack_me` poll, Agent Edition deck (`deck/climatico-agent-edition.html`)
 
 This document is the product contract. The deck is the argument. The Worker is what a judge can trigger. Where they disagree, **the Worker wins for demo**, and the deck names the next honest step — not a fake one.
 
@@ -12,13 +12,12 @@ This document is the product contract. The deck is the argument. The Worker is w
 
 | Fact | Value |
 | --- | --- |
-| Phase | **BUILD** · banner “Building now” |
+| Phase | **BUILD → DEMO** |
 | Roster | **Registered.** Roles: `participant`, `team_lead`. NDA signed. Check-in flag still false on `ic_hack_me`. |
-| Team | **Climatico** (`t_5a903ee708c64f1e`), one member, `recruiting: true` |
-| Submission | **`null`** — `ic_hack_submit` has not been called. Submit now; overwrite until lock. |
-| Seats | 5 used / 45 remaining (50 builder seats) |
-| Other named teams | Physical Capability Cloud, Showtonic, @nikhilkulkarni1755 |
-| Lock | **Thursday 15:00 PDT** — further `ic_hack_submit` returns locked |
+| Team | **Climatico** (`t_5a903ee708c64f1e`), one member, `recruiting: false` |
+| Submission | **Filed and current.** `ic_hack_submit` returns `locked: false` as of 15:27 PDT — repo/demo URLs and `agent_surface` match the deployed Worker. |
+| Other named teams | Physical Capability Cloud, Showtonic, @nikhilkulkarni1755, Gatekeeper V2, Motel4, Surf/Skate/or Bike, attest, finddomain (9 teams total) |
+| Lock | **Thursday 15:00 PDT** per schedule — submission still accepted past that as of last check; do not rely on this |
 | Demos | Thursday 15:30, two tracks in parallel |
 | Overnight | **None.** Floor clear 20:00 both nights. Whatever cannot restart cannot be the product. |
 | Building | Clears 20:30 venue / 20:00 event |
@@ -66,7 +65,7 @@ The teams in this gap already run through **agents**. A layer only a human can v
 
 ## 3. Product
 
-**One-liner:** Climatico is the attribution layer for agent-native companies: a **write surface** that files which emissions are whose, with evidence, or **refuses and stores why**.
+**One-liner:** Climatico is the attribution layer for agent-native companies: its own agents **investigate** a company's operations and **follow up** — measuring, flagging hotspots, researching alternatives, settling offsets — without a human asking first. Every finding and follow-up lands as a permanent receipt. `refuse` exists only for the adversarial case: a claim that isn't true, or a request outside Climatico's mandate — never for a real event Climatico simply couldn't cite a source for.
 
 It is **not** “a carbon dashboard with a chatbot.” The screen (Assess / Inbox / Agent / Onboard / Stack) is how humans read the same ledger agents write.
 
@@ -137,7 +136,7 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Policy before write; refusal stored | HMAC bearer, 401/422, SQLite receipts | — |
 | Tavily grounding | Live on brief/assess/audit; empty → `ungrounded` | Coupon `26HACK` still optional (keyless works) |
 | Fleet ingest → audit → settle | `POST /v1/fleet/run`, MCP `run_fleet`, handoff channels | Compute class only; heuristic 0.45 kg/$ , 20¢/kg over budget — **labelled heuristic**, not GHG Protocol ICT |
-| Freight PO write | `freight` intent — mode (sea/air/road/rail) × weight × distance → grounded kg CO2e via live Tavily/GLEC evidence, refuses if ungrounded. `POST /v1/actions`, MCP `file_freight`, CLI `freight`. | Heuristic kg CO2e/tonne-km by mode — **labelled heuristic**, not ISO 14083/GLEC precision. No supplier-only/buyer-only token split yet — one credential files the write. |
+| Freight PO write | `freight` intent — mode (sea/air/road/rail) × weight × distance → kg CO2e. **Always commits** (the booking is a fact, not a claim); the emission-factor citation is tagged grounded (live Tavily/GLEC source found) or modeled (none found) — same modeled/measured split as the seven classes, never refused for a citation miss. `POST /v1/actions`, MCP `file_freight`, CLI `freight`. | Heuristic kg CO2e/tonne-km by mode — **labelled heuristic**, not ISO 14083/GLEC precision. No supplier-only/buyer-only token split yet — one credential files the write. |
 | Assessment UI | Assess table, inbox, L0–L5, stack, clerk | Two-sided hardware PO workflow (supplier/buyer scoped tokens) not implemented |
 | Clerk AI agent | Workers AI (`@cf/moonshotai/kimi-k2.6`) with tools for complete_action, run_fleet, get_insights, list_receipts | Claude-powered — answers questions, files writes, explains refusals |
 | Cotal-shaped handoffs | On-ledger; `cotal.yaml`; **own `climatico` mesh live** — manager/delivery/NATS running, 8 agents on roster, 15 min uptime | Hack.cotal.ai event mesh **not joined** — same device-code auth blocker as before (no publish rights). Worker-side `COTAL_WEBHOOK_URL` also unset. Two separate meshes, one running. |
@@ -166,7 +165,7 @@ Any agent
 ```
 
 **Writes:** `brief` · `watch` · `offset` · `assess` · `abate` · `switch` · `refund` · `freight` · `run_fleet`  
-**Refused outright (stored):** payout, wire_transfer, delete_account, greenwash, admin_override, exfiltrate, unknown intent, no location, ungrounded brief/audit, offset over token ceiling.
+**Refused outright (stored):** payout, wire_transfer, delete_account, greenwash, admin_override, exfiltrate, unknown intent, no location, ungrounded brief/fleet audit, offset over token ceiling. `freight` is deliberately **not** on this list — a real booking is never refused for a missing citation; it commits tagged grounded or modeled instead.
 
 **Reads:** `discover_climatico`, `get_policy`, `whoami`, `get_receipt`, `list_receipts`, `list_handoffs`, `get_insights`  
 **Human UI:** `/` — Assess, Inbox, Agent, Onboard, Stack. Inbox text = `GET /v1/workspace` = clerk `get_insights`. Clerk AI agent (Claude via Workers AI) answers questions and files writes.
@@ -177,6 +176,7 @@ Any agent
 | `GET /v1/report` | Plain-English progress report (fleet runs, commits, refusals, suggestions) | Public |
 | `POST /v1/connect` | Scan a startup's folder signals → auto-assess 7 emission classes via Tavily | Bearer |
 | `GET /v1/connections` | List previously connected folders + their assessments | Bearer |
+| `GET /v1/observe` | One-call snapshot: orepath status + provider stats + recent fleet runs — what to show a viewer with zero clicks | Public |
 | `GET /v1/agents/orepath` | Orepath compute-watcher status | Public |
 | `POST /v1/agents/orepath/start` | Start the Orepath agent (DO alarm, 15 min cycle) | Public |
 | `POST /v1/agents/orepath/stop` | Stop the Orepath agent | Public |
@@ -264,14 +264,12 @@ Stack tab and inbox must keep this distinction. Decorative integrations fail the
 2. `npm run deploy` — current version deployed to `workers.dev`.  
 3. **Tavily `26HACK`** — claimed and live on the write path.  
 4. **Cotal $300** — own `climatico` mesh live (8 agents). Hack.cotal.ai event mesh gated by device-code auth — find David or Sven if prize requires "hack" membership.  
-5. **Demo script** a judge can run without us:  
-   - `climatico/climatico.sh discover` → agent discovery files  
-   - `climatico/climatico.sh mint judge` → bearer token  
-   - `climatico/climatico.sh fleet SJC 420` → ingest→audit→settle  
-   - Open browser: inbox shows kg over budget + offset receipt  
-   - `climatico/climatico.sh refuse` → greenwash refused + stored  
-   - Refresh page: receipt still there (DO persistence)  
-6. **Optional:** Hacker Bob scan of `/mcp`, `POST /v1/agents/orepath/start` for live Orepath agent.
+5. **Demo script** (`climatico/scripts/demo.sh $DEMO_URL`) — a judge can run it without us. Order matches the submission blurb: investigation first, writes second, refusal last.  
+   1. Cold start — `/ai-agent.json` (name, mcp, a2a, auth type)  
+   2. Connect a viewing identity — mint a scoped token  
+   3. **What Climatico already found on its own** — `GET /v1/agents/orepath` (autonomous runs filed), `GET /v1/report` (compiled findings + follow-up suggestions), `GET /v1/handoffs` (the ingest→audit→settle trail, filed without a judge)  
+   4. **What an outside agent can also do** — unauthenticated write refused (401); a real `freight` leg filed and scored; a `greenwash` claim refused and stored; `GET /v1/receipts` shows both living in the same ledger  
+6. **Optional:** `POST /v1/agents/orepath/start` for a live Orepath agent restart; `GET /v1/observe` for the one-call dashboard snapshot.
 
 ---
 
