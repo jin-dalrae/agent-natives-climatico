@@ -1,0 +1,26 @@
+---
+name: Climatico Proof Stream
+about: Public JSON ledger of all committed climate actions with evidence
+labels:
+  - proof
+  - automatic
+body: |
+  ## Action
+
+  - **intent**: `brief`, `abate`, `offset`, `run_fleet`
+  - **location**: `SJC`, `Orepath`, `Oakland Port`, etc.
+  - **kgCO2e**: 18,167
+  - **spendUsd**: 35.80
+  - **timestamp**: 2026-08-26T23:15:00Z
+
+  ## Evidence
+
+  - [Tavily report: SJC grid risk](https://tavily.com/sjc-grid-risk-report-2026)
+  - [Climatico receipt: abc123](https://climatico.dalrae-jin-work.workers.dev/v1/receipt/abc123)
+
+  ## Claim
+
+  > "Climatico has offset 18,167 kgCO2e from SJC cloud spike via fleet run."
+
+  This claim is verified and immutable. See [proof stream](https://github.com/jin-dalrae/agent-natives-climatico/proofs/live.json).
+---
