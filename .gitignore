@@ -17,6 +17,7 @@
 .omo/
 .hermes/
 orepath-work/.token
+.playwright-mcp/
 
 # Scratch fetches and generated reports from cronjobs/ — regenerated each run.
 /receipts.json

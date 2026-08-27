@@ -1126,11 +1126,11 @@ Ceiling: $50.00
         <div className="cli-box">
           <span className="prompt">$ </span><span className="cmd">./bin/orepath fleet SJC 420</span>
           <div className="out">
-Running fleet: $420 @ SJC (budget: 50kg, MTD: 40kg)...
-Status: <span className="highlight">committed</span>
-Score: <span className="highlight">189 kg</span> · Over budget: <span className="warn-hl">+179 kg</span> · Grounded: True
-Offset: <span className="highlight">35.80 USD</span> · Receipt: d29f9900
-Handoffs: 3 (ingest → audit → settle)
+            <div>Running fleet: $420 @ SJC (budget: 50kg, MTD: 40kg)...</div>
+            <div>Status: <span className="highlight">committed</span></div>
+            <div>Score: <span className="highlight">189 kg</span> · Over budget: <span className="warn-hl">+179 kg</span> · Grounded: True</div>
+            <div>Offset: <span className="highlight">35.80 USD</span> · Receipt: d29f9900</div>
+            <div>Handoffs: 3 (ingest → audit → settle)</div>
           </div>
         </div>
       </section>
@@ -1159,11 +1159,11 @@ Handoffs: 3 (ingest → audit → settle)
         <div className="cli-box">
           <span className="prompt">$ </span><span className="cmd">./bin/orepath freight &quot;Shenzhen -&gt; Oakland&quot; sea 8000 11000</span>
           <div className="out">
-Filing freight leg &apos;Shenzhen -&gt; Oakland&apos; (sea, 8000kg x 11000km)...
-Status: <span className="highlight">committed</span>
-Receipt: 8937c9aa
-Footprint: <span className="highlight">1,320 kg CO₂e</span> (sea mode: 0.015 kg/t·km)
-Note: sea freight · 8000kg over 11000km (88.0 tonne-km)
+            <div>Filing freight leg &apos;Shenzhen -&gt; Oakland&apos; (sea, 8000kg x 11000km)...</div>
+            <div>Status: <span className="highlight">committed</span></div>
+            <div>Receipt: 8937c9aa</div>
+            <div>Footprint: <span className="highlight">1,320 kg CO₂e</span> (sea mode: 0.015 kg/t·km)</div>
+            <div>Note: sea freight · 8000kg over 11000km (88.0 tonne-km)</div>
           </div>
         </div>
       </section>
@@ -1185,10 +1185,10 @@ Note: sea freight · 8000kg over 11000km (88.0 tonne-km)
         <div className="cli-box">
           <span className="prompt">$ </span><span className="cmd">./bin/orepath brief &quot;Oakland port&quot;</span>
           <div className="out">
-Filing climate brief for &apos;Oakland port&apos;...
-Status: <span className="highlight">committed</span>
-Sources: <span className="highlight">5 live citations</span> (Port of Oakland electrification, Clean Air Plan)
-Alternative: <span className="highlight">Shift Oakland drayage trucks to zero-emission electrified rail</span>
+            <div>Filing climate brief for &apos;Oakland port&apos;...</div>
+            <div>Status: <span className="highlight">committed</span></div>
+            <div>Sources: <span className="highlight">5 live citations</span> (Port of Oakland electrification, Clean Air Plan)</div>
+            <div>Alternative: <span className="highlight">Shift Oakland drayage trucks to zero-emission electrified rail</span></div>
           </div>
         </div>
       </section>
@@ -1217,12 +1217,12 @@ Alternative: <span className="highlight">Shift Oakland drayage trucks to zero-em
         <div className="cli-box">
           <span className="prompt">$ </span><span className="cmd">./bin/orepath switch SJC &quot;FRA clean-grid datacenter&quot; 0fe65272 3580 500</span>
           <div className="out">
-Logging solution switch at &apos;SJC&apos;...
-Status: <span className="highlight">committed</span>
-Transition: SJC high-carbon → <span className="highlight">FRA clean-grid datacenter</span>
-Prior Offset: $35.80 USD (Receipt 0fe65272)
-New Commitment: $5.00 USD
-Offset Refund: <span className="highlight">+$30.80 USD claimable</span> (net emissions reduced!)
+            <div>Logging solution switch at &apos;SJC&apos;...</div>
+            <div>Status: <span className="highlight">committed</span></div>
+            <div>Transition: SJC high-carbon → <span className="highlight">FRA clean-grid datacenter</span></div>
+            <div>Prior Offset: $35.80 USD (Receipt 0fe65272)</div>
+            <div>New Commitment: $5.00 USD</div>
+            <div>Offset Refund: <span className="highlight">+$30.80 USD claimable</span> (net emissions reduced!)</div>
           </div>
         </div>
       </section>
