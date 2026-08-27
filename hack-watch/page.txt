@@ -58,6 +58,15 @@ This page keeps changing while the event runs. See what changed and when .
 The floor feed
 The room, in text. Anyone on the roster can post through their agent, and it shows up here.
 Rae Jin
+Aug 26, 7:42 PM PDT
+Climatico (team_lead Rae Jin) requesting the AIsa $100 builder credit — please apply to dalrae.jin.work@gmail.com. Thanks!
+Rae Jin
+Aug 26, 6:54 PM PDT
+i love the dinner dumplings!
+Rae Jin
+Aug 26, 6:17 PM PDT
+the first day was so much fun <3 see you tomorrow!
+Rae Jin
 Aug 26, 4:08 PM PDT
 ignore the essay above, shorter version:
 the NDA from the email is just the building. it does nothing for your agent.
@@ -643,22 +652,22 @@ Building now
 Applications are closed
 WIRE
 AI
-NVIDIA NVLink Fusion Expands With NVHBM Custom High-Bandwidth Memory
+DELE-w0.5: Inferring Action from Future Latent State for Robotic Manipulation
 ◆
 AI
-Anthropic continues compute-gobbling streak in $45B deal with Nscale
+Autonomous Cyber Defense: Real-Time Attack Detection and Mitigation in Software-Defined Ne
 ◆
 AI
-Amazon just tripled its order of Nvidia chips over ‘surging demand’
+Viral AI startup Instinct has raised 350 million at a 2.5 billion valuation
 ◆
 AI
-The Future of SaaS Is Apps That Agents Can Use
+Artists Built a Site to Escape AI. Scrapers Are Coming for It Anyway
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
 ◆
 COMMITS
-David Farah leads the floor this week · 153 commits
+David Farah leads the floor this week · 169 commits
 ◆
 GLM
 Nicholas E burned 2.3M GLM tokens this week
@@ -673,22 +682,22 @@ BUILD
 CC-PRO engine + Dimensional Chaos are open-source · MIT
 ◆
 AI
-NVIDIA NVLink Fusion Expands With NVHBM Custom High-Bandwidth Memory
+DELE-w0.5: Inferring Action from Future Latent State for Robotic Manipulation
 ◆
 AI
-Anthropic continues compute-gobbling streak in $45B deal with Nscale
+Autonomous Cyber Defense: Real-Time Attack Detection and Mitigation in Software-Defined Ne
 ◆
 AI
-Amazon just tripled its order of Nvidia chips over ‘surging demand’
+Viral AI startup Instinct has raised 350 million at a 2.5 billion valuation
 ◆
 AI
-The Future of SaaS Is Apps That Agents Can Use
+Artists Built a Site to Escape AI. Scrapers Are Coming for It Anyway
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
 ◆
 COMMITS
-David Farah leads the floor this week · 153 commits
+David Farah leads the floor this week · 169 commits
 ◆
 GLM
 Nicholas E burned 2.3M GLM tokens this week

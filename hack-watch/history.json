@@ -774,5 +774,67 @@
     "to": "27da0ba469a861a0"
    }
   ]
+ },
+ {
+  "at": "2026-08-27T05:25:06.830308+00:00",
+  "at_pdt": "2026-08-26 22:25:06 PDT",
+  "changes": [
+   {
+    "field": "team",
+    "label": "Your team",
+    "from": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "name": "Climatico",
+     "lead": "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC",
+     "members": [
+      "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC"
+     ],
+     "recruiting": true,
+     "created_at": "2026-08-26T21:04:53.122Z",
+     "updated_at": "2026-08-26T21:04:53.122Z"
+    },
+    "to": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "name": "Climatico",
+     "lead": "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC",
+     "members": [
+      "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC"
+     ],
+     "recruiting": false,
+     "created_at": "2026-08-26T21:04:53.122Z",
+     "updated_at": "2026-08-27T01:52:31.304Z"
+    }
+   },
+   {
+    "field": "submission",
+    "label": "Your submission",
+    "from": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "Agent-native climate action desk. A stranger agent discovers /ai-agent.json, mints a scoped bearer, and completes a write. Internal fleet ingest\u2192audit\u2192settle leaves durable Cotal-shaped handoffs. Refusals persist. Tavily grounds audits. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": false,
+     "updated_at": "2026-08-26T22:50:21.347Z"
+    },
+    "to": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "Agent-native climate action desk. A stranger agent discovers /ai-agent.json, mints a scoped bearer, and completes a write. Internal fleet ingest\u2192audit\u2192settle leaves durable Cotal-shaped handoffs. Refusals persist. Tavily grounds audits. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": false,
+     "updated_at": "2026-08-27T01:13:29.254Z"
+    }
+   }
+  ]
  }
 ]

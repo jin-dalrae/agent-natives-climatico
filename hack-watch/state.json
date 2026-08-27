@@ -1,9 +1,9 @@
 {
- "checked_at": "2026-08-27T01:01:45.483543+00:00",
- "checked_at_pdt": "2026-08-26 18:01:45 PDT",
+ "checked_at": "2026-08-27T05:25:06.830308+00:00",
+ "checked_at_pdt": "2026-08-26 22:25:06 PDT",
  "http_status": 200,
  "reachable": true,
- "page_bytes": 348261,
+ "page_bytes": 350984,
  "status_banner": "Building now",
  "phase_line": "Building now",
  "kicker": "August 26-27, 2026 \u00b7 Cloudflare SF, 101 Townsend St \u00b7 50 builder seats",
@@ -163,9 +163,9 @@
   "members": [
    "user_3IT2Uz2y5L5B8WuqDuW1ymmtrqC"
   ],
-  "recruiting": true,
+  "recruiting": false,
   "created_at": "2026-08-26T21:04:53.122Z",
-  "updated_at": "2026-08-26T21:04:53.122Z"
+  "updated_at": "2026-08-27T01:52:31.304Z"
  },
  "submission": {
   "eid": "anb-hack-01",
@@ -177,7 +177,7 @@
   "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger.",
   "submitted_at": "2026-08-26T22:50:21.347Z",
   "locked": false,
-  "updated_at": "2026-08-26T22:50:21.347Z"
+  "updated_at": "2026-08-27T01:13:29.254Z"
  },
  "api_phase": "BUILD",
  "applied": false,
@@ -193,7 +193,7 @@
   "Showtonic",
   "Surf, Skate, or Bike"
  ],
- "body_hash": "27da0ba469a861a0",
- "checks_run": 43,
- "change_events": 40
+ "body_hash": "eb035f1f4c00fea2",
+ "checks_run": 44,
+ "change_events": 41
 }
