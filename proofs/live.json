@@ -1,2 +1,75 @@
 [
+  {
+    "id": "93295b1a-d5c4-4431-82eb-895c2069e1a2",
+    "intent": "brief",
+    "location": "Climatico Project",
+    "spendUsd": null,
+    "evidence": [
+      "https://www.germanwatch.org/en/cri",
+      "https://www.un.org/en/climatechange/reports"
+    ],
+    "timestamp": "2026-08-26T22:56:07.448000",
+    "status": "committed",
+    "refusal": null
+  },
+  {
+    "id": "0a40a9ab-721a-46c3-ba4f-db547c724064",
+    "intent": "brief",
+    "location": "San Francisco",
+    "spendUsd": null,
+    "evidence": [
+      "https://onesanfrancisco.org/cap-plan-2026/climate-resilience"
+    ],
+    "timestamp": "2026-08-26T22:52:52.627000",
+    "status": "committed",
+    "refusal": null
+  },
+  {
+    "id": "15d243d6-7b53-409a-ade5-d201c138b563",
+    "intent": "abate",
+    "location": "Oakland port",
+    "spendUsd": null,
+    "evidence": [
+      "ledger://abatement/modeled"
+    ],
+    "timestamp": "2026-08-26T19:06:03.627000",
+    "status": "committed",
+    "refusal": null
+  },
+  {
+    "id": "02564267-b9a0-44c8-b11f-4166e93de500",
+    "intent": "offset",
+    "location": "SJC",
+    "spendUsd": 35.8,
+    "evidence": [
+      "https://climate.law.columbia.edu/content/offset-protocols"
+    ],
+    "timestamp": "2026-08-26T17:59:11.833000",
+    "status": "committed",
+    "refusal": null
+  },
+  {
+    "id": "2fea3a78-2f89-4e46-bbda-ad4b9ad9a490",
+    "intent": "offset",
+    "location": "SJC",
+    "spendUsd": 35.8,
+    "evidence": [
+      "https://climate.law.columbia.edu/content/offset-protocols"
+    ],
+    "timestamp": "2026-08-26T17:27:29.075000",
+    "status": "committed",
+    "refusal": null
+  },
+  {
+    "id": "ea3328bd-adf7-43e0-9b85-a7cf3446a4ec",
+    "intent": "offset",
+    "location": "SJC",
+    "spendUsd": 35.8,
+    "evidence": [
+      "https://climate.law.columbia.edu/content/offset-protocols"
+    ],
+    "timestamp": "2026-08-26T16:01:18.084000",
+    "status": "committed",
+    "refusal": null
+  }
 ]
