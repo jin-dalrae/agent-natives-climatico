@@ -7,18 +7,24 @@ set -e
 dir="$(dirname "$0")"
 cd "$dir/.." || exit 1
 
-# Export API key for Tavily access
-export TAVILY_API_KEY=$(grep "TAVILY_API_KEY=" .dev.vars | cut -d'=' -f2- | tr -d '"')
-
 # Log start
 echo "[$(date)] Starting proof stream generation" > logs/proof_stream.log
 
-# Get receipts (committed + refused)
-echo "Fetching receipts..." >> logs/proof_stream.log
+# Mint a read-only credential, then use it to list receipts.
+# GET /v1/receipts requires a bearer token; there is no unauthenticated path.
+echo "Minting read-only credential..." >> logs/proof_stream.log
+mint_response=$(curl -sS -H "Content-Type: application/json" \
+  -X POST https://climatico.dalrae-jin-work.workers.dev/v1/credentials \
+  -d '{"subject": "proof-stream-cron", "scopes": ["climatico:read"]}')
+token=$(echo "$mint_response" | jq -r '.token')
+if [ -z "$token" ] || [ "$token" = "null" ]; then
+  echo "Error: failed to mint credential" >> logs/proof_stream.log
+  exit 1
+fi
 
-if curl -sS -H "Content-Type: application/json" \
-   -X POST https://climatico.dalrae-jin-work.workers.dev/v1/receipts \
-   -d '{"limit": 50}' > receipts.json; then
+echo "Fetching receipts..." >> logs/proof_stream.log
+if curl -sS -f -H "Authorization: Bearer $token" \
+   https://climatico.dalrae-jin-work.workers.dev/v1/receipts > receipts.json; then
   echo "Success: retrieved receipts" >> logs/proof_stream.log
 else
   echo "Error: failed to fetch receipts" >> logs/proof_stream.log
@@ -34,36 +40,23 @@ echo "[" > proofs/live.json
 # Flag to track if at least one item
 first=true
 
-# Loop through receipts
+# Loop through committed receipts, building one proof object per line (jq -c),
+# using only fields the API actually returns. Evidence links are the real
+# Tavily source URLs already stored on the receipt, plus our own receipt link
+# so the record can be independently checked — never an invented citation.
 jq -c '.receipts[] | select(.status == "committed")' receipts.json | while read -r receipt; do
-  # Extract data
-  intent=$(echo "$receipt" | jq -r '.intent')
-  location=$(echo "$receipt" | jq -r '.location')
-  kgCO2e=$(echo "$receipt" | jq -r '.kgCO2e')
-  spendUsd=$(echo "$receipt" | jq -r '.spendUsd')
-  id=$(echo "$receipt" | jq -r '.id')
-  timestamp=$(echo "$receipt" | jq -r '.timestamp')
-  evidence_count=$(echo "$receipt" | jq -r '.evidence | length')
+  proof=$(echo "$receipt" | jq \
+    --arg selflink "https://climatico.dalrae-jin-work.workers.dev/v1/receipts/" \
+    '{
+      action: .intent,
+      intent: .intent,
+      location: .location,
+      amountCents: .amountCents,
+      evidence: ([.evidence[].url] + [$selflink + .id]),
+      createdAt: .createdAt,
+      refusal: null
+    }')
 
-  # Build proof object. Only link to our own receipt — never invent a source URL;
-  # a fabricated citation is exactly what this project refuses to do.
-  proof=$(cat << EOF
-{
-  "action": "offset",
-  "intent": "$intent",
-  "location": "$location",
-  "kgCO2e": $kgCO2e,
-  "spendUsd": $spendUsd,
-  "evidence": [
-    "https://climatico.dalrae-jin-work.workers.dev/v1/receipt/$id"
-  ],
-  "timestamp": "$timestamp",
-  "refusal": null
-}
-EOF
-  )
-
-  # Append to live.json
   if [ "$first" = true ]; then
     echo "$proof" >> proofs/live.json
     first=false

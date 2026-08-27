@@ -15,3 +15,9 @@
 .idea/
 .vscode/
 .omo/
+
+# Scratch fetches and generated reports from cronjobs/ — regenerated each run.
+/receipts.json
+/workspace.json
+/climatico_report_*.csv
+reports/*.csv

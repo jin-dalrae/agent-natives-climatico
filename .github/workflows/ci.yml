@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  typecheck-and-build:
+    # Runs on Tenki's real infrastructure, not GitHub-hosted runners.
+    # Requires the Tenki GitHub App installed on this repo first:
+    # https://tenki.cloud/events/agent-native -> Runners -> Install on this repo.
+    # Until that's connected this job has no matching runner and will not start.
+    runs-on: tenki-standard-medium-4c-8g
+    defaults:
+      run:
+        working-directory: climatico
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Worker types
+        run: npx wrangler types
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build

@@ -1,75 +1,99 @@
 [
-  {
-    "id": "93295b1a-d5c4-4431-82eb-895c2069e1a2",
-    "intent": "brief",
-    "location": "Climatico Project",
-    "spendUsd": null,
-    "evidence": [
-      "https://www.germanwatch.org/en/cri",
-      "https://www.un.org/en/climatechange/reports"
-    ],
-    "timestamp": "2026-08-26T22:56:07.448000",
-    "status": "committed",
-    "refusal": null
-  },
-  {
-    "id": "0a40a9ab-721a-46c3-ba4f-db547c724064",
-    "intent": "brief",
-    "location": "San Francisco",
-    "spendUsd": null,
-    "evidence": [
-      "https://onesanfrancisco.org/cap-plan-2026/climate-resilience"
-    ],
-    "timestamp": "2026-08-26T22:52:52.627000",
-    "status": "committed",
-    "refusal": null
-  },
-  {
-    "id": "15d243d6-7b53-409a-ade5-d201c138b563",
-    "intent": "abate",
-    "location": "Oakland port",
-    "spendUsd": null,
-    "evidence": [
-      "ledger://abatement/modeled"
-    ],
-    "timestamp": "2026-08-26T19:06:03.627000",
-    "status": "committed",
-    "refusal": null
-  },
-  {
-    "id": "02564267-b9a0-44c8-b11f-4166e93de500",
-    "intent": "offset",
-    "location": "SJC",
-    "spendUsd": 35.8,
-    "evidence": [
-      "https://climate.law.columbia.edu/content/offset-protocols"
-    ],
-    "timestamp": "2026-08-26T17:59:11.833000",
-    "status": "committed",
-    "refusal": null
-  },
-  {
-    "id": "2fea3a78-2f89-4e46-bbda-ad4b9ad9a490",
-    "intent": "offset",
-    "location": "SJC",
-    "spendUsd": 35.8,
-    "evidence": [
-      "https://climate.law.columbia.edu/content/offset-protocols"
-    ],
-    "timestamp": "2026-08-26T17:27:29.075000",
-    "status": "committed",
-    "refusal": null
-  },
-  {
-    "id": "ea3328bd-adf7-43e0-9b85-a7cf3446a4ec",
-    "intent": "offset",
-    "location": "SJC",
-    "spendUsd": 35.8,
-    "evidence": [
-      "https://climate.law.columbia.edu/content/offset-protocols"
-    ],
-    "timestamp": "2026-08-26T16:01:18.084000",
-    "status": "committed",
-    "refusal": null
-  }
+{
+  "action": "brief",
+  "intent": "brief",
+  "location": "Climatico Project",
+  "amountCents": null,
+  "evidence": [
+    "https://www.germanwatch.org/en/cri",
+    "https://www.un.org/en/climatechange/reports",
+    "https://science.nasa.gov/climate-change/effects",
+    "https://www.who.int/news-room/fact-sheets/detail/climate-change-and-health",
+    "https://climateresilience.ca.gov/overview/impacts.html",
+    "https://climatico.dalrae-jin-work.workers.dev/v1/receipts/93295b1a-d5c4-4431-82eb-895c2069e1a2"
+  ],
+  "createdAt": 1787810167448,
+  "refusal": null
+}
+,
+{
+  "action": "brief",
+  "intent": "brief",
+  "location": "San Francisco",
+  "amountCents": null,
+  "evidence": [
+    "https://onesanfrancisco.org/cap-plan-2026/climate-resilience",
+    "https://climatecheck.com/california/san-francisco",
+    "https://shapessf.com/wp-content/uploads/2019/11/SSF_ECR_Ch11_ClimateChange_final.pdf",
+    "https://sfplanning.org/sea-level-rise-action-plan",
+    "https://climatechangeresources.org/learn-more/states/california/san-francisco",
+    "https://climatico.dalrae-jin-work.workers.dev/v1/receipts/0a40a9ab-721a-46c3-ba4f-db547c724064"
+  ],
+  "createdAt": 1787809972627,
+  "refusal": null
+}
+,
+{
+  "action": "abate",
+  "intent": "abate",
+  "location": "Oakland port",
+  "amountCents": null,
+  "evidence": [
+    "ledger://abatement/modeled",
+    "https://climatico.dalrae-jin-work.workers.dev/v1/receipts/15d243d6-7b53-409a-ade5-d201c138b563"
+  ],
+  "createdAt": 1787796363627,
+  "refusal": null
+}
+,
+{
+  "action": "offset",
+  "intent": "offset",
+  "location": "SJC",
+  "amountCents": 3580,
+  "evidence": [
+    "https://climate.law.columbia.edu/content/offset-protocols",
+    "http://www.offsetguide.org/wp-content/uploads/2019/11/11.15.19.pdf",
+    "https://www.green-e.org/wp-content/uploads/2025/12/Carbon-Offset-GSG.pdf",
+    "https://www.resources.org/common-resources/verification-standards-for-carbon-offsets-breaking-down-the-new-proposed-guidance",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6761920",
+    "https://climatico.dalrae-jin-work.workers.dev/v1/receipts/02564267-b9a0-44c8-b11f-4166e93de500"
+  ],
+  "createdAt": 1787792351833,
+  "refusal": null
+}
+,
+{
+  "action": "offset",
+  "intent": "offset",
+  "location": "SJC",
+  "amountCents": 3580,
+  "evidence": [
+    "https://climate.law.columbia.edu/content/offset-protocols",
+    "https://sustainingprogress.umd.edu/carbon-offset-program",
+    "http://www.offsetguide.org/wp-content/uploads/2019/11/11.15.19.pdf",
+    "https://www.green-e.org/wp-content/uploads/2025/12/Carbon-Offset-GSG.pdf",
+    "https://www.resources.org/common-resources/verification-standards-for-carbon-offsets-breaking-down-the-new-proposed-guidance",
+    "https://climatico.dalrae-jin-work.workers.dev/v1/receipts/2fea3a78-2f89-4e46-bbda-ad4b9ad9a490"
+  ],
+  "createdAt": 1787790449075,
+  "refusal": null
+}
+,
+{
+  "action": "offset",
+  "intent": "offset",
+  "location": "SJC",
+  "amountCents": 3580,
+  "evidence": [
+    "https://climate.law.columbia.edu/content/offset-protocols",
+    "https://sustainingprogress.umd.edu/carbon-offset-program",
+    "http://www.offsetguide.org/wp-content/uploads/2019/11/11.15.19.pdf",
+    "https://www.green-e.org/wp-content/uploads/2025/12/Carbon-Offset-GSG.pdf",
+    "https://www.resources.org/common-resources/verification-standards-for-carbon-offsets-breaking-down-the-new-proposed-guidance",
+    "https://climatico.dalrae-jin-work.workers.dev/v1/receipts/ea3328bd-adf7-43e0-9b85-a7cf3446a4ec"
+  ],
+  "createdAt": 1787785278084,
+  "refusal": null
+}
 ]
