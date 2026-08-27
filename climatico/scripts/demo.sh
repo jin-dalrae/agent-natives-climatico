@@ -80,8 +80,8 @@ curl -sS "$BASE/v1/handoffs" -H "authorization: Bearer $TOKEN" \
 echo
 
 echo
-echo "== Runtype A2A consumption =="
-echo "Agent card for Runtype:"
+echo "== A2A consumption =="
+echo "Agent card:"
 curl -sS "$BASE/.well-known/agent-card.json" | head -c 500
 echo
 echo "A2A endpoint:"

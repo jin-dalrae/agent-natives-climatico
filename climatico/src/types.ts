@@ -1,7 +1,7 @@
 export const SCOPES = ["climatico:read", "climatico:transact", "climatico:admin"] as const;
 export type Scope = (typeof SCOPES)[number];
 
-export const INTENTS = ["brief", "watch", "offset", "assess", "abate", "switch", "refund"] as const;
+export const INTENTS = ["brief", "watch", "offset", "assess", "abate", "switch", "refund", "freight"] as const;
 export type Intent = (typeof INTENTS)[number];
 
 export const FORBIDDEN_INTENTS = [
@@ -33,6 +33,9 @@ export type ActionInput = {
   priorReceiptId?: string;
   priorAmountCents?: number;
   newSolution?: string;
+  freightMode?: string;
+  weightKg?: number;
+  distanceKm?: number;
 };
 
 export type EvidenceItem = {

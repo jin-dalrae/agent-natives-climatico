@@ -10,6 +10,9 @@
 #   offset <loc> <¢>  Commit an offset
 #   brief <loc>       File an evidence-backed brief
 #   watch <loc>       Start watching a location
+#   freight <lane> <mode> <kg> <km>  File a real PO/freight leg (sea|air|road|rail)
+#   switch <loc> <newSolution> <priorReceiptId> <priorCents> <newCents>  Log a solution switch
+#   refund <loc> <priorReceiptId> <priorCents> <newCents>  Claim back the delta after a switch
 #   refuse <loc>      Test a forbidden claim (greenwash)
 #   report            Show progress report from the scheduler
 #   receipts [n]      Show recent receipts (default: 5)
@@ -133,6 +136,24 @@ print('Status:', r.get('status','?'))
 print('Code:', r.get('refusalCode','?'))
 print('Why:', r.get('refusalReason','?'))
 print('Receipt ID:', r.get('id','?')[:8], '(refusal stored permanently)')
+"
+    ;;
+  freight)
+    loc="${1:-Shenzhen -> Oakland}"
+    mode="${2:-sea}"
+    kg="${3:-8000}"
+    km="${4:-11000}"
+    [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
+    echo "Filing freight leg '$loc' ($mode, ${kg}kg x ${km}km)..."
+    body="{\"intent\":\"freight\",\"location\":\"$loc\",\"freightMode\":\"$mode\",\"weightKg\":$kg,\"distanceKm\":$km}"
+    api POST /v1/actions "$body" | python3 -c "
+import json,sys
+r=json.load(sys.stdin).get('receipt',{})
+print('Status:', r.get('status','?'))
+print('Receipt:', r.get('id','?')[:8])
+print('Note:', r.get('note','?'))
+if r.get('status') == 'refused':
+    print('Refused:', r.get('refusalReason','?'))
 "
     ;;
   switch)

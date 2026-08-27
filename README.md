@@ -120,7 +120,7 @@ script, not separately-running services.
 | `/a2a` | AI agents (Agent-to-Agent protocol) | **DONE** |
 | `/v1/*` | Any program (REST API) — includes `/v1/report`, `/v1/agents/*`, `/v1/memory`, `/v1/dashboard` | **DONE** |
 | `/` (web page) | Humans — 9 tabs: Assess, Grow, Fleet Pipeline, Swarm, Ledger, Inbox, Clerk, Onboard, Stack | **DONE** |
-| `climatico.sh` | CLI — 15 commands from your terminal | **DONE** |
+| `climatico.sh` | CLI — 23 commands from your terminal | **DONE** |
 
 All four read and write the **same** notebook: one Durable Object running SQLite
 on Cloudflare. That notebook survives restarts — nothing important is lost
@@ -151,8 +151,9 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - ✅ **Report builder** — `/v1/report` compiles fleet runs + receipts + budget into plain-English summary
 - ✅ **Inbox analyst** — hotspot alerts and suggestions pushed to the workspace inbox automatically
 - ✅ **Cortex memory** — `cortex.ts` stores fleet run summaries, retrievable via `/v1/memory`. **Mitosis Cortex** wired into scheduler.
-- ✅ **Runtype enrichment** — `runtype.ts` wired into scheduler for audit/suggest/forecast
-- ✅ **CLI** — `climatico.sh` with 15 commands: discover, mint, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard
+- ✅ **CLI** — `climatico.sh` with 23 commands: discover, mint, connect, status, fleet, offset, brief, watch, freight, switch, refund, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard, observe
+- ✅ **Freight write** — the PO/freight leg write is shipped: `freight` intent takes mode (sea/air/road/rail), weight, distance, grounds against real Tavily/GLEC logistics evidence, scores kg CO2e via a labelled heuristic, refuses if ungrounded. Real booking, not a stubbed LCA. `POST /v1/actions`, MCP `file_freight`, CLI `climatico.sh freight`.
+- ✅ **Solution switch + offset refund** — `switch` logs a transition to a greener solution against a prior offset receipt; `refund` claims back the delta. Provider agent processes the reversal and records it.
 - Cotal: **two meshes, one live.** Our own `climatico` mesh is genuinely joined
   and running — manager/delivery/NATS all up, 8 roster agents, 15+ min uptime.
   The hack.cotal.ai event mesh (tied to the $300 best-use prize) is **not joined**
@@ -175,41 +176,21 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Each emission class starts **modeled** — an estimate with an error bar — until
   it's actually grounded. Compute grounds automatically from fleet activity; the
   other six ground on request (see above), not automatically.
-- The **hardware / freight PO write** — the star feature for our customer story —
-  is *named, not built*. It needs supplier-only and buyer-only tokens that do not
-  exist yet. We are NOT faking it.
+- The **freight leg itself is now a real write** (mode/weight/distance → grounded
+  kg CO2e — see DONE above). What's still *not* built: supplier-only and
+  buyer-only scoped tokens for the two-sided PO flow — right now one credential
+  files the freight write, there's no separate supplier/buyer split yet.
 - Tavily runs **keyless** right now (the `26HACK` coupon, which grants 8,000 extra
   credits, is not yet claimed — two days only).
 - The Worker's own Cotal webhook (`COTAL_WEBHOOK_URL`) is still unset — the
   code path (`announceHandoff`) fires automatically once it is, it just needs
   a real URL from the Cotal booth. Our own `climatico` mesh is live regardless
   (see above).
-- Runtype $500: **capability link fixed 27 Aug, end-to-end not yet.** With a real
-  API key, we created a real Secret, a real `file_climate_action` Tool (its
-  code does an actual `fetch()` against
-  `climatico.dalrae-jin-work.workers.dev/v1/actions`), and a real Agent on
-  `claude-sonnet-5` — all live on Runtype's platform via their own API
-  (`api.runtype.com/v1`), not the dashboard. The earlier blocker — the
-  capability's `toolId` resolving to `null` so the tool never fired — is fixed:
-  the orphan capability was removed and re-added via
-  `POST /v1/agents/{id}/capabilities` (Runtype's spec has no PATCH/PUT on
-  agent capabilities, only POST/DELETE — confirmed in the live OpenAPI spec
-  at `https://api.runtype.com/v1/openapi.json`). `POST /v1/agents/{id}/execute`
-  now emits a real `tool_start → tool_complete` event pair for
-  `file_climate_action`. **What's still broken:** the tool's outbound
-  `fetch()` to our Worker returns a non-JSON "Network ac…" response, so the
-  model reports failure rather than a real receipt. The Climatico Worker
-  itself is healthy — calling it directly with the same baked-in token
-  returns `201 committed` with a real receipt. This looks like Runtype's
-  tool-runtime egress policy, not a Worker bug. Not competing for the $500
-  bounty (Nate confirmed the track doesn't require building on Runtype);
-  this row is "if it works, it works." `/.well-known/agent-card.json` is
-  still generic A2A, not a Runtype-specific flow.
 - Hacker Bob / HUD: **not** integrated. Booths, credits, or prizes only.
 
 ### 🚫 We will not fake
 
-No fake AIsa payment, no fake Hacker Bob scan, no fake GHG Protocol engine.
+No fake Hacker Bob scan, no fake GHG Protocol engine.
 We ship what runs and we say what we haven't.
 
 ---
@@ -229,7 +210,6 @@ We ship what runs and we say what we haven't.
 | **Report builder** | Compiles runs+receipts into `/v1/report` | REST | — |
 | **Inbox analyst** | Pushes hotspot alerts + suggestions to workspace | Insights | — |
 | **Cortex memory** | Stores fleet run summaries, retrievable by namespace | REST | **Mitosis Cortex** |
-| **Runtype analyst** | Enrichment: audit/suggest/forecast via Runtype agents | REST | **Runtype** |
 | **Clerk** | AI chat — answers questions, files writes, explains refusals | Workers AI | **Workers AI** |
 
 ---
@@ -240,11 +220,10 @@ We ship what runs and we say what we haven't.
 | --- | --- | --- |
 | Cloudflare | **Host.** Runtime: Workers, Durable Objects, Workers AI, Agents SDK | YES — everything runs on it |
 | Tavily | Sponsor. Web search = evidence + abatement research | YES — the write path + cron research |
-| AIsa | Sponsor. Machine payment rail | Partial — real balance read only; payment rail not wired |
+| AIsa | Sponsor. Machine payment rail | No — not used (removed 27 Aug; see hackathon chat post) |
 | Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
 | Cotal | Organiser. Agent mesh | Partial — own `climatico` mesh live (8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook unset |
-| Mitosis | Sponsor. Cortex agent memory | YES — `cortex.ts` wired into scheduler; fleet run summaries stored/recalled. 27 Aug session transcript (5 records, Runtype fix + Tenki + Mitosis setup) ingested into office `f56e7069-…` and queryable via `mi cortex ask`. |
-| Runtype | Sponsor. Enrichment (audit/suggest/forecast) | Partial — `runtype.ts` wired into scheduler; tool-runtime egress blocks end-to-end |
+| Mitosis | Sponsor. Cortex agent memory | YES — `cortex.ts` wired into scheduler; fleet run summaries stored/recalled. 27 Aug session transcript (5 records, Tenki + Mitosis setup) ingested into office `f56e7069-…` and queryable via `mi cortex ask`. |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
 | Nebius | Sponsor. GPU Cloud / $75 Builder Program | No — grounding summaries moved to Workers AI, no external key used |
 | Hacker Bob, HUD | Credits / prizes / booths | No — not wired in, on purpose |
@@ -263,9 +242,11 @@ Rae had no number. That question can block a deal.
 
 - Orepath's **biggest** footprint is **logistics** (12 tonnes/yr, ±35%) — still modeled.
 - What Rae can file **today**: ground the Oakland port (`brief`), watch it
-  (`watch`), file the SJC compute bill that runs the tracer (`run_fleet`), and
-  refuse any green supply-chain slogan (`greenwash` → refused & stored).
-- **Next:** the actual PO / freight write — the honest next step, not a fake one.
+  (`watch`), file the SJC compute bill that runs the tracer (`run_fleet`), file
+  the actual battery freight leg (`freight` — mode, weight, distance → real
+  grounded kg CO2e), and refuse any green supply-chain slogan (`greenwash` →
+  refused & stored).
+- **Next:** supplier-only / buyer-only scoped tokens for the two-sided PO flow.
 
 ---
 
@@ -279,7 +260,7 @@ npx wrangler types
 npm run dev                      # http://127.0.0.1:8787
 ```
 
-`TAVILY_API_KEY` and `COTAL_WEBHOOK_URL` are optional. `AISA_API_KEY` is configured for a free wallet-balance read only — it does not enable payments.
+`TAVILY_API_KEY` and `COTAL_WEBHOOK_URL` are optional.
 
 ---
 

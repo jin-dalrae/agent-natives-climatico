@@ -75,7 +75,6 @@ export type WorkspaceView = {
   runs: FleetRun[];
   tavilyKey: boolean;
   cotalWebhook: boolean;
-  aisaConfigured: boolean;
   tenkiConfigured: boolean;
 };
 
@@ -261,11 +260,9 @@ export function buildWorkspace(input: {
   runs: FleetRun[];
   tavilyKey: boolean;
   cotalWebhook: boolean;
-  aisaConfigured?: boolean;
   tenkiConfigured?: boolean;
 }): WorkspaceView {
   const { dashboard, receipts, handoffs, runs, tavilyKey, cotalWebhook } = input;
-  const aisaConfigured = Boolean(input.aisaConfigured);
   const tenkiConfigured = Boolean(input.tenkiConfigured);
   const lastRun = runs[0] ?? null;
   const lastCompute = lastRun?.audit?.kgCO2e ?? null;
@@ -520,28 +517,6 @@ export function buildWorkspace(input: {
       href: "https://tenki.cloud/events/agent-native",
     },
     {
-      id: "aisa",
-      name: "AIsa",
-      role: "Machine payments · $100 list",
-      status: aisaConfigured ? "live" : "booth",
-      insight: aisaConfigured
-        ? "Worker reads the real wallet balance (free, read-only). M2M payment settlement stays a deliberate non-goal — that write needs a bounded, human-confirmed instruction, not a standing key."
-        : "Offsets settle on our ledger until credits land.",
-      how: aisaConfigured
-        ? "GET /v1/aisa/balance, or MCP check_aisa_balance."
-        : "Give an organiser the email. No self-serve page.",
-      href: "https://aisa.one",
-    },
-    {
-      id: "runtype",
-      name: "Runtype",
-      role: "Flows / evals · $500 best use",
-      status: "prize",
-      insight: "Winning requires deploying on Runtype, not a logo.",
-      how: "Ask Nathan or Nate for $50 credits; bounty is a real deploy.",
-      href: "https://runtype.com",
-    },
-    {
       id: "mitosis",
       name: "Mitosis Labs",
       role: "Memory beyond a session",
@@ -608,7 +583,6 @@ export function buildWorkspace(input: {
     runs,
     tavilyKey,
     cotalWebhook,
-    aisaConfigured,
     tenkiConfigured,
   };
 }

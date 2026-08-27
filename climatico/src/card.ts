@@ -91,7 +91,7 @@ export function aiAgentJson(origin: string) {
     },
     payments: {
       kind: "machine_ledger",
-      note: "Offsets settle on the Durable Object ledger. AIsa is optional if credits are applied.",
+      note: "Offsets settle on the Durable Object ledger.",
       endpoint: `${origin}/v1/actions`,
     },
     tools: [

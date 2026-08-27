@@ -83,9 +83,9 @@ A refusal is a receipt. Committed and refused rows share id, subject, token, tim
 | Peer range | ~1.5–4 tCO₂e/FTE/yr | ~15–45 (order of magnitude off if treated as SaaS) |
 | Secret | Token scopes | Bill of materials — supplier write-only / buyer read-only tokens |
 
-**One user (from the GTR desk):** Rae Jin, founder of Orepath. The product traces *customers’* battery freight. A buyer asked for Orepath’s *own* impact. Logistics (12 t, modeled) is the story class; the agentic interface is the PO / booking / port her team already runs through agents. Practical tools this weekend: ground Oakland, watch the port, file SJC compute, refuse a green-chain claim. The freight write itself is named, not stubbed.
+**One user (from the GTR desk):** Rae Jin, founder of Orepath. The product traces *customers’* battery freight. A buyer asked for Orepath’s *own* impact. Logistics (12 t, modeled) is the story class; the agentic interface is the PO / booking / port her team already runs through agents. Practical tools this weekend: ground Oakland, watch the port, file SJC compute, file the actual battery freight leg (mode/weight/distance → graded kg CO2e), refuse a green-chain claim. The freight write is shipped — supplier-only/buyer-only scoped tokens for the two-sided PO flow are next.
 
-Shipped demo is **compute**. Hardware / PO-freight workflow is NEXT, not a stubbed LCA.
+Shipped demo is **compute + freight**. The PO/freight leg write ships this weekend (mode/weight/distance → grounded kg CO2e); a full two-sided hardware PO workflow (supplier-only/buyer-only tokens) is NEXT, not a stubbed LCA.
 
 ### 3.3 Seven emission classes (assessment)
 
@@ -137,21 +137,20 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Policy before write; refusal stored | HMAC bearer, 401/422, SQLite receipts | — |
 | Tavily grounding | Live on brief/assess/audit; empty → `ungrounded` | Coupon `26HACK` still optional (keyless works) |
 | Fleet ingest → audit → settle | `POST /v1/fleet/run`, MCP `run_fleet`, handoff channels | Compute class only; heuristic 0.45 kg/$ , 20¢/kg over budget — **labelled heuristic**, not GHG Protocol ICT |
-| Assessment UI | Assess table, inbox, L0–L5, stack, clerk | Hardware PO/freight writes not implemented |
+| Freight PO write | `freight` intent — mode (sea/air/road/rail) × weight × distance → grounded kg CO2e via live Tavily/GLEC evidence, refuses if ungrounded. `POST /v1/actions`, MCP `file_freight`, CLI `freight`. | Heuristic kg CO2e/tonne-km by mode — **labelled heuristic**, not ISO 14083/GLEC precision. No supplier-only/buyer-only token split yet — one credential files the write. |
+| Assessment UI | Assess table, inbox, L0–L5, stack, clerk | Two-sided hardware PO workflow (supplier/buyer scoped tokens) not implemented |
 | Clerk AI agent | Workers AI (`@cf/moonshotai/kimi-k2.6`) with tools for complete_action, run_fleet, get_insights, list_receipts | Claude-powered — answers questions, files writes, explains refusals |
-| AIsa read | `GET /v1/aisa/balance` reads the real wallet balance (free, read-only) | M2M payment settlement is **not wired** — deliberate non-goal without a bounded, human-confirmed instruction |
 | Cotal-shaped handoffs | On-ledger; `cotal.yaml`; **own `climatico` mesh live** — manager/delivery/NATS running, 8 agents on roster, 15 min uptime | Hack.cotal.ai event mesh **not joined** — same device-code auth blocker as before (no publish rights). Worker-side `COTAL_WEBHOOK_URL` also unset. Two separate meshes, one running. |
 | Seven classes with error bars | Table in UI + `GET /v1/workspace`; all seven can be grounded live (compute automatically, the other six via `assess` + `source`) | Grounding is on-request for six classes, not automatic — a class reverts to nothing new only if ungrounded, never fabricated |
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
 | Mitosis Cortex memory | `cortex.ts` — `cortexRemember()`/`cortexRecall()` wired into the scheduler; fleet run summaries stored and retrievable via `/v1/memory` | Not called inside the write path — enrichment layer |
-| Runtype enrichment | `runtype.ts` — audit/suggest/forecast via Runtype platform, wired into scheduler | Best-effort enrichment; tool-runtime egress still blocks end-to-end |
-| CLI | `climatico.sh` — 15 commands: discover, mint, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start/stop | No auth token persistence (must `export` after mint) |
+| CLI | `climatico.sh` — 23 commands: discover, mint, connect, status, fleet, offset, brief, watch, freight, switch, refund, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard, observe | No auth token persistence (must `export` after mint) |
 | Orepath compute-watcher agent | Durable Object alarm — files fleet runs autonomously every 15 min during working hours. `/v1/agents/orepath` | Single compute-spike pattern; no freight/PO agent |
 | 3rd-party provider agent | DO callable — `green-offset-co` fulfills offsets, reviews receipts, earns revenue. `/v1/agents/provider` | Demo persona, not a real offset provider |
-| Proactive scheduler | Cron `*/30 * * * *` — random fleet run + Tavily abatement research + Runtype analysis + Cortex memory store + provider fulfillment | Runs every 30 min regardless of actual spend events |
+| Proactive scheduler | Cron `*/30 * * * *` — random fleet run + Tavily abatement research + Cortex memory store + provider fulfillment | Runs every 30 min regardless of actual spend events |
 | Report endpoint | `GET /v1/report` — compiles fleet runs + receipts + budget into plain-English summary with suggestions | Static model values (37.7 t total) — not dynamically recalculated |
 
-**Do not ship:** fake AIsa payment, fake Hacker Bob scan, fake GHG Protocol engine.
+**Do not ship:** fake Hacker Bob scan, fake GHG Protocol engine.
 
 ---
 
@@ -166,7 +165,7 @@ Any agent
   → Ledger DO SQLite (receipts, watches, handoffs, fleet_runs)
 ```
 
-**Writes:** `brief` · `watch` · `offset` · `assess` · `run_fleet`  
+**Writes:** `brief` · `watch` · `offset` · `assess` · `abate` · `switch` · `refund` · `freight` · `run_fleet`  
 **Refused outright (stored):** payout, wire_transfer, delete_account, greenwash, admin_override, exfiltrate, unknown intent, no location, ungrounded brief/audit, offset over token ceiling.
 
 **Reads:** `discover_climatico`, `get_policy`, `whoami`, `get_receipt`, `list_receipts`, `list_handoffs`, `get_insights`  
@@ -187,7 +186,7 @@ Any agent
 | `GET /v1/memory?namespace=` | Recall memories from Cortex | Bearer |
 | `GET /v1/dashboard` | Committed/refused/watches/fleetRuns counters | Public |
 
-**CLI:** `climatico/climatico.sh` — discover, mint, connect, status, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start, agents-stop, dashboard.
+**CLI:** `climatico/climatico.sh` — discover, mint, connect, status, fleet, offset, brief, watch, freight, switch, refund, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start, agents-stop, dashboard, observe.
 
 **Onboarding flow:** `climatico.sh connect ~/my-startup` scans a folder for climate-impact signals (package.json deps, wrangler config, README keywords), sends them to `/v1/connect`, which derives an auto-assessment for all 7 emission classes via Tavily. The connection persists in a Durable Object table; the background agents (Scheduler, Orepath, Inbox analyst) continue monitoring from there.
 
@@ -210,7 +209,7 @@ The CLI prints the exact JSON payload before sending, and supports `--dry-run` t
 
 **This is a binding constraint, not a feature.** The CLI source is auditable; the server's `/v1/connect` handler explicitly does not accept a `file_contents` or `path_contents` field. Any change to this would be a breaking change to the privacy contract.
 
-**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, AIsa wallet balance readable, Tenki sandbox ready, hotspot alerts from scheduler, abatement suggestions, next actions.
+**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, Tenki sandbox ready, hotspot alerts from scheduler, abatement suggestions, next actions.
 
 ---
 
@@ -220,18 +219,15 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 
 | Item | Kind | How Climatico treats it |
 | --- | --- | --- |
-| Runtype **$500** | Best use of Runtype | **Not competing.** Nate confirmed the track doesn't require building on Runtype. `runtype.ts` wired into scheduler for enrichment (audit/suggest/forecast); tool-runtime egress blocks end-to-end. [persona-chat.dev](https://persona-chat.dev) is the reference implementation. |
 | Cotal **$300** | Best use of Cotal | **Own `climatico` mesh is live** (8 agents, manager/delivery/NATS running). Hack.cotal.ai event mesh **not joined** — device-code login didn't grant publish rights. Same blocker as before. David + Sven on site if prize eligibility depends on "hack" specifically. |
 | Sandbox VR | Experience, 1/track | Irrelevant to product |
 | HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
 | Hacker Bob | Scan every builder | Point at `/mcp` + `/v1/credentials`. Michalis judges. |
 | Tenki **$100** | Every builder | **Active** — sandboxes/CI for agent testing. Event signup URL auto-applies. |
-| AIsa **$100** | Every builder | Not yet claimed — no self-serve page, give an organiser your email. Key is live for a free balance read only; M2M settlement not wired. |
 | Nebius **$75** | Builder Program | Clerk uses Workers AI; Nebius if the model is too small. |
 | Tavily **9,000** (8k + 1k free) | Self-serve `26HACK` | **On the write path.** Two days only. |
-| Runtype **$50** | Show-up | Ask Nate or Nathan. Separate from $500 bounty. |
 
-**Sponsor challenge (only one posted):** Best use of Runtype — Nate Stewart presented the Runtype track and [persona-chat.dev](https://persona-chat.dev) as a reference implementation. Mentioning Runtype in a README does not win.
+**No sponsor challenge this weekend.** Track is judged on the standard rubric; sponsor prizes are separate from the track.
 
 ---
 
@@ -243,10 +239,9 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Tavily | Sponsor | **Yes** — evidence + abatement research |
 | Cotal | Organiser | Own `climatico` mesh **yes** (live, 8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook still optional |
 | Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
-| AIsa | Real balance read only | **Partial** — `GET /v1/aisa/balance` is real; the M2M payment rail itself is **not** in the write path |
+| AIsa | Real balance read only | **No — removed 27 Aug.** Module, route, MCP tool, UI card, .dev.vars key, docs, and the orepath_agents.py AIsa balance read are all gone. See the hackathon chat post for the wallet-vs-inference split. |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
-| Mitosis | Cortex agent memory | **Yes** — `cortex.ts` wired into scheduler; fleet run summaries stored and recalled via `/v1/memory`. 27 Aug session transcript also ingested into the office (`f56e7069-…`) as 5 records (Runtype fix, Tenki live integration, Mitosis setup, Runtype egress bug, session meta) — fully embedded and graphed, queryable via `mi cortex ask`. |
-| Runtype | Enrichment (audit/suggest/forecast) | **Partial** — `runtype.ts` wired into scheduler; tool-runtime egress blocks end-to-end |
+| Mitosis | Cortex agent memory | **Yes** — `cortex.ts` wired into scheduler; fleet run summaries stored and recalled via `/v1/memory`. 27 Aug session transcript also ingested into the office (`f56e7069-…`) as 5 records (Tenki live integration, Mitosis setup, session meta) — fully embedded and graphed, queryable via `mi cortex ask`. |
 | Nebius | GPU Cloud / $75 Builder Program | **No** — grounding summaries moved to Workers AI; no external Nebius key used |
 | Hacker Bob, HUD | Credits / prizes / booths | **No** until a real call exists |
 
@@ -259,8 +254,7 @@ Stack tab and inbox must keep this distinction. Decorative integrations fail the
 - Full Scope 1–3 accounting or ISO 14040 LCA  
 - Handprint / net-zero marketing claims  
 - Multi-tenant SaaS, document upload of BOMs  
-- Overnight jobs (venue forbids overnight; DO hibernation is the stand-in)  
-- Building **on** Runtype — Nate confirmed the track doesn't require it. (`runtype.ts` is enrichment only)
+- Overnight jobs (venue forbids overnight; DO hibernation is the stand-in)
 
 ---
 

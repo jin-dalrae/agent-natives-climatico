@@ -9,7 +9,8 @@
   },
   "vars": {
     "PRODUCT_NAME": "Climatico",
-    "PUBLIC_BASE_URL": ""
+    "PUBLIC_BASE_URL": "",
+    "PROVIDER_NAME": "green-offset-co"
   },
   "ai": {
     "binding": "AI",

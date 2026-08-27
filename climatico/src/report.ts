@@ -54,7 +54,7 @@ export function buildReport(input: {
   if (switches > 0) {
     suggestions.push(`${switches} solution switch(es) logged. ${refunds.length} refund(s) claimed, ${(totalRefundCents / 100).toFixed(2)} USD returned.`);
   }
-  if (refunds.length === 0 && commits > 0) {
+  if (refunds.length === 0 && committed > 0) {
     suggestions.push("Have you switched to a greener solution? File a 'switch' to claim back the prior offset.");
   }
   suggestions.push("Logistics (12 t/yr) is your biggest class — still modeled. Talk to your freight provider about data sharing.");

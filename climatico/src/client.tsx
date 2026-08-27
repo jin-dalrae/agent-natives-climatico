@@ -54,11 +54,6 @@ function SponsorPills({
         <strong>Cotal Mesh</strong>
         <span className="sub">#team.climatico</span>
       </div>
-      <div className="sponsor-badge info">
-        <span className="dot info" />
-        <strong>AIsa & Runtype</strong>
-        <span className="sub">M2M Rail & Evals</span>
-      </div>
     </div>
   );
 }
@@ -1506,12 +1501,6 @@ export function App() {
                 ))}
               </tbody>
             </table>
-            <p className="sub" style={{ marginTop: 10 }}>
-              AIsa{" "}
-              {ws?.aisaConfigured
-                ? "is connected — this desk can read the real wallet balance (GET /v1/credits/balance), free and read-only. Machine-to-machine payment settlement stays off: that write needs a specific, bounded, human-confirmed instruction, not a standing key."
-                : "is the machine-payment rail (M2M). Not collected here yet — offsets settle on our ledger. No fake call."}
-            </p>
           </section>
         ) : null}
 

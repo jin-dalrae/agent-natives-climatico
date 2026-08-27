@@ -12,7 +12,6 @@ running as separate live processes (`cotal ps --space climatico`).
 Sponsor APIs actually exercised, all real:
   - Climatico (this weekend's product) -- every call below
   - Tavily -- inside Climatico's own /v1/fleet/run audit step (grounds kgCO2e)
-  - AIsa -- GET /v1/aisa/balance, real read-only wallet balance
   - Cotal -- `cotal send`, real local mesh publish
   (Mitosis memory write happens separately, from the orchestrating agent,
   once this script's real results are in hand -- see README note at bottom.)
@@ -116,7 +115,7 @@ def main():
     })
     print()
 
-    # --- Act 4: compliance (buyer proof, read-only) + real AIsa balance read ---
+    # --- Act 4: compliance (buyer proof, read-only) ---
     print("[compliance] minting read-only buyer credential + pulling proof...")
     buyer_cred, status = http("POST", "/v1/credentials", {"subject": "ev-buyer-auditor", "scopes": ["climatico:read"]})
     buyer_token = buyer_cred["token"]
@@ -124,13 +123,9 @@ def main():
     n = len(receipts.get("receipts", []))
     print(f"  buyer verified {n} Orepath receipts (read-only token, transact scope: none)")
 
-    print("[compliance] reading real AIsa wallet balance...")
-    aisa, status = http("GET", "/v1/aisa/balance", token=token)
-    print(f"  AIsa balance read: {aisa.get('balance')}")
-
     cotal_send("orepath.compliance", {
         "agent": "compliance", "kind": "attribution_proof",
-        "verifiedReceiptCount": n, "buyerScopes": buyer_cred.get("scopes"), "aisaBalance": aisa.get("balance"),
+        "verifiedReceiptCount": n, "buyerScopes": buyer_cred.get("scopes"),
     })
 
     print("\n=== Done. `cotal console --space climatico` to watch all 8 agents live. ===")

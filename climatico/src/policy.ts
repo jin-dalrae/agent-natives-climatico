@@ -8,6 +8,8 @@ import {
 } from "./types";
 import { hasScope } from "./auth";
 
+const FREIGHT_MODES = ["sea", "air", "road", "rail"] as const;
+
 export function isIntent(value: string): value is Intent {
   return (INTENTS as readonly string[]).includes(value);
 }
@@ -20,7 +22,7 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     return {
       allow: false,
       code: "intent_required",
-      reason: "Climatico only commits named climate actions: brief, watch, offset, assess, abate, switch, refund.",
+      reason: "Climatico only commits named climate actions: brief, watch, offset, assess, abate, switch, refund, freight.",
     };
   }
 
@@ -36,7 +38,7 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     return {
       allow: false,
       code: "unknown_intent",
-      reason: `Unknown intent '${intent}'. Allowed writes: brief, watch, offset, assess, abate, switch, refund.`,
+      reason: `Unknown intent '${intent}'. Allowed writes: brief, watch, offset, assess, abate, switch, refund, freight.`,
     };
   }
 
@@ -97,6 +99,31 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
         allow: false,
         code: "prior_amount_required",
         reason: "refund requires priorAmountCents > 0. How much was the prior offset? Pass it so we can compute the delta.",
+      };
+    }
+  }
+
+  if (intent === "freight") {
+    const mode = (input.freightMode ?? "").trim().toLowerCase();
+    if (!(FREIGHT_MODES as readonly string[]).includes(mode)) {
+      return {
+        allow: false,
+        code: "freight_mode_required",
+        reason: `freight requires freightMode: one of ${FREIGHT_MODES.join(", ")}.`,
+      };
+    }
+    if (!Number.isFinite(input.weightKg) || (input.weightKg ?? 0) <= 0) {
+      return {
+        allow: false,
+        code: "weight_required",
+        reason: "freight requires weightKg > 0 — the shipment weight. This is a real booking, not an estimate.",
+      };
+    }
+    if (!Number.isFinite(input.distanceKm) || (input.distanceKm ?? 0) <= 0) {
+      return {
+        allow: false,
+        code: "distance_required",
+        reason: "freight requires distanceKm > 0 — the leg distance.",
       };
     }
   }

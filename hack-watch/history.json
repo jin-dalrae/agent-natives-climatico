@@ -935,5 +935,83 @@
     "to": 17
    }
   ]
+ },
+ {
+  "at": "2026-08-27T21:59:38.278909+00:00",
+  "at_pdt": "2026-08-27 14:59:38 PDT",
+  "changes": [
+   {
+    "field": "submission",
+    "label": "Your submission",
+    "from": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "Agent-native climate action desk. A stranger agent discovers /ai-agent.json, mints a scoped bearer, and completes a write. Internal fleet ingest\u2192audit\u2192settle leaves durable Cotal-shaped handoffs. Refusals persist. Tavily grounds audits. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": false,
+     "updated_at": "2026-08-27T01:13:29.254Z"
+    },
+    "to": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "AI agents that measure a company's environmental impact \u2014 today and in the future. It breaks the impact down by business area (cloud compute, shipping, travel) and projects how it grows over time. Then it works to reduce it: running calculations, flagging hotspots, researching greener alternatives, and handling offset payments \u2014 all through agents that can act without a human in the loop. 8 agents: Ingests, Audit (Tavily), Settle, Scheduler (cron), Report builder, Orepath compute-watcher (DO alarm), 3rd-party Provider, Clerk (AI chat). CLI included. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "/ai-agent.json, /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs, /v1/report, /v1/agents/orepath, /v1/agents/provider, /v1/memory. Internal: ingest\u2192audit\u2192settle across Tavily + Workers AI + Durable Objects + own Cotal mesh + Cortex memory. CLI: climatico.sh.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": false,
+     "updated_at": "2026-08-27T20:22:44.956Z"
+    }
+   },
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 17,
+    "to": 27
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 9,
+    "to": 15
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Gatekeeper V2",
+     "Motel4",
+     "Physical Capability Cloud",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "attest",
+     "finddomain"
+    ],
+    "to": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Gatekeeper V2",
+     "Global Blocks",
+     "LetEveryoneIn",
+     "Motel4",
+     "Physical Capability Cloud",
+     "SELAT",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "The Deal Room",
+     "attest",
+     "finddomain",
+     "nolim",
+     "onRun"
+    ]
+   }
+  ]
  }
 ]

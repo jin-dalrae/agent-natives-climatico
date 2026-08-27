@@ -22,5 +22,3 @@ Track to declare in the build plan: **Internal** (coordination + work across Tav
 Do not describe carbon accounting in `agent_surface`. Name the files.
 
 Cotal $300 = best **use of Cotal**, not first place. After submit: `cotal up -f cotal.yaml` or join https://hack.cotal.ai (David + Sven). Optional `COTAL_WEBHOOK_URL` mirrors each handoff onto the mesh.
-
-Runtype $500 = build **on Runtype**, not a mention in the README. Skip unless you actually deploy a Runtype flow.

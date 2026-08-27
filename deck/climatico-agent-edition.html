@@ -749,15 +749,6 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <h3>Tenki</h3>
         <p class="sub">Agent test environments</p>
       </div>
-      <div class="card" style="border-color: var(--accent);">
-        <span class="chip info">Deploy</span>
-        <h3>Runtype</h3>
-        <p class="sub">A2A agent surface + Exa for best use</p>
-      </div>
-    </div>
-    <div class="card" style="margin-top:14px;">
-      <span class="kicker">Best use · Runtype orchestrates</span>
-      <p><b>Runtype flow:</b> Exa researches a shipping route (Shenzhen → Oakland) → pipes to Climatico → Climatico files <span class="inline">assess</span> + returns receipt → Runtype displays result. One prompt, two services, real data.</p>
     </div>
   </div>
 </section>
@@ -807,62 +798,6 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <p style="margin-top:12px;"><b>Why it stops there:</b> M2M settlement is a real, automated transfer of real money, with no confirmation checkpoint in the loop. That write needs a specific, bounded, human-confirmed instruction &mdash; a standing API key is not that.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="slide" id="slide-runtype" data-name="Runtype — the real path">
-  <div class="inner wide">
-    <div class="eyebrow">Best use of Runtype &middot; a real key, a real agent, a real egress block</div>
-    <h2 class="slide-title">Nate confirmed the track doesn't require building on Runtype. We have a key anyway &mdash; and it goes through us as enrichment.</h2>
-    <p class="lede">A real Runtype API key. A real Secret, Tool (<code>file_climate_action</code>) and Agent (<code>claude-sonnet-5</code>) live on <code>api.runtype.com/v1</code>. The capability-to-tool link is fixed (the earlier <code>toolId: null</code> orphan was rebuilt via POST <code>/v1/agents/{id}/capabilities</code> &mdash; Runtype's spec has no PATCH/PUT on agent capabilities, only POST/DELETE, confirmed in the live OpenAPI). <code>runtype.ts</code> is wired into the scheduler as enrichment: audit/suggest/forecast get a Runtype-agent perspective. The Climatico Worker itself returns 201 + real receipt on direct call &mdash; what's blocked is Runtype's tool-runtime egress, not our code.</p>
-    <figure>
-      <svg viewBox="0 0 1020 220" role="img" aria-label="Runtype agent (claude-sonnet-5) calls our scheduler enrichment, which calls Tavily and Workers AI. Tool-runtime egress is the only thing between the agent and a real receipt.">
-        <g font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="currentColor" opacity=".55">
-          <text x="8" y="18">RUNTYPE &middot; REAL</text>
-          <text x="500" y="18">CLIMATICO &middot; ENRICHMENT</text>
-        </g>
-
-        <rect x="8" y="40" width="190" height="90" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
-        <text x="103" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">Agent</text>
-        <text x="103" y="82" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">claude-sonnet-5</text>
-        <text x="103" y="96" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">api.runtype.com/v1</text>
-        <text x="103" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">live, real</text>
-
-        <path d="M198,85 H236" stroke="currentColor" fill="none" stroke-width="1.25"/>
-
-        <rect x="238" y="40" width="200" height="90" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
-        <text x="338" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">runtype.ts</text>
-        <text x="338" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">audit / suggest</text>
-        <text x="338" y="98" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">forecast</text>
-        <text x="338" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">wired, real</text>
-
-        <rect x="478" y="40" width="180" height="90" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
-        <text x="568" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">Workers AI</text>
-        <text x="568" y="82" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">kimi-k2.6</text>
-        <text x="568" y="96" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">summarizer</text>
-        <text x="568" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">real, shipped</text>
-
-        <rect x="688" y="40" width="150" height="90" fill="none" stroke="var(--refuse)" stroke-width="1.5" stroke-dasharray="4 3"/>
-        <text x="763" y="64" text-anchor="middle" font-size="12" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">Tool fetch</text>
-        <text x="763" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">POST /v1/actions</text>
-        <text x="763" y="102" text-anchor="middle" font-size="9.5" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">non-JSON &quot;Network ac…&quot;</text>
-        <text x="763" y="118" text-anchor="middle" font-size="9" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">egress block</text>
-
-        <path d="M438,85 H476" stroke="currentColor" fill="none" stroke-width="1.25"/>
-        <path d="M658,85 H686" stroke="currentColor" fill="none" stroke-width="1.25"/>
-
-        <line x1="680" y1="20" x2="680" y2="200" stroke="var(--refuse)" stroke-width="1.25" stroke-dasharray="5 4"/>
-
-        <rect x="858" y="40" width="150" height="90" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-        <text x="933" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">Receipt</text>
-        <text x="933" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".7" font-family="IBM Plex Mono, monospace">committed or</text>
-        <text x="933" y="102" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".7" font-family="IBM Plex Mono, monospace">refused</text>
-        <text x="933" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">real, shipped</text>
-
-        <path d="M838,85 H856" stroke="currentColor" fill="none" stroke-dasharray="3 3"/>
-      </svg>
-      <figcaption>The bounty is "best use of Runtype," and we did build on it &mdash; the agent exists, the tool fires, the capability → tool link works. The only thing between the Runtype tool and a real receipt is their tool-runtime's outbound network policy, not our Worker.</figcaption>
-    </figure>
   </div>
 </section>
 

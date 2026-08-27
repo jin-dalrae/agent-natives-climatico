@@ -11,7 +11,3 @@ TOKEN_SECRET=replace-with-openssl-rand-hex-32
 # Optional. Without it, POST /v1/sandbox/verify refuses — no key, no sandbox.
 # tenki.cloud/events/agent-native → $100 auto-applies
 # TENKI_API_KEY=tk_...
-
-# Optional. Only used for GET /v1/aisa/balance — a free, read-only wallet check.
-# This desk never calls AIsa's paid or M2M-payment endpoints.
-# AISA_API_KEY=sk-aisa-...

@@ -1,5 +1,4 @@
 import { routeAgentRequest } from "agents";
-import { getAisaBalance } from "./aisa";
 import { handleA2A } from "./a2a";
 import { bearerFrom, type CredentialGrant } from "./auth";
 import {
@@ -19,7 +18,6 @@ import { buildReport } from "./report";
 import { getOrepathAgent, OrepathAgent } from "./orepath-agent";
 import { getProviderAgent, ProviderAgent } from "./provider";
 import { cortexRemember, cortexRecall } from "./cortex";
-import { runtypeAnalysis } from "./runtype";
 import { runAutoAssessment, type FolderScan } from "./ingest";
 
 export { Clerk, Ledger, OrepathAgent, ProviderAgent };
@@ -44,7 +42,7 @@ export default {
     }
   },
 
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+  async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
     const ledger = await getLedger(env);
 
     const minted = await ledger.mintCredential({
@@ -81,10 +79,7 @@ export default {
       }
     })());
 
-    // 3. Runtype analysis (enrichment)
-    ctx.waitUntil(runtypeAnalysis(env, "audit", { location: loc, kg: run.audit?.kgCO2e, spend }).catch(() => null));
-
-    // 4. Cortex memory (store fleet run summary)
+    // 3. Cortex memory (store fleet run summary)
     ctx.waitUntil(cortexRemember(env, "fleet-runs",
       `Fleet run ${run.id.slice(0,8)}: $${spend} at ${loc}, ${run.audit?.kgCO2e || '?'}kg, status ${run.status}`
     ).catch(() => null));
@@ -216,6 +211,9 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       newSolution?: string;
       priorReceiptId?: string;
       priorAmountCents?: number;
+      freightMode?: string;
+      weightKg?: number;
+      distanceKm?: number;
     }>(request)) ?? {};
     const ledger = await getLedger(env);
     const receipt = await ledger.runAction(
@@ -229,6 +227,9 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
         newSolution: body.newSolution,
         priorReceiptId: body.priorReceiptId,
         priorAmountCents: body.priorAmountCents,
+        freightMode: body.freightMode,
+        weightKg: body.weightKg,
+        distanceKm: body.distanceKm,
       },
       principal,
     );
@@ -289,13 +290,6 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     return json(request, { checks: await ledger.listSandboxChecks(10) });
   }
 
-  if (path === "/v1/aisa/balance" && request.method === "GET") {
-    const principal = await principalOr401(request, env);
-    if (principal instanceof Response) return principal;
-    const balance = await getAisaBalance(env);
-    return json(request, { balance }, "error" in balance ? 422 : 200);
-  }
-
   if (path === "/v1/report" && request.method === "GET") {
     const ledger = await getLedger(env);
     const runs = await ledger.listFleetRuns(10);
@@ -312,7 +306,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       watches: d.watches,
     });
 
-    // Enrich with Cortex memory and Runtype analysis if available
+    // Enrich with Cortex memory
     ctx.waitUntil(enrichReport(env));
 
     return json(request, report);
@@ -391,7 +385,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
   if (path === "/v1/memory" && request.method === "POST") {
     const principal = await principalOr401(request, env);
     if (principal instanceof Response) return principal;
-    const body = (await readJson<{ namespace: string; content: string }>(request)) ?? {};
+    const body = (await readJson<{ namespace: string; content: string }>(request)) ?? { namespace: "", content: "" };
     const id = await cortexRemember(env, body.namespace || "general", body.content, { subject: principal.subject });
     return json(request, { ok: !!id, memoryId: id || null }, id ? 201 : 422);
   }
@@ -406,7 +400,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
   if (path === "/v1/connect" && request.method === "POST") {
     const principal = await principalOr401(request, env);
     if (principal instanceof Response) return principal;
-    const body = (await readJson<{ path: string; signals: Array<{ kind: string; class: string; evidence: string; confidence: number; spendUsd?: number }> }>(request)) ?? {};
+    const body = (await readJson<{ path: string; signals: Array<{ kind: string; class: string; evidence: string; confidence: number; spendUsd?: number }> }>(request)) ?? { path: "", signals: [] };
     if (!body.path || !body.signals) {
       return json(request, { error: "missing_path_or_signals" }, 422);
     }
@@ -468,15 +462,6 @@ async function enrichReport(env: Env) {
     const memory = await cortexRecall(env, "fleet-runs", 5);
     if (memory.length > 0) {
       console.log(JSON.stringify({ message: "cortex memory enriched", count: memory.length }));
-    }
-    const analysis = await runtypeAnalysis(env, "forecast", {
-      location: "SJC",
-      kg: 189,
-      spend: 420,
-      trend: "increasing cloud spend",
-    });
-    if (analysis) {
-      console.log(JSON.stringify({ message: "runtype analysis complete", preview: analysis.slice(0, 100) }));
     }
   } catch (e) {
     // enrichment is best-effort

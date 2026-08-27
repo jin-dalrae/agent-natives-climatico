@@ -4,6 +4,14 @@ import { gatherEvidence, gatherClassEvidence, isGroundableClass } from "./tavily
 import { workersGroundingSummary } from "./nebius";
 import { impactForSource, ABATEMENT } from "./impact";
 
+/** Heuristic freight intensity, kg CO2e per tonne-km, cited against live web evidence — not GHG Protocol/GLEC precision. */
+const FREIGHT_KG_PER_TONNE_KM: Record<string, number> = {
+  air: 0.6,
+  road: 0.1,
+  rail: 0.03,
+  sea: 0.015,
+};
+
 export type GraphContext = {
   env: Env;
   now: number;
@@ -128,6 +136,35 @@ export async function runActionGraph(
         snippet: `Claiming back ${refundCents}¢ against prior receipt ${priorId.slice(0, 8)} (${priorAmount}¢) at ${location}. New commitment: ${newAmount}¢. Net reduction: ${refundCents}¢.`,
       },
     ];
+  } else if (intent === "freight") {
+    const mode = (input.freightMode ?? "").trim().toLowerCase();
+    const weightKg = input.weightKg ?? 0;
+    const distanceKm = input.distanceKm ?? 0;
+    const gathered = await gatherClassEvidence(ctx.env, "logistics");
+    if (!gathered.grounded) {
+      return {
+        ...base,
+        status: "refused",
+        refusalCode: "ungrounded",
+        refusalReason:
+          "Climatico will not score a freight leg without live logistics-factor evidence. Live web evidence (Tavily) was unavailable or empty. It stays modeled.",
+        evidence: [],
+      };
+    }
+    const factor = FREIGHT_KG_PER_TONNE_KM[mode];
+    const tonnes = weightKg / 1000;
+    const kgCO2e = Math.round(factor * tonnes * distanceKm * 10) / 10;
+    evidence = [
+      ...gathered.evidence,
+      {
+        title: `Freight leg scored · ${mode} · ${tonnes}t × ${distanceKm}km`,
+        url: "ledger://freight/scored",
+        snippet: `Heuristic ${factor} kg CO2e/tonne-km (${mode}), cited against live web evidence. ${tonnes} t over ${distanceKm} km → ${kgCO2e} kg CO2e. This is the PO/freight write: a real booking, not a stubbed LCA.`,
+      },
+    ];
+    if (!base.note) {
+      base.note = `freight: ${mode} · ${tonnes}t × ${distanceKm}km → ${kgCO2e} kg CO2e`;
+    }
   }
 
   return {

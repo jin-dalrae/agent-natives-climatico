@@ -1,7 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { createMcpHandler } from "agents/mcp/server";
 import { z } from "zod";
-import { getAisaBalance } from "./aisa";
 import { hasScope } from "./auth";
 import { getLedger } from "./ledger";
 import type { Principal } from "./types";
@@ -192,6 +191,41 @@ export function mcpHandler(env: Env, principal: Principal) {
       );
 
       server.registerTool(
+        "file_freight",
+        {
+          description:
+            "File a real freight leg (PO / booking) and score it: mode, weight, distance → kg CO2e. Refuses if live logistics-factor evidence (Tavily) can't ground the heuristic. This is the PO/freight write path — a real booking, not a stubbed LCA. Requires climatico:transact.",
+          inputSchema: {
+            location: z.string().describe("Origin, destination, or lane — e.g. 'Shenzhen → Oakland'."),
+            freightMode: z.enum(["sea", "air", "road", "rail"]).describe("Transport mode for this leg."),
+            weightKg: z.number().positive().describe("Shipment weight in kg."),
+            distanceKm: z.number().positive().describe("Leg distance in km."),
+            note: z.string().optional().describe("Free-text context, e.g. PO number."),
+            idempotencyKey: z.string().optional().describe("Replay-safe key."),
+          },
+        },
+        async (args) => {
+          if (!hasScope(principal, "climatico:transact")) {
+            return text({ ok: false, refused: true, code: "missing_scope" }, true);
+          }
+          const ledger = await getLedger(env);
+          const receipt = await ledger.runAction(
+            {
+              intent: "freight",
+              location: args.location,
+              freightMode: args.freightMode,
+              weightKg: args.weightKg,
+              distanceKm: args.distanceKm,
+              note: args.note,
+              idempotencyKey: args.idempotencyKey,
+            },
+            principal,
+          );
+          return text({ ok: receipt.status === "committed", refused: receipt.status === "refused", receipt });
+        },
+      );
+
+      server.registerTool(
         "plan_abatement",
         {
           description:
@@ -293,16 +327,6 @@ export function mcpHandler(env: Env, principal: Principal) {
           const check = await ledger.completeSandboxCheck(sessionId, output, principal);
           return text(check, "error" in check);
         },
-      );
-
-      server.registerTool(
-        "check_aisa_balance",
-        {
-          description:
-            "Read AIsa's real wallet balance (GET /v1/credits/balance) — a free, read-only check, not a payment. This desk does not execute AIsa's machine-to-machine payment rail; that write is a deliberate non-goal without a specific, human-confirmed, bounded instruction.",
-          inputSchema: {},
-        },
-        async () => text(await getAisaBalance(env)),
       );
 
       server.registerTool(

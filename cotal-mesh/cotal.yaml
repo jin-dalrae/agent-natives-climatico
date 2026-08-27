@@ -18,7 +18,7 @@ agents:
   settle:
     instructions: >
       You commit offsets only when audit says over_budget. Climatico ledger is the
-      settlement of record. AIsa is optional M2M rail if credits are applied.
+      settlement of record.
 
   # --- Orepath side: the customer, an agent-native company in its own right ---
   discovery:
