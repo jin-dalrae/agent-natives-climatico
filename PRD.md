@@ -176,7 +176,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 
 | Item | Kind | How Climatico treats it |
 | --- | --- | --- |
-| Runtype **$500** | Best use of Runtype | **In progress.** Real API key obtained; a real Secret, Tool (`file_climate_action`, actually calls our `/v1/actions`), and Agent (`claude-sonnet-5`) exist live on `api.runtype.com`, created via their own API, not the dashboard. The agent reasons correctly about calling the tool but the tool-calling link isn't firing yet (`toolId` resolves `null`) — not faked past. `/.well-known/agent-card.json` is generic A2A, not Runtype-specific. |
+| Runtype **$500** | Best use of Runtype | **Not competing.** Nate confirmed on site (12:44 PDT) that Runtype track does not require building on their platform. API key obtained, real Secret/Tool/Agent created on api.runtype.com but tool-calling never resolved. [persona-chat.dev](https://persona-chat.dev) presented as a reference. |
 | Cotal **$300** | Best use of Cotal | **Own `climatico` mesh is live** (8 agents, manager/delivery/NATS running). Hack.cotal.ai event mesh **not joined** — device-code login didn't grant publish rights. Same blocker as before. David + Sven on site if prize eligibility depends on "hack" specifically. |
 | Sandbox VR | Experience, 1/track | Irrelevant to product |
 | HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
@@ -185,9 +185,9 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | AIsa **$100** | Every builder | Not yet claimed — no self-serve page, give an organiser your email. Key is live for a free balance read only; M2M settlement not wired. |
 | Nebius **$75** | Builder Program | Clerk uses Workers AI; Nebius if the model is too small. |
 | Tavily **9,000** (8k + 1k free) | Self-serve `26HACK` | **On the write path.** Two days only. |
-| Runtype **$50** | Show-up | Ask. Separate from $500 bounty. |
+| Runtype **$50** | Show-up | Ask Nate or Nathan. Separate from $500 bounty. |
 
-**Sponsor challenge (only one posted):** Best use of Runtype — agents, flows, evals, auth/multi-tenancy already on their platform. Mentioning Runtype in a README does not win.
+**Sponsor challenge (only one posted):** Best use of Runtype — Nate Stewart presented the Runtype track and [persona-chat.dev](https://persona-chat.dev) as a reference implementation. Mentioning Runtype in a README does not win.
 
 ---
 
@@ -202,7 +202,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | AIsa | Real balance read only | **Partial** — `GET /v1/aisa/balance` is real; the M2M payment rail itself is **not** in the write path |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
 | Nebius | Token Factory LLM | **No** — grounding summaries moved to Workers AI (`workersGroundingSummary()`); no external Nebius key used |
-| Runtype | Agent → Capability → MCP Surface | **Partial** — real Agent/Tool/Secret created via their API, agent runs and reasons about the tool, tool-calling itself not firing yet |
+| Runtype | Agent → Capability → MCP Surface | **Not competing.** Nate confirmed track doesn't require building on Runtype. Tooling experimented with but never resolved. [persona-chat.dev](https://persona-chat.dev) shown as reference. |
 | Mitosis | Cortex memory (`cortex_remember`/`cortex_recall`) | **Partial** — real, verified round-trip (write + recall, real `universal_id`); it's the team's own agent-memory layer via MCP, not called from inside the Climatico Worker's write path |
 | Hacker Bob, HUD | Credits / prizes / booths | **No** until a real call exists |
 
@@ -216,7 +216,7 @@ Stack tab and inbox must keep this distinction. Decorative integrations fail the
 - Handprint / net-zero marketing claims  
 - Multi-tenant SaaS, document upload of BOMs  
 - Overnight jobs (venue forbids overnight; DO hibernation is the stand-in)  
-- Building **on** Runtype unless we actually do  
+- Building **on** Runtype unless we actually do — Nate confirmed track doesn't require it  
 
 ---
 
