@@ -1,4 +1,4 @@
-# Cotal mesh for the Climatico fleet. Launch: cotal up -f cotal.yaml
+# Cotal mesh for the Climatico fleet + Orepath's own agents. Launch: cotal up -f cotal.yaml
 # Event mesh: https://hack.cotal.ai  (David + Sven on site; $300 is best-use prize, not credits)
 apiVersion: cotal/v1
 kind: Mesh
@@ -6,6 +6,7 @@ space: climatico
 agent: hermes
 
 agents:
+  # --- Climatico side: the attribution service ---
   ingest:
     instructions: >
       You parse usage spikes (cloud, SaaS, travel) into a location + spendUsd event.
@@ -19,16 +20,59 @@ agents:
       You commit offsets only when audit says over_budget. Climatico ledger is the
       settlement of record. AIsa is optional M2M rail if credits are applied.
 
+  # --- Orepath side: the customer, an agent-native company in its own right ---
+  discovery:
+    instructions: >
+      You are Orepath's own discovery agent. You scan Climatico's
+      /.well-known/agent-card.json to find what protocols and scopes Climatico
+      exposes, then hand off to procurement. Post what you found on orepath.onboarding.
+  procurement:
+    instructions: >
+      You are Orepath's procurement agent. You request a scoped machine bearer
+      token from Climatico's POST /v1/credentials for Orepath's tracer fleet
+      (climatico:read, climatico:transact). Post the minted scope + ceiling on
+      orepath.onboarding. Never request climatico:admin.
+  tracer:
+    instructions: >
+      You are Orepath's own compute-tracer agent, watching Orepath's own cloud
+      spend (not customers' freight). When you see a spike, file it with
+      Climatico's run_fleet using the token procurement minted. Post the real
+      result (grounded kgCO2e, receipt) on fleet.ingest.
+  policy_test:
+    instructions: >
+      You are Orepath's internal red-team agent. You periodically attempt a
+      forbidden claim (e.g. "greenwash") against Climatico's /v1/actions to
+      verify Climatico's policy engine actually refuses it and stores the
+      refusal as a receipt. Post the refusal receipt on orepath.policy. If
+      Climatico ever commits a forbidden intent instead of refusing it, that
+      is a critical failure - report it loudly.
+  compliance:
+    instructions: >
+      You are Orepath's compliance agent. When a buyer (e.g. an EV OEM) asks
+      for proof of Orepath's attribution, you mint a read-only credential for
+      the buyer and pull Climatico's receipts to prove the ledger. Post the
+      verified receipt count and evidence trail on orepath.compliance. You
+      never get transact scope for a buyer token.
+
 channels:
   general:
-    subscribe: [ingest, audit, settle]
-    allowPublish: [ingest, audit, settle]
+    subscribe: [ingest, audit, settle, discovery, procurement, tracer, policy_test, compliance]
+    allowPublish: [ingest, audit, settle, discovery, procurement, tracer, policy_test, compliance]
   fleet.ingest:
-    subscribe: [ingest, audit]
-    allowPublish: [ingest]
+    subscribe: [ingest, audit, tracer]
+    allowPublish: [ingest, tracer]
   fleet.audit:
     subscribe: [audit, settle]
     allowPublish: [audit]
   fleet.settle:
     subscribe: [settle, ingest]
     allowPublish: [settle]
+  orepath.onboarding:
+    subscribe: [discovery, procurement, tracer]
+    allowPublish: [discovery, procurement]
+  orepath.policy:
+    subscribe: [policy_test, audit, settle]
+    allowPublish: [policy_test]
+  orepath.compliance:
+    subscribe: [compliance, settle]
+    allowPublish: [compliance]

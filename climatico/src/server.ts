@@ -123,7 +123,8 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     const principal = await principalOr401(request, env);
     if (principal instanceof Response) return principal;
     const ledger = await getLedger(env);
-    return json(request, { receipts: await ledger.listReceipts(20) });
+    const subject = url.searchParams.get("subject") ?? undefined;
+    return json(request, { receipts: await ledger.listReceipts(20, subject) });
   }
 
   if (path.startsWith("/v1/receipts/") && request.method === "GET") {

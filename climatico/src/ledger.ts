@@ -394,10 +394,15 @@ export class Ledger extends Agent<Env, LedgerState> {
     return rows[0] ? this.toReceipt(rows[0]) : null;
   }
 
-  listReceipts(limit = 20): Receipt[] {
-    const rows = [...this.sql<ReceiptRow>`
-      SELECT * FROM receipts ORDER BY created_at DESC LIMIT ${Math.min(limit, 50)}
-    `];
+  listReceipts(limit = 20, subject?: string): Receipt[] {
+    const rows = subject
+      ? [...this.sql<ReceiptRow>`
+          SELECT * FROM receipts WHERE subject = ${subject}
+          ORDER BY created_at DESC LIMIT ${Math.min(limit, 50)}
+        `]
+      : [...this.sql<ReceiptRow>`
+          SELECT * FROM receipts ORDER BY created_at DESC LIMIT ${Math.min(limit, 50)}
+        `];
     return rows.map((row) => this.toReceipt(row));
   }
 
