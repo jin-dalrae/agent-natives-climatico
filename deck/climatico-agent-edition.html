@@ -895,6 +895,41 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   </div>
 </section>
 
+<section class="slide" id="slide-privacy" data-name="Privacy">
+  <div class="inner wide">
+    <div class="eyebrow">Privacy &middot; signal-only, like Salesforce / Google / Workday</div>
+    <h2 class="slide-title">Your business information is very secure in Climatico.</h2>
+    <p class="lede">When <code>climatico.sh connect ~/my-startup</code> runs, it scans the folder <em>on the startup's machine</em> and extracts only derived signals. The server never sees file contents. The CLI prints the exact JSON payload before sending and supports <code>--dry-run</code> to inspect without transmitting.</p>
+    <div class="grid g2">
+      <div class="card" style="border-color: var(--ok);">
+        <span class="chip ok" style="margin-bottom:8px;">Stays on your machine</span>
+        <ul class="ticks">
+          <li><b>File contents</b> of <code>package.json</code>, <code>wrangler.*</code>, <code>README.md</code>, <code>.env</code>, source code</li>
+          <li><b>Any other file</b> in the folder</li>
+          <li>Your data, your records, your secrets</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip acc" style="margin-bottom:8px;">Leaves (small JSON only)</span>
+        <ul class="ticks">
+          <li><b>Vendor names</b> from deps: <code>"stripe"</code>, <code>"datadog"</code></li>
+          <li><b>Cloud provider</b> from config: <code>"Cloudflare Workers"</code></li>
+          <li><b>README keyword hits</b>: <code>"mentions shipping"</code></li>
+          <li><b>kind, class, confidence</b> &mdash; no values, no snippets</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <span class="kicker">Why this is the same model as the SaaS tools you already trust</span>
+      <p><b>Salesforce</b> reads your org's metadata, not your records. &nbsp; <b>Google</b> reads your ad counts, not your emails. &nbsp; <b>Workday</b> reads your headcount, not your salary data. &nbsp; <b>Climatico</b> reads your signals, not your source. We do not store your files. We do not train on them. We do not send them to third parties.</p>
+    </div>
+    <div class="card" style="margin-top:14px;border-color: var(--warn);">
+      <span class="kicker">This is a binding constraint, not a feature</span>
+      <p>The CLI source is auditable. The server's <code>/v1/connect</code> handler does not accept a <code>file_contents</code> or <code>path_contents</code> field &mdash; by design, by contract, by source code. Future data connections (Salesforce, Google billing, Workday) will follow the same pattern: extract rollups locally, send rollups, never records.</p>
+    </div>
+  </div>
+</section>
+
 <section class="slide" id="slide-live" data-name="Verified live">
   <div class="inner wide">
     <div class="eyebrow">No stubs &middot; two_sided_swarm.py against the live Worker</div>

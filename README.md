@@ -296,11 +296,31 @@ export CLIMATICO_TOKEN="<token>"
 ./climatico.sh orepath           # Check Orepath agent status
 ./climatico.sh agents-start      # Start auto-pilot (15 min cycles)
 ./climatico.sh connect ~/my-startup  # Scan folder, auto-assess 7 classes
+./climatico.sh connect ~/my-startup --dry-run  # Show the payload, send nothing
 ./climatico.sh status            # Show connected folders + assessments
 ./climatico.sh receipts          # Recent receipts
 ./climatico.sh handoffs          # Recent handoff log
 ./climatico.sh help              # Full command list
 ```
+
+---
+
+## Privacy — your business data never leaves your machine
+
+Climatico follows the Salesforce / Google / Workday pattern: **we read your metadata, not your records**.
+
+When you run `./climatico.sh connect ~/my-startup`:
+
+| Stays on your machine | Leaves (small JSON payload) |
+| --- | --- |
+| File contents of `package.json`, `wrangler.*`, `README.md`, `.env`, source code | Vendor names from deps (`"stripe"`, `"datadog"`) |
+| Anything else in the folder | Cloud provider from config (`"Cloudflare Workers"`) |
+| | README keyword hits (`"mentions shipping"`) |
+| | Kind, class, confidence — **no values, no snippets** |
+
+The CLI prints the exact JSON payload before sending and supports `--dry-run` to inspect without transmitting. No file content is sent. No file content is stored. The server's `/v1/connect` handler does not accept a `file_contents` field — by design, by contract, by source code.
+
+**This is the binding rule**, not a feature. Auditable in the CLI source. Future data connections (Salesforce, Google billing, Workday) will follow the same model: extract rollups locally, send rollups, never records.
 
 ---
 

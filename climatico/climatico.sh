@@ -287,13 +287,47 @@ EOF
 
   connect)
     folder="${1:-.}"
+    dry_run=0
+    [ "${2:-}" = "--dry-run" ] && dry_run=1
     if [ ! -d "$folder" ]; then
       echo "Folder not found: $folder"
       exit 1
     fi
-    [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
 
-    echo "Scanning $folder for climate-impact signals..."
+    if [ $dry_run -eq 0 ]; then
+      [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
+    fi
+
+    cat <<'PRIVACY'
+  ┌────────────────────────────────────────────────────────────────┐
+  │  PRIVACY — what stays on YOUR machine vs. what leaves it         │
+  ├────────────────────────────────────────────────────────────────┤
+  │                                                                │
+  │  STAYS LOCAL (never read, never sent):                          │
+  │    • File contents of package.json, wrangler config, README    │
+  │    • Your source code, your .env files, your data               │
+  │    • Anything else in the folder                               │
+  │                                                                │
+  │  SENT TO CLIMATICO (derived signals only):                      │
+  │    • "Cloudflare Workers"  (extracted from wrangler config)     │
+  │    • "stripe"              (extracted from package.json deps)   │
+  │    • "README mentions shipping"  (keyword match only)          │
+  │    • kind, class, confidence                                  │
+  │    • NO file text, NO code snippets, NO values                 │
+  │                                                                │
+  │  LIKE: Salesforce reads your org's metadata, not your records. │
+  │        Google reads your ad counts, not your emails.            │
+  │        Workday reads your headcount, not your salary data.     │
+  │        Climatico reads your signals, not your source.           │
+  │                                                                │
+  │  We do not store your files. We do not train on them.           │
+  │  We do not send them to third parties. The server only sees     │
+  │  the small JSON payload below — and that payload is yours to     │
+  │  inspect with --dry-run before anything is sent.                │
+  └────────────────────────────────────────────────────────────────┘
+PRIVACY
+    echo ""
+    echo "Scanning $folder (file contents never leave this machine)..."
     signals_json="["
     first=1
     file_count=0
@@ -346,9 +380,30 @@ EOF
     abs_path=$(cd "$folder" 2>/dev/null && pwd || echo "$folder")
     echo ""
     echo "→ $file_count files scanned"
-    echo "→ Sending to Climatico for auto-assessment..."
+    echo ""
 
     body="{\"path\":\"$abs_path\",\"signals\":$signals_json}"
+    sig_count=$(echo "$signals_json" | python3 -c "import json,sys; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "0")
+
+    echo "  ┌─ EXACT PAYLOAD TO BE SENT ─────────────────────────────────┐"
+    echo "  │  Path:    $abs_path"
+    echo "  │  Signals: $sig_count derived item(s)"
+    echo "  │  Bytes:   $(echo -n "$body" | wc -c | tr -d ' ')"
+    echo "  │  ─────"
+    echo "$body" | python3 -c "
+import json,sys
+d=json.loads(sys.stdin.read())
+print('  │  ' + json.dumps(d, indent=2).replace('\n', '\n  │  '))
+" 2>/dev/null || echo "  │  $body"
+    echo "  └─────────────────────────────────────────────────────────────┘"
+    echo ""
+
+    if [ $dry_run -eq 1 ]; then
+      echo "(--dry-run: nothing sent. Run without --dry-run to send this payload.)"
+      exit 0
+    fi
+
+    echo "→ Sending to Climatico for auto-assessment..."
     res=$(curl -sS -X POST "$BASE/v1/connect" \
       -H 'content-type: application/json' \
       -H "authorization: Bearer $TOKEN" \

@@ -1,6 +1,6 @@
 # Climatico PRD
 
-**Version:** 0.4 · **Date:** 27 August 2026, ~13:30 PDT  
+**Version:** 0.5 · **Date:** 27 August 2026, ~14:30 PDT  
 **Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF  
 **Sources:** shipped Worker (`climatico/`), Agent Edition deck (`deck/climatico-agent-edition.html`), live watch (`http://127.0.0.1:8791/hackathon-watch.html` / Immersive Commons page poll 14:46 PDT)
 
@@ -190,6 +190,25 @@ Any agent
 **CLI:** `climatico/climatico.sh` — discover, mint, connect, status, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start, agents-stop, dashboard.
 
 **Onboarding flow:** `climatico.sh connect ~/my-startup` scans a folder for climate-impact signals (package.json deps, wrangler config, README keywords), sends them to `/v1/connect`, which derives an auto-assessment for all 7 emission classes via Tavily. The connection persists in a Durable Object table; the background agents (Scheduler, Orepath, Inbox analyst) continue monitoring from there.
+
+---
+
+## 5.1 Privacy model — signal-only, never file contents
+
+Climatico follows the Salesforce / Google / Workday pattern: **we read your metadata, not your records**. The CLI scans a startup's working folder **on the startup's machine** and extracts only derived signals. The server never sees file contents.
+
+| What stays on YOUR machine | What leaves (small JSON payload) |
+| --- | --- |
+| File contents of `package.json`, `wrangler.*`, `README.md`, `.env`, source code | Vendor names from deps (`"stripe"`, `"datadog"`) |
+| Any other file in the folder | Cloud provider from config (`"Cloudflare Workers"`) |
+| | README keyword hits (`"mentions shipping"`) |
+| | Kind, class, confidence — no values, no snippets |
+
+The CLI prints the exact JSON payload before sending, and supports `--dry-run` to inspect without transmitting. No file content is sent. No file content is stored. The server's `ingest.ts` only processes the signals array; it never reads files.
+
+**Data connections (future):** Same model. A Salesforce connection sends org-level rollups (seat count, region) — never individual records. A cloud billing connection sends monthly spend per region — never itemized invoices. The startup decides what to extract locally; the server only sees the extracted rollup.
+
+**This is a binding constraint, not a feature.** The CLI source is auditable; the server's `/v1/connect` handler explicitly does not accept a `file_contents` or `path_contents` field. Any change to this would be a breaking change to the privacy contract.
 
 **Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, AIsa wallet balance readable, Tenki sandbox ready, hotspot alerts from scheduler, abatement suggestions, next actions.
 
