@@ -11,6 +11,7 @@ import {
 } from "./card";
 import { json, publicBase, readJson, unauthorized } from "./http";
 import { Clerk } from "./clerk";
+import { landingPage } from "./landing";
 import { getLedger, Ledger } from "./ledger";
 import { mcpHandler } from "./mcp";
 import { researchAlternatives, summarizeAbatement } from "./abatement";
@@ -103,6 +104,16 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
   const url = new URL(request.url);
   const origin = publicBase(request, env);
   const path = url.pathname.replace(/\/$/, "") || "/";
+
+  if (path === "/" && request.method === "GET") {
+    return new Response(landingPage(), {
+      status: 200,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "public, max-age=60",
+      },
+    });
+  }
 
   if (request.method === "OPTIONS" && path.startsWith("/v1")) {
     return json(request, { ok: true });

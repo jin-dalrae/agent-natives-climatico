@@ -7,7 +7,7 @@ import { OREPATH, OREPATH_GROWTH } from "./insights";
 import type { FleetRun, Handoff, Receipt } from "./types";
 import "./styles.css";
 
-type Tab = "assess" | "grow" | "pipeline" | "swarm" | "impact" | "ledger" | "inbox" | "agent" | "onboard" | "stack";
+type Tab = "assess" | "grow" | "pipeline" | "swarm" | "impact" | "ledger" | "inbox" | "agent";
 const TABS: { id: Tab; label: string }[] = [
   { id: "assess", label: "Assess" },
   { id: "grow", label: "Grow" },
@@ -17,8 +17,6 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "ledger", label: "Ledger & Receipts" },
   { id: "inbox", label: "Inbox" },
   { id: "agent", label: "Agent Clerk" },
-  { id: "onboard", label: "Onboard" },
-  { id: "stack", label: "Sponsor Stack" },
 ];
 
 function tabFromUrl(): Tab {
@@ -1182,14 +1180,12 @@ export function App() {
     ledger: "Receipts & refusals",
     inbox: "Inbox",
     agent: "Ask the clerk",
-    onboard: "Getting started",
-    stack: "Who's actually in the write path",
   };
 
   return (
     <div className={`shell${embedded ? " embed" : ""}`}>
       <header className="top">
-        <a className="brand" href="/">
+        <a className="brand" href="/app">
           <img src="/assets/climatico-logo.svg" alt="Climatico" width="148" height="40" />
           <span className="sub">desk</span>
         </a>
@@ -1216,80 +1212,79 @@ export function App() {
       </header>
 
       <main className="main">
-        <section className="cover">
-          <SponsorPills
-            tavilyKey={ws?.tavilyKey}
-            cotalWebhook={ws?.cotalWebhook}
-          />
-          <p className="kicker">Climatico</p>
-          <h1>{title[tab]}</h1>
-          <p className="lede">
-            A footprint estimate across seven emission classes. Compute is live today, backed by real
-            sources. The rest is modeled until it becomes a write. Try it: mint a credential, then run one
-            of the buttons below.
-          </p>
-          <div className="row">
-            <button type="button" className="primary" disabled={busy} onClick={() => void mint()}>
-              Mint credential
-            </button>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() =>
-                void write("/v1/fleet/run", {
-                  source: "cloud",
-                  location,
-                  spendUsd: 420,
-                  monthlyBudgetKg: 50,
-                  monthToDateKg: 40,
-                })
-              }
-            >
-              Assess a spend spike ($420)
-            </button>
-            <button
-              type="button"
-              className="danger"
-              disabled={busy}
-              onClick={() => void write("/v1/actions", { intent: "greenwash", location })}
-            >
-              Test Forbidden Claim (Greenwash)
-            </button>
-          </div>
-        </section>
+        {tab === "assess" ? (
+          <>
+            <section className="cover">
+              <SponsorPills
+                tavilyKey={ws?.tavilyKey}
+                cotalWebhook={ws?.cotalWebhook}
+              />
+              <p className="kicker">Climatico</p>
+              <h1>{title[tab]}</h1>
+              <p className="lede">Seven emission classes, modeled. File a write and one becomes real.</p>
+              <div className="row">
+                <button type="button" className="primary" disabled={busy} onClick={() => void mint()}>
+                  Mint credential
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() =>
+                    void write("/v1/fleet/run", {
+                      source: "cloud",
+                      location,
+                      spendUsd: 420,
+                      monthlyBudgetKg: 50,
+                      monthToDateKg: 40,
+                    })
+                  }
+                >
+                  Assess a spend spike ($420)
+                </button>
+                <button
+                  type="button"
+                  className="danger"
+                  disabled={busy}
+                  onClick={() => void write("/v1/actions", { intent: "greenwash", location })}
+                >
+                  Test Forbidden Claim (Greenwash)
+                </button>
+              </div>
+            </section>
 
-        <div className="metrics">
-          <div className="metric foot">
-            <div className="k">Modeled EI</div>
-            <div className="v">{modeled || "—"}</div>
-            <div className="d">tCO₂e / year · seven classes</div>
-          </div>
-          <div className="metric hand">
-            <div className="k">Live compute</div>
-            <div className="v">{liveClass ? "LIVE" : "MODELED"}</div>
-            <div className="d">{liveClass?.liveNote ?? "Run a grounded fleet spike"}</div>
-          </div>
-          <div className="metric">
-            <div className="k">Committed</div>
-            <div className="v">{d?.committed ?? 0}</div>
-            <div className="d">writes that landed</div>
-          </div>
-          <div className="metric">
-            <div className="k">Refused</div>
-            <div className="v">{d?.refused ?? 0}</div>
-            <div className="d">receipts that said no</div>
-          </div>
-          <div className="metric">
-            <div className="k">Fleet Runs</div>
-            <div className="v">{d?.fleetRuns ?? 0}</div>
-            <div className="d">Ingest → Audit → Settle</div>
-          </div>
-        </div>
+            <div className="metrics">
+              <div className="metric foot">
+                <div className="k">Modeled EI</div>
+                <div className="v">{modeled || "—"}</div>
+                <div className="d">tCO₂e / year · seven classes</div>
+              </div>
+              <div className="metric hand">
+                <div className="k">Live compute</div>
+                <div className="v">{liveClass ? "LIVE" : "MODELED"}</div>
+                <div className="d">{liveClass?.liveNote ?? "Run a grounded fleet spike"}</div>
+              </div>
+              <div className="metric">
+                <div className="k">Committed</div>
+                <div className="v">{d?.committed ?? 0}</div>
+                <div className="d">writes that landed</div>
+              </div>
+              <div className="metric">
+                <div className="k">Refused</div>
+                <div className="v">{d?.refused ?? 0}</div>
+                <div className="d">receipts that said no</div>
+              </div>
+              <div className="metric">
+                <div className="k">Fleet Runs</div>
+                <div className="v">{d?.fleetRuns ?? 0}</div>
+                <div className="d">Ingest → Audit → Settle</div>
+              </div>
+            </div>
+          </>
+        ) : null}
 
         {tab === "assess" ? (
           <>
             <section className="identity">
-              <img src="/assets/rae.jpg" alt="Rae Jin" width="72" height="72" />
               <div>
                 <div className="name">
                   {story.name} · {story.company}
@@ -1426,8 +1421,8 @@ export function App() {
             <p className="lede">
               CO₂e is the modeled core. Water, air pollution and e-waste are upstream knock-ons, named
               but not scored — Climatico refuses to print a number it can't back. Each row is a business
-              source an agent already touches (a PO, a booking, a port). File an abatement plan with
-              <span className="inline"> intent: abate</span> to record the alternative + modeled projection.
+              source an agent already touches (a PO, a booking, a port). Record a reduction plan for any
+              row below — the alternative, and the modeled projection over the next two years.
             </p>
             <div className="metrics">
               <div className="metric">
@@ -1443,7 +1438,7 @@ export function App() {
                 <div className="v">{ws?.abatement?.quarters?.[4]?.defaultT ?? "—"} t</div>
               </div>
               <div className="metric">
-                <div className="k">Abate plans filed</div>
+                <div className="k">Reduction plans recorded</div>
                 <div className="v">{ws?.abatementPlans ?? 0}</div>
               </div>
             </div>
@@ -1494,7 +1489,7 @@ export function App() {
                           })
                         }
                       >
-                        File abatement
+                        Record this plan
                       </button>
                     </td>
                   </tr>
@@ -1550,59 +1545,6 @@ export function App() {
           </div>
         ) : null}
 
-        {tab === "onboard" ? (
-          <section className="card">
-            <span className="kicker">Getting started</span>
-            <h3>Each level unlocks with a real write, not a checkbox</h3>
-            <div className="steps">
-              {(ws?.maturity ?? []).map((m) => (
-                <div className={`goal-row ${m.done ? "done" : ""}`} key={m.level}>
-                  <div className="step-n">{m.done ? "✓" : `L${m.level}`}</div>
-                  <div>
-                    <b>{m.name}</b>
-                    <p>{m.how}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="row">
-              <button type="button" onClick={() => void mint()}>
-                L1 mint
-              </button>
-              <button
-                type="button"
-                onClick={() => void write("/v1/actions", { intent: "brief", location: "Houston, TX" })}
-              >
-                L2 brief
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  void write("/v1/fleet/run", {
-                    source: "cloud",
-                    location,
-                    spendUsd: 420,
-                    monthlyBudgetKg: 50,
-                    monthToDateKg: 40,
-                  })
-                }
-              >
-                L3–L4 fleet
-              </button>
-              <button
-                className="ghost"
-                type="button"
-                onClick={() => void write("/v1/actions", { intent: "watch", location })}
-              >
-                L5 watch
-              </button>
-            </div>
-          </section>
-        ) : null}
-
-        {tab === "stack" ? (
-          <StackView sponsors={ws?.sponsors ?? []} />
-        ) : null}
       </main>
     </div>
   );
