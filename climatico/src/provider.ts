@@ -52,7 +52,7 @@ export class ProviderAgent extends Agent<Env, { services: string[]; contracts: n
       ok: true,
       opinion: receipt.status === "committed"
         ? `Reviewed receipt ${receipt.id.slice(0, 8)}: ${receipt.amountCents ? `$${receipt.amountCents / 100} at ${receipt.location}. ` : ""}Evidence quality: ${receipt.evidence.length} sources. Recommendation: file a watch to track this location continuously.`
-        : `Reviewed refusal ${receipt.id.slice(0, 8)}: ${receipt.refusalReason || receipt.refusalCode}. Recommendation: address the policy issue before retrying.`,
+        : `Reviewed flag ${receipt.id.slice(0, 8)}: ${receipt.flagReason || receipt.flagCode}. Recommendation: address the policy issue before retrying.`,
     };
   }
 

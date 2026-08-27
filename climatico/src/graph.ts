@@ -47,9 +47,9 @@ export async function runActionGraph(
   if (!decision.allow) {
     return {
       ...base,
-      status: "refused",
-      refusalCode: decision.code,
-      refusalReason: decision.reason,
+      status: "flagged",
+      flagCode: decision.code,
+      flagReason: decision.reason,
       evidence: [],
     };
   }
@@ -60,9 +60,9 @@ export async function runActionGraph(
     if (!gathered.grounded) {
       return {
         ...base,
-        status: "refused",
-        refusalCode: "ungrounded",
-        refusalReason:
+        status: "flagged",
+        flagCode: "ungrounded",
+        flagReason:
           "Climatico will not invent a climate brief. Live web evidence (Tavily) was unavailable or empty. Retry, or file a watch instead.",
         evidence: [],
       };
@@ -77,9 +77,9 @@ export async function runActionGraph(
     if (!gathered.grounded) {
       return {
         ...base,
-        status: "refused",
-        refusalCode: "ungrounded",
-        refusalReason: groundingClass
+        status: "flagged",
+        flagCode: "ungrounded",
+        flagReason: groundingClass
           ? `Climatico will not mark ${classId} as live without a real source. Live web evidence (Tavily) was unavailable or empty. It stays modeled.`
           : "Climatico will not invent a climate brief. Live web evidence (Tavily) was unavailable or empty. Retry, or file a watch instead.",
         evidence: [],
@@ -170,8 +170,8 @@ export async function runActionGraph(
   return {
     ...base,
     status: "committed",
-    refusalCode: null,
-    refusalReason: null,
+    flagCode: null,
+    flagReason: null,
     evidence,
   };
 }

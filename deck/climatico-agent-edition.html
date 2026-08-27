@@ -21,8 +21,8 @@
   --accent-2: #7fb84f;
   --ok: #7ad9a0;
   --ok-bg: rgba(122,217,160,.12);
-  --refuse: #ef6b4a;
-  --refuse-bg: rgba(239,107,74,.13);
+  --flag: #ef6b4a;
+  --flag-bg: rgba(239,107,74,.13);
   --warn: #e8b44c;
   --warn-bg: rgba(232,180,76,.13);
   --shadow: none;
@@ -59,7 +59,7 @@ button {
   cursor: pointer;
 }
 button.ghost { background: transparent; color: var(--ink); }
-button.danger { background: var(--refuse); color: #1a0804; }
+button.danger { background: var(--flag); color: #1a0804; }
 button:disabled { opacity: .45; cursor: not-allowed; }
 button[aria-pressed="true"] { outline: 1px solid var(--accent); }
 a { color: var(--accent); text-underline-offset: 3px; }
@@ -90,7 +90,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   color: var(--muted); margin-top: 8px; white-space: nowrap;
 }
 .live-pill.on { color: var(--ok); }
-.live-pill.off { color: var(--refuse); }
+.live-pill.off { color: var(--flag); }
 
 .deck { margin-left: 88px; scroll-snap-type: y proximity; }
 .slide {
@@ -141,7 +141,7 @@ h2.slide-title { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.12; }
   padding: 2px 7px; font-weight: 600;
 }
 .chip.ok { color: var(--ok); background: var(--ok-bg); }
-.chip.no { color: var(--refuse); background: var(--refuse-bg); }
+.chip.no { color: var(--flag); background: var(--flag-bg); }
 .chip.wa { color: var(--warn); background: var(--warn-bg); }
 .chip.info { color: var(--muted); border: 1px solid var(--line); }
 
@@ -153,7 +153,7 @@ pre {
 pre .c { color: var(--muted); }
 pre .k { color: var(--accent); }
 pre .g { color: var(--ok); }
-pre .r { color: var(--refuse); }
+pre .r { color: var(--flag); }
 code { font-size: .93em; }
 .inline { background: var(--panel-2); border: 1px solid var(--line-2); padding: 1px 5px; }
 
@@ -268,7 +268,7 @@ ul.ticks li b { color: var(--ink); font-weight: 600; }
 }
 .term .out { color: var(--muted); }
 .term .ok { color: var(--ok); }
-.term .err { color: var(--refuse); }
+.term .err { color: var(--flag); }
 .term .cmd { color: var(--accent); }
 
 figure { margin: 16px 0 0; }
@@ -370,7 +370,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div>
         <div class="who-meta">Rae Jin · founder · Orepath · Seed · 14 people in SF</div>
         <p class="lede" style="margin-top:0">Orepath traces battery materials mine → cell for EV buyers. Green on the customer’s chain. Then a cell buyer asked: <em>what’s your company’s impact — not the mines?</em> No answer can block the deal.</p>
-        <p class="lede">The highest-emission activity isn't on a dashboard. It's in a <b>purchase order, a booking, a port record</b>. Those systems are already run by agents. Climatico lets an agent submit real data at that moment — or it refuses and records why, if the claim isn't backed by evidence.</p>
+        <p class="lede">The highest-emission activity isn't on a dashboard. It's in a <b>purchase order, a booking, a port record</b>. Those systems are already run by agents. Climatico lets an agent submit real data at that moment — or it flags and records why, if the claim isn't backed by evidence.</p>
       </div>
     </div>
     <div class="grid g2" style="margin-top:16px;">
@@ -381,7 +381,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
           <li><b>Watch the port</b> — L5. Survives restart. Still modeled tonnes.</li>
           <li><b>File the tracer’s compute</b> — <span class="inline">run_fleet</span> on SJC. The live class.</li>
           <li><b>File the battery freight leg</b> — <span class="inline">freight</span>: mode, weight, distance → real kg CO2e. Always commits, tagged grounded or modeled.</li>
-          <li><b>Refuse a green chain</b> — <span class="inline">greenwash</span> is a receipt, not a marketing line.</li>
+          <li><b>Flag a green chain</b> — <span class="inline">greenwash</span> is a receipt, not a marketing line.</li>
         </ul>
       </div>
       <div class="card">
@@ -478,15 +478,15 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <span class="k">"subject"</span>: <span class="g">"judge-agent"</span>
 }</pre>
       </div>
-      <div class="card" style="border-color: var(--refuse);">
+      <div class="card" style="border-color: var(--flag);">
         <div class="row" style="justify-content:space-between;margin-bottom:12px;">
-          <span class="chip no">refused</span><span class="tag">POST /v1/actions · 422</span>
+          <span class="chip no">flagged</span><span class="tag">POST /v1/actions · 422</span>
         </div>
 <pre><span class="c">greenwash · everywhere</span>
 {
-  <span class="k">"status"</span>: <span class="r">"refused"</span>,
-  <span class="k">"refusalCode"</span>: <span class="r">"forbidden_intent"</span>,
-  <span class="k">"refusalReason"</span>: <span class="r">"the desk does not mint
+  <span class="k">"status"</span>: <span class="r">"flagged"</span>,
+  <span class="k">"flagCode"</span>: <span class="r">"forbidden_intent"</span>,
+  <span class="k">"flagReason"</span>: <span class="r">"the desk does not mint
     unverified claims."</span>
 }</pre>
       </div>
@@ -497,7 +497,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <p><span class="inline">brief</span> <span class="inline">watch</span> <span class="inline">offset</span> <span class="inline">assess</span> <span class="inline">run_fleet</span></p>
       </div>
       <div class="card">
-        <span class="kicker">Refused and stored</span>
+        <span class="kicker">Flagged and stored</span>
         <p><span class="chip no">payout</span> <span class="chip no">greenwash</span> <span class="chip no">exfiltrate</span> <span class="chip no">ungrounded</span> · unknown intent, no location, over ceiling. The policy never runs after the write.</p>
       </div>
     </div>
@@ -558,7 +558,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div class="step">
         <div class="step-n">05</div>
         <div class="step-t">Keep the receipt</div>
-        <div class="step-d">Committed or refused, same shape. Retry with the same <span class="inline">idempotencyKey</span> returns the original row.</div>
+        <div class="step-d">Committed or flagged, same shape. Retry with the same <span class="inline">idempotencyKey</span> returns the original row.</div>
       </div>
     </div>
     <figure>
@@ -610,7 +610,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <div class="inner">
     <div class="eyebrow">Demo · scripts/demo.sh against the live Worker</div>
     <h2 class="slide-title">Point an agent at it. Or press play.</h2>
-    <p class="lede">This is the walkthrough a judge can run without us. It hits the desk at <span class="inline" id="demoBaseLabel">http://127.0.0.1:8787</span> — mint, 401, grounded brief, stored refusal, fleet over budget.</p>
+    <p class="lede">This is the walkthrough a judge can run without us. It hits the desk at <span class="inline" id="demoBaseLabel">http://127.0.0.1:8787</span> — mint, 401, grounded brief, stored flag, fleet over budget.</p>
     <div class="row" style="margin-top:16px;">
       <button type="button" id="playDemo">Play judge demo</button>
       <button type="button" class="ghost" id="stepDemo">One step</button>
@@ -643,12 +643,12 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <rect x="196" y="28" width="230" height="96" fill="none" stroke="currentColor" stroke-width="1.25"/>
         <text x="212" y="52" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">ingest</text>
         <text x="212" y="74" font-size="10.5" fill="currentColor" opacity=".8" font-family="IBM Plex Mono, monospace">spike → location + spend</text>
-        <text x="212" y="94" font-size="10" fill="currentColor" opacity=".55" font-family="IBM Plex Mono, monospace">refuses if no region</text>
+        <text x="212" y="94" font-size="10" fill="currentColor" opacity=".55" font-family="IBM Plex Mono, monospace">flags if no region</text>
         <rect x="466" y="28" width="230" height="96" fill="none" stroke="currentColor" stroke-width="1.25"/>
         <text x="482" y="52" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">audit</text>
         <text x="482" y="74" font-size="10.5" fill="currentColor" opacity=".8" font-family="IBM Plex Mono, monospace">189.0 kg · heuristic 0.45 kg/$</text>
         <text x="482" y="94" font-size="10.5" fill="currentColor" opacity=".8" font-family="IBM Plex Mono, monospace">40 + 189 vs 50 kg → 179 over</text>
-        <text x="482" y="112" font-size="10" fill="currentColor" opacity=".55" font-family="IBM Plex Mono, monospace">refuses if ungrounded</text>
+        <text x="482" y="112" font-size="10" fill="currentColor" opacity=".55" font-family="IBM Plex Mono, monospace">flags if ungrounded</text>
         <rect x="736" y="28" width="230" height="96" fill="none" stroke="currentColor" stroke-width="1.25"/>
         <text x="752" y="52" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">settle</text>
         <text x="752" y="74" font-size="10.5" fill="currentColor" opacity=".8" font-family="IBM Plex Mono, monospace">3 580¢ offset, token-capped</text>
@@ -780,7 +780,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
           </div>
           <div class="step">
             <div class="step-n">04</div>
-            <div class="step-t">Refused if the session isn't ours</div>
+            <div class="step-t">Flagged if the session isn't ours</div>
             <div class="step-d">The reported sessionId is checked against what this ledger actually created, then re-confirmed with Tenki itself. Invented output is a 422.</div>
           </div>
         </div>
@@ -794,7 +794,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <span class="k">"ok"</span>: <span class="g">true</span>,
   <span class="k">"memoryId"</span>: <span class="g">"universal_id..."</span>
 }</pre>
-        <p style="margin-top:12px;"><b>What it's for:</b> enrichment, not the write path itself &mdash; a fleet run commits or refuses on policy and Tavily evidence alone. Cortex is where that history becomes queryable later, by us or another agent.</p>
+        <p style="margin-top:12px;"><b>What it's for:</b> enrichment, not the write path itself &mdash; a fleet run commits or flags on policy and Tavily evidence alone. Cortex is where that history becomes queryable later, by us or another agent.</p>
       </div>
     </div>
   </div>
@@ -814,7 +814,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div class="card" style="border-color: var(--ok);">
         <span class="chip ok" style="margin-bottom:8px;">Service army</span>
         <h3>Climatico: 10 agents in one Worker</h3>
-        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e against live Tavily sources. <b>Settle</b> commits a token-capped offset. <b>Policy</b> refuses forbidden intents &mdash; and records the rejection. <b>Scheduler</b> (cron) runs all three plus Tavily abatement research every 30 min. <b>Abatement researcher</b> + <b>summary writer</b> (Workers AI) find real greener alternatives. <b>Report builder</b> compiles <code>/v1/report</code>. <b>Inbox analyst</b> pushes hotspot alerts. <b>Clerk</b> (Workers AI) answers questions. Every handoff is a row.</p>
+        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e against live Tavily sources. <b>Settle</b> commits a token-capped offset. <b>Policy</b> flags forbidden intents &mdash; and records the rejection. <b>Scheduler</b> (cron) runs all three plus Tavily abatement research every 30 min. <b>Abatement researcher</b> + <b>summary writer</b> (Workers AI) find real greener alternatives. <b>Report builder</b> compiles <code>/v1/report</code>. <b>Inbox analyst</b> pushes hotspot alerts. <b>Clerk</b> (Workers AI) answers questions. Every handoff is a row.</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
         <span class="chip info" style="margin-bottom:8px;">3rd-party + buyer</span>
@@ -884,11 +884,11 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
           <li>Role separation is a factor, not a chatbot paragraph</li>
         </ul>
       </div>
-      <div class="card" style="border-color: var(--refuse);">
-        <span class="kicker">Refused &middot; stored</span>
+      <div class="card" style="border-color: var(--flag);">
+        <span class="kicker">Flagged &middot; stored</span>
         <ul class="ticks">
           <li>Greenwash claimed at &ldquo;Orepath Global Chain&rdquo; <b>intercepted before the write</b></li>
-          <li>Refusal <span class="inline">eac21a5b</span> persisted &mdash; same table as commits</li>
+          <li>Flag <span class="inline">eac21a5b</span> persisted &mdash; same table as commits</li>
           <li>Read-only buyer minted <span class="inline">climatico:read</span> and audited <b>6</b> receipts</li>
         </ul>
       </div>
@@ -901,7 +901,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <div class="inner wide">
     <div class="eyebrow">Modeled impact &amp; abatement &middot; not measured</div>
     <h2 class="slide-title">The footprint behind the business &mdash; and how to run the same business differently.</h2>
-    <p class="lede">Orepath today, modeled: <b style="color:var(--ink)">~37.7 tCO&#8322;e/yr</b> across seven classes. CO&#8322;e is the modeled core. Water, air pollution and e-waste sit upstream and downstream &mdash; labelled here but <b>not yet broken out per class</b>, because Climatico refuses to print a number it can&rsquo;t back up. Alternatives are the same business, run a different way &mdash; each keyed to the business source that drives the tonne.</p>
+    <p class="lede">Orepath today, modeled: <b style="color:var(--ink)">~37.7 tCO&#8322;e/yr</b> across seven classes. CO&#8322;e is the modeled core. Water, air pollution and e-waste sit upstream and downstream &mdash; labelled here but <b>not yet broken out per class</b>, because Climatico won&rsquo;t print a number it can&rsquo;t back up. Alternatives are the same business, run a different way &mdash; each keyed to the business source that drives the tonne.</p>
 
     <div class="grid g4" style="margin-top:16px;">
       <div class="stat"><b>37.7 t</b><span>today &middot; modeled</span></div>
@@ -940,7 +940,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div class="card" style="border-color: var(--warn);">
         <span class="chip wa" style="margin-bottom:8px;">Where we won&rsquo;t fake</span>
         <h3>Water &amp; air rows are upstream, not scored</h3>
-        <p>CO&#8322;e is the modelled and filed core. Water, NOx/PM and e-waste are named as knock-ons &mdash; but the desk refuses to mint a pollution or handprint number it cannot back with evidence.</p>
+        <p>CO&#8322;e is the modelled and filed core. Water, NOx/PM and e-waste are named as knock-ons &mdash; but the desk won&rsquo;t mint a pollution or handprint number it cannot back with evidence.</p>
       </div>
     </div>
   </div>
@@ -997,7 +997,7 @@ npm run demo         <span class="c"># this slide, in a shell</span>
 ./climatico.sh fleet SJC 420   <span class="c"># CLI: 15 commands</span>
 ./climatico.sh orepath         <span class="c"># check Orepath agent</span>
 ./climatico.sh agents-start    <span class="c"># start the auto-pilot</span></pre>
-        <p style="margin-top:12px;">Mint, prove the 401, file a Houston brief, commit an offset, store a greenwash refusal, run the fleet under and over budget. CLI runs the same flows from any terminal.</p>
+        <p style="margin-top:12px;">Mint, prove the 401, file a Houston brief, commit an offset, store a greenwash flag, run the fleet under and over budget. CLI runs the same flows from any terminal.</p>
       </div>
       <div class="card">
         <span class="kicker">Surfaces a probe will find</span>
@@ -1050,11 +1050,11 @@ npm run demo         <span class="c"># this slide, in a shell</span>
   var ws = null;
 
   var CANNED = {
-    dashboard: { committed: 8, refused: 3, watches: 1, fleetRuns: 2 },
+    dashboard: { committed: 8, flagged: 3, watches: 1, fleetRuns: 2 },
     maturity: [
       { level: 0, name: "L0 · estimated", done: true, how: "Seven modeled classes with error bars. Nothing claimed as measured." },
       { level: 1, name: "L1 · credential", done: true, how: "Mint climatico:transact. Scopes freeze. Ceiling 5 000¢." },
-      { level: 2, name: "L2 · grounded write", done: true, how: "File a brief or assess. Tavily must return sources or we refuse." },
+      { level: 2, name: "L2 · grounded write", done: true, how: "File a brief or assess. Tavily must return sources or we flag." },
       { level: 3, name: "L3 · fleet", done: true, how: "run_fleet on a usage spike. Ingest → audit → settle, handoffs stored." },
       { level: 4, name: "L4 · settlement", done: true, how: "Over-budget spike commits an offset receipt, capped at the token." },
       { level: 5, name: "L5 · continuous", done: true, how: "Open a watch on a place. It keeps running even after you close your laptop." }
@@ -1071,12 +1071,12 @@ npm run demo         <span class="c"># this slide, in a shell</span>
     inbox: [
       { from: "audit", channel: "fleet.audit", tone: "wa", title: "SJC is 179 kg over the monthly budget", body: "Compute class scored 189 kgCO2e from $420 spend. Factor is a published heuristic, cited against 5 live sources.", action: "Settle the offset or cut spend in this region." },
       { from: "settle", channel: "fleet.settle", tone: "ok", title: "Offset committed · 35.8 USD", body: "Receipt on the ledger. Retry-safe via idempotencyKey.", action: "Show this receipt to a buyer agent with climatico:read only." },
-      { from: "policy", channel: "ledger", tone: "no", title: "Refused greenwash @ everywhere", body: "greenwash is outside Climatico's mandate. The system files climate actions; it does not accept unverified green claims.", action: "This rejection is also recorded." },
+      { from: "policy", channel: "ledger", tone: "no", title: "Flagged greenwash @ everywhere", body: "greenwash is outside Climatico's mandate. The system files climate actions; it does not accept unverified green claims.", action: "This rejection is also recorded." },
       { from: "clerk", channel: "assess", tone: "ok", title: "Grounded brief for Houston, TX", body: "5 live sources. First: Billion-Dollar Weather and Climate Disasters", action: "Promote this place to a watch, or run fleet against the same location." }
     ],
     sponsors: [
       { name: "Cloudflare", role: "Host · runtime", status: "host", insight: "Workers, Durable Objects, Agents SDK, MCP." },
-      { name: "Tavily", role: "Live evidence", status: "booth", insight: "Ungrounded briefs and audits are refused." },
+      { name: "Tavily", role: "Live evidence", status: "booth", insight: "Ungrounded briefs and audits are flagged." },
       { name: "Cotal", role: "Mesh · $300 best use", status: "prize", insight: "Handoff channels already match Cotal names." }
     ],
     next: [
@@ -1097,7 +1097,7 @@ npm run demo         <span class="c"># this slide, in a shell</span>
     "mint": { token: "clm_demo", token_type: "bearer", scopes: ["climatico:read", "climatico:transact"], maxAmountCents: 5000, subject: "judge-agent" },
     "401": { error: "invalid_token", hint: "Mint a scoped credential at POST /v1/credentials" },
     "brief": { receipt: { intent: "brief", location: "Houston, TX", status: "committed", evidence: [{ title: "Billion-Dollar Weather and Climate Disasters" }] } },
-    "greenwash": { receipt: { intent: "greenwash", location: "everywhere", status: "refused", refusalCode: "forbidden_intent", refusalReason: "the system does not accept unverified claims." } },
+    "greenwash": { receipt: { intent: "greenwash", location: "everywhere", status: "flagged", flagCode: "forbidden_intent", flagReason: "the system does not accept unverified claims." } },
     "fleet": { run: { status: "committed", audit: { kgCO2e: 189, overBudgetKg: 179, factor: "heuristic 0.45 kg per USD" }, settlement: { action: "offset", amountCents: 3580 }, handoffs: [{ from: "ingest", to: "audit" }, { from: "audit", to: "settle" }, { from: "settle", to: "ledger" }] } },
     "handoffs": { handoffs: [
       { from: "ingest", to: "audit", channel: "fleet.ingest", kind: "usage_parsed" },
@@ -1112,7 +1112,7 @@ npm run demo         <span class="c"># this slide, in a shell</span>
     { id: "mint", n: "03", t: "Mint credential", d: "POST /v1/credentials", method: "POST", path: "/v1/credentials", body: { subject: "judge-agent", scopes: ["climatico:read", "climatico:transact"] } },
     { id: "unauth", n: "04", t: "Unauthenticated write", d: "POST /v1/actions → 401", method: "POST", path: "/v1/actions", body: { intent: "brief", location: "Houston, TX" }, noAuth: true },
     { id: "brief", n: "05", t: "Grounded brief", d: "brief · Houston, TX", method: "POST", path: "/v1/actions", body: { intent: "brief", location: "Houston, TX" } },
-    { id: "refuse", n: "06", t: "Stored refusal", d: "greenwash · 422", method: "POST", path: "/v1/actions", body: { intent: "greenwash", location: "everywhere" } },
+    { id: "flag", n: "06", t: "Stored flag", d: "greenwash · 422", method: "POST", path: "/v1/actions", body: { intent: "greenwash", location: "everywhere" } },
     { id: "fleet", n: "07", t: "Fleet spike", d: "SJC $420 → 189 kg", method: "POST", path: "/v1/fleet/run", body: { source: "cloud", location: "SJC", spendUsd: 420, monthlyBudgetKg: 50, monthToDateKg: 40 } },
     { id: "handoffs", n: "08", t: "Handoffs", d: "GET /v1/handoffs", method: "GET", path: "/v1/handoffs" }
   ];
@@ -1156,7 +1156,7 @@ npm run demo         <span class="c"># this slide, in a shell</span>
     html += '<div class="eyebrow">Agent Natives · Internal track · one ledger</div>';
     html += "<h2 class='slide-title' style='font-size:22px'>" + esc(titles[tab] || titles.assess) + "</h2>";
     html += '<div class="stats">';
-    [["committed", d.committed], ["refused", d.refused], ["fleet runs", d.fleetRuns], ["watches", d.watches]].forEach(function (row) {
+    [["committed", d.committed], ["flagged", d.flagged], ["fleet runs", d.fleetRuns], ["watches", d.watches]].forEach(function (row) {
       html += '<div class="stat"><b>' + (row[1] ?? 0) + "</b><span>" + row[0] + "</span></div>";
     });
     html += "</div>";
@@ -1255,8 +1255,8 @@ npm run demo         <span class="c"># this slide, in a shell</span>
       var canned = FALLBACK[step.id] || FALLBACK[step.path] || FALLBACK.brief;
       if (step.id === "mint") canned = FALLBACK.mint;
       if (step.id === "unauth") canned = FALLBACK["401"];
-      if (step.id === "refuse") canned = FALLBACK.greenwash;
-      logTerm(step.id === "unauth" || step.id === "refuse" ? "err" : "ok", shortJson(canned));
+      if (step.id === "flag") canned = FALLBACK.greenwash;
+      logTerm(step.id === "unauth" || step.id === "flag" ? "err" : "ok", shortJson(canned));
       return canned;
     }
     var headers = { "content-type": "application/json" };

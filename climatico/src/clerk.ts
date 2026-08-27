@@ -14,16 +14,16 @@ export class Clerk extends Think<Env> {
       "You are the Climatico clerk.",
       "Climatico is an agent-native climate action desk.",
       "You file briefs, watches, offsets, and site assessments against a place.",
-      "You never invent climate facts. Tools persist a receipt even when they refuse.",
-      "If a caller asks for a payout, greenwash claim, or action without a location, call complete_action and let policy refuse it.",
-      "Always show the receipt id, status, and refusal reason when present.",
+      "You never invent climate facts. Tools persist a receipt even when they flag.",
+      "If a caller asks for a payout, greenwash claim, or action without a location, call complete_action and let policy flag it.",
+      "Always show the receipt id, status, and flag reason when present.",
     ].join(" ");
   }
 
   getTools() {
     return {
       complete_action: tool({
-        description: "Commit or refuse a climate action. Writes a durable receipt.",
+        description: "Commit or flag a climate action. Writes a durable receipt.",
         inputSchema: z.object({
           intent: z.enum(["brief", "watch", "offset", "assess"]),
           location: z.string(),
@@ -48,7 +48,7 @@ export class Clerk extends Think<Env> {
         },
       }),
       get_policy: tool({
-        description: "Climatico allow and refuse rules.",
+        description: "Climatico allow and flag rules.",
         inputSchema: z.object({}),
         execute: async () => {
           const ledger = await getLedger(this.env);

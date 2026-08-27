@@ -13,7 +13,7 @@ export const FORBIDDEN_INTENTS = [
   "exfiltrate",
 ] as const;
 
-export type ActionStatus = "committed" | "refused";
+export type ActionStatus = "committed" | "flagged";
 
 export type Principal = {
   tokenId: string;
@@ -51,8 +51,8 @@ export type Receipt = {
   amountCents: number | null;
   note: string | null;
   status: ActionStatus;
-  refusalCode: string | null;
-  refusalReason: string | null;
+  flagCode: string | null;
+  flagReason: string | null;
   evidence: EvidenceItem[];
   subject: string;
   tokenId: string;
@@ -66,7 +66,7 @@ export type PolicyDecision =
 
 export type Dashboard = {
   committed: number;
-  refused: number;
+  flagged: number;
   watches: number;
   lastReceiptId: string | null;
   fleetRuns: number;

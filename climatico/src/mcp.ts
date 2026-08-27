@@ -26,7 +26,7 @@ export function mcpHandler(env: Env, principal: Principal) {
       server.registerTool(
         "get_policy",
         {
-          description: "Allowed intents, refusal rules, and scope ceilings.",
+          description: "Allowed intents, flag rules, and scope ceilings.",
           inputSchema: {},
         },
         async () => text(await policy(env)),
@@ -52,11 +52,11 @@ export function mcpHandler(env: Env, principal: Principal) {
         "complete_action",
         {
           description:
-            "Commit a climate action. Allowed intents: brief, watch, offset, assess, abate. Requires location. offset also requires amountCents. abate records a modeled abatement plan for a business source. assess with source set to one of the six non-compute classes (hardware, travel, saas, logistics, electricity, direct) grounds that class in a live Tavily source instead of a modeled default — it stays modeled if no source is found. Refusals persist as receipts.",
+            "Commit a climate action. Allowed intents: brief, watch, offset, assess, abate. Requires location. offset also requires amountCents. abate records a modeled abatement plan for a business source. assess with source set to one of the six non-compute classes (hardware, travel, saas, logistics, electricity, direct) grounds that class in a live Tavily source instead of a modeled default — it stays modeled if no source is found. Flags persist as receipts.",
           inputSchema: {
             intent: z
               .string()
-              .describe("brief | watch | offset | assess | abate. Other values are refused, not guessed."),
+              .describe("brief | watch | offset | assess | abate. Other values are flagged, not guessed."),
             location: z.string().describe("City, site name, or lat,lon."),
             source: z
               .string()
@@ -81,7 +81,7 @@ export function mcpHandler(env: Env, principal: Principal) {
             return text(
               {
                 ok: false,
-                refused: true,
+                flagged: true,
                 code: "missing_scope",
                 reason: "Mint a credential with climatico:transact to write.",
               },
@@ -101,7 +101,7 @@ export function mcpHandler(env: Env, principal: Principal) {
           );
           return text({
             ok: receipt.status === "committed",
-            refused: receipt.status === "refused",
+            flagged: receipt.status === "flagged",
             receipt,
           });
         },
@@ -124,7 +124,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         },
         async (args) => {
           if (!hasScope(principal, "climatico:transact")) {
-            return text({ ok: false, refused: true, code: "missing_scope" }, true);
+            return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
           const receipt = await ledger.runAction(
@@ -140,7 +140,7 @@ export function mcpHandler(env: Env, principal: Principal) {
             },
             principal,
           );
-          return text({ ok: receipt.status === "committed", refused: receipt.status === "refused", receipt });
+          return text({ ok: receipt.status === "committed", flagged: receipt.status === "flagged", receipt });
         },
       );
 
@@ -160,7 +160,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         },
         async (args) => {
           if (!hasScope(principal, "climatico:transact")) {
-            return text({ ok: false, refused: true, code: "missing_scope" }, true);
+            return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
           const receipt = await ledger.runAction(
@@ -186,7 +186,7 @@ export function mcpHandler(env: Env, principal: Principal) {
             });
           } catch (_) {
           }
-          return text({ ok: receipt.status === "committed", refused: receipt.status === "refused", receipt, refundCents });
+          return text({ ok: receipt.status === "committed", flagged: receipt.status === "flagged", receipt, refundCents });
         },
       );
 
@@ -194,7 +194,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         "file_freight",
         {
           description:
-            "File a real freight leg (PO / booking) and score it: mode, weight, distance → kg CO2e. Refuses if live logistics-factor evidence (Tavily) can't ground the heuristic. This is the PO/freight write path — a real booking, not a stubbed LCA. Requires climatico:transact.",
+            "File a real freight leg (PO / booking) and score it: mode, weight, distance → kg CO2e. Flags if live logistics-factor evidence (Tavily) can't ground the heuristic. This is the PO/freight write path — a real booking, not a stubbed LCA. Requires climatico:transact.",
           inputSchema: {
             location: z.string().describe("Origin, destination, or lane — e.g. 'Shenzhen → Oakland'."),
             freightMode: z.enum(["sea", "air", "road", "rail"]).describe("Transport mode for this leg."),
@@ -206,7 +206,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         },
         async (args) => {
           if (!hasScope(principal, "climatico:transact")) {
-            return text({ ok: false, refused: true, code: "missing_scope" }, true);
+            return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
           const receipt = await ledger.runAction(
@@ -221,7 +221,7 @@ export function mcpHandler(env: Env, principal: Principal) {
             },
             principal,
           );
-          return text({ ok: receipt.status === "committed", refused: receipt.status === "refused", receipt });
+          return text({ ok: receipt.status === "committed", flagged: receipt.status === "flagged", receipt });
         },
       );
 
@@ -241,21 +241,21 @@ export function mcpHandler(env: Env, principal: Principal) {
         },
         async (args) => {
           if (!hasScope(principal, "climatico:transact")) {
-            return text({ ok: false, refused: true, code: "missing_scope" }, true);
+            return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
           const receipt = await ledger.runAction(
             { intent: "abate", location: args.location, source: args.source, note: args.note },
             principal,
           );
-          return text({ ok: receipt.status === "committed", refused: receipt.status === "refused", receipt });
+          return text({ ok: receipt.status === "committed", flagged: receipt.status === "flagged", receipt });
         },
       );
 
       server.registerTool(
         "get_receipt",
         {
-          description: "Fetch one durable receipt by id, including refusals.",
+          description: "Fetch one durable receipt by id, including flags.",
           inputSchema: { id: z.string().describe("Receipt UUID") },
         },
         async ({ id }) => {
@@ -282,7 +282,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         async (args) => {
           if (!hasScope(principal, "climatico:transact")) {
             return text(
-              { ok: false, refused: true, code: "missing_scope" },
+              { ok: false, flagged: true, code: "missing_scope" },
               true,
             );
           }
@@ -290,7 +290,7 @@ export function mcpHandler(env: Env, principal: Principal) {
           const run = await ledger.runFleet(args, principal);
           return text({
             ok: run.status === "committed",
-            refused: run.status === "refused",
+            flagged: run.status === "flagged",
             run,
           });
         },
@@ -316,7 +316,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         "complete_sandbox_check",
         {
           description:
-            "Report the real output of a command you ran in a Tenki sandbox created by start_sandbox_check. Refused if sessionId was never created by this ledger, or if Tenki's control plane no longer recognizes it — this desk does not accept invented output.",
+            "Report the real output of a command you ran in a Tenki sandbox created by start_sandbox_check. Flagged if sessionId was never created by this ledger, or if Tenki's control plane no longer recognizes it — this desk does not accept invented output.",
           inputSchema: {
             sessionId: z.string().describe("The sessionId returned by start_sandbox_check."),
             output: z.string().describe("The real stdout/output from executing the command in that sandbox."),
@@ -359,7 +359,7 @@ export function mcpHandler(env: Env, principal: Principal) {
       server.registerTool(
         "list_receipts",
         {
-          description: "Recent receipts, newest first. Proof of what was committed and what was refused.",
+          description: "Recent receipts, newest first. Proof of what was committed and what was flagged.",
           inputSchema: {
             limit: z.number().int().min(1).max(50).optional(),
           },

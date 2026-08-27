@@ -27,9 +27,9 @@ type ReceiptRow = {
   location: string | null;
   amount_cents: number | null;
   note: string | null;
-  status: "committed" | "refused";
-  refusal_code: string | null;
-  refusal_reason: string | null;
+  status: "committed" | "flagged";
+  flag_code: string | null;
+  flag_reason: string | null;
   evidence_json: string;
   subject: string;
   token_id: string;
@@ -40,7 +40,7 @@ type ReceiptRow = {
 export class Ledger extends Agent<Env, LedgerState> {
   initialState: LedgerState = {
     committed: 0,
-    refused: 0,
+    flagged: 0,
     watches: 0,
     lastReceiptId: null,
     fleetRuns: 0,
@@ -70,8 +70,8 @@ export class Ledger extends Agent<Env, LedgerState> {
         amount_cents INTEGER,
         note TEXT,
         status TEXT NOT NULL,
-        refusal_code TEXT,
-        refusal_reason TEXT,
+        flag_code TEXT,
+        flag_reason TEXT,
         evidence_json TEXT NOT NULL,
         subject TEXT NOT NULL,
         token_id TEXT NOT NULL,
@@ -187,7 +187,7 @@ export class Ledger extends Agent<Env, LedgerState> {
       `;
     }
     const committed = receipt.status === "committed" ? this.state.committed + 1 : this.state.committed;
-    const refused = receipt.status === "refused" ? this.state.refused + 1 : this.state.refused;
+    const flagged = receipt.status === "flagged" ? this.state.flagged + 1 : this.state.flagged;
     const watches =
       receipt.status === "committed" && receipt.intent === "watch"
         ? this.state.watches + 1
@@ -195,7 +195,7 @@ export class Ledger extends Agent<Env, LedgerState> {
     this.setState({
       ...this.state,
       committed,
-      refused,
+      flagged,
       watches,
       lastReceiptId: receipt.id,
     });
@@ -266,7 +266,7 @@ export class Ledger extends Agent<Env, LedgerState> {
   }
 
   /**
-   * Step 2. Refuses unless sessionId matches a check this ledger actually created AND
+   * Step 2. Flags unless sessionId matches a check this ledger actually created AND
    * Tenki's control plane confirms that session really exists — a caller cannot invent
    * a sessionId and claim fabricated output.
    */
@@ -289,7 +289,7 @@ export class Ledger extends Agent<Env, LedgerState> {
     if (row.status === "completed") return { error: "This sandbox session was already reported." };
     const state = await sandboxSessionState(this.env, sessionId);
     if (!state) {
-      return { error: "Tenki does not recognize this session id. Refusing to store unverifiable output." };
+      return { error: "Tenki does not recognize this session id. Flagging to store unverifiable output." };
     }
     const completedAt = Date.now();
     this.sql`
@@ -420,7 +420,7 @@ export class Ledger extends Agent<Env, LedgerState> {
   dashboard(): Dashboard {
     return {
       committed: this.state.committed,
-      refused: this.state.refused,
+      flagged: this.state.flagged,
       watches: this.state.watches,
       lastReceiptId: this.state.lastReceiptId,
       fleetRuns: this.state.fleetRuns ?? 0,
@@ -469,7 +469,7 @@ export class Ledger extends Agent<Env, LedgerState> {
     return {
       product: "Climatico",
       writes: ["brief", "watch", "offset", "assess", "abate", "fleet.run"],
-      refuses: [
+      flags: [
         "payout",
         "wire_transfer",
         "delete_account",
@@ -495,7 +495,7 @@ export class Ledger extends Agent<Env, LedgerState> {
       sandbox: {
         provider: "Tenki",
         trigger: "POST /v1/sandbox/verify then /v1/sandbox/complete, or MCP start_sandbox_check / complete_sandbox_check",
-        note: "Worker calls Tenki's control plane for real (create/get). Executing inside the sandbox is a duplex stream a Worker cannot open, so the caller execs it and reports real output back. A sessionId this ledger never created is refused.",
+        note: "Worker calls Tenki's control plane for real (create/get). Executing inside the sandbox is a duplex stream a Worker cannot open, so the caller execs it and reports real output back. A sessionId this ledger never created is flagged.",
       },
       persistence: "Durable Object SQLite. A watch or fleet run opened today is still here after the laptop sleeps.",
     };
@@ -509,7 +509,7 @@ export class Ledger extends Agent<Env, LedgerState> {
   private persistReceipt(receipt: Receipt) {
     this.sql`
       INSERT INTO receipts (
-        id, intent, location, amount_cents, note, status, refusal_code, refusal_reason,
+        id, intent, location, amount_cents, note, status, flag_code, flag_reason,
         evidence_json, subject, token_id, idempotency_key, created_at
       ) VALUES (
         ${receipt.id},
@@ -518,8 +518,8 @@ export class Ledger extends Agent<Env, LedgerState> {
         ${receipt.amountCents},
         ${receipt.note},
         ${receipt.status},
-        ${receipt.refusalCode},
-        ${receipt.refusalReason},
+        ${receipt.flagCode},
+        ${receipt.flagReason},
         ${JSON.stringify(receipt.evidence)},
         ${receipt.subject},
         ${receipt.tokenId},
@@ -537,8 +537,8 @@ export class Ledger extends Agent<Env, LedgerState> {
       amountCents: row.amount_cents,
       note: row.note,
       status: row.status,
-      refusalCode: row.refusal_code,
-      refusalReason: row.refusal_reason,
+      flagCode: row.flag_code,
+      flagReason: row.flag_reason,
       evidence: JSON.parse(row.evidence_json) as Receipt["evidence"],
       subject: row.subject,
       tokenId: row.token_id,

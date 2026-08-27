@@ -2,7 +2,7 @@ export function agentCard(origin: string) {
   return {
     name: "Climatico",
     description:
-      "Agent-native climate action desk. A stranger agent discovers this card, mints a scoped credential, and commits a real climate action (brief, watch, offset, or assess) against a place. Refusals are first-class receipts.",
+      "Agent-native climate action desk. A stranger agent discovers this card, mints a scoped credential, and commits a real climate action (brief, watch, offset, or assess) against a place. Flags are first-class receipts.",
     url: `${origin}/a2a`,
     version: "0.1.0",
     protocolVersion: "0.3.0",
@@ -21,7 +21,7 @@ export function agentCard(origin: string) {
         id: "complete_action",
         name: "Complete a climate action",
         description:
-          "Commit brief | watch | offset | assess for a location. Requires a bearer token with climatico:transact. Returns a durable receipt, including refusals.",
+          "Commit brief | watch | offset | assess for a location. Requires a bearer token with climatico:transact. Returns a durable receipt, including flags.",
         tags: ["climate", "transact", "receipt"],
         examples: [
           "File a climate brief for Houston",

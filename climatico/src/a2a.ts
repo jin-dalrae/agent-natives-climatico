@@ -60,7 +60,7 @@ export async function handleA2A(
     return json(
       request,
       rpcResult(rpc.id ?? null, {
-        refused: true,
+        flagged: true,
         code: "missing_scope",
         reason: "Mint climatico:transact to send tasks.",
       }),

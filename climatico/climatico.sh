@@ -13,7 +13,7 @@
 #   freight <lane> <mode> <kg> <km>  File a real PO/freight leg (sea|air|road|rail)
 #   switch <loc> <newSolution> <priorReceiptId> <priorCents> <newCents>  Log a solution switch
 #   refund <loc> <priorReceiptId> <priorCents> <newCents>  Claim back the delta after a switch
-#   refuse <loc>      Test a forbidden claim (greenwash)
+#   flag <loc>      Test a forbidden claim (greenwash)
 #   report            Show progress report from the scheduler
 #   receipts [n]      Show recent receipts (default: 5)
 #   handoffs [n]      Show recent handoffs (default: 5)
@@ -72,7 +72,7 @@ r=json.load(sys.stdin).get('receipt',{})
 print('Subject:', r.get('subject','?'))
 print('Intent:', r.get('intent','?'))
 print('Status:', r.get('status','?'))
-print('Refusal:', r.get('refusalReason','—'))
+print('Flag:', r.get('flagReason','—'))
 " 2>/dev/null || echo "Token valid"
     ;;
   fleet)
@@ -112,7 +112,7 @@ import json,sys
 r=json.load(sys.stdin).get('receipt',{})
 print('Status:', r.get('status','?'))
 print('Sources:', len(r.get('evidence',[])))
-if r.get('status')=='refused': print('Why:', r.get('refusalReason','?'))
+if r.get('status')=='flagged': print('Why:', r.get('flagReason','?'))
 "
     ;;
   watch)
@@ -126,16 +126,16 @@ print('Receipt:', r.get('id','?')[:8])
 print('Evidence sources:', len(r.get('evidence',[])))
 "
     ;;
-  refuse)
+  flag)
     loc="${1:-Orepath Global Chain}"
     echo "Testing forbidden claim (greenwash) at '$loc'..."
     api POST /v1/actions "{\"intent\":\"greenwash\",\"location\":\"$loc\"}" | python3 -c "
 import json,sys
 r=json.load(sys.stdin).get('receipt',{})
 print('Status:', r.get('status','?'))
-print('Code:', r.get('refusalCode','?'))
-print('Why:', r.get('refusalReason','?'))
-print('Receipt ID:', r.get('id','?')[:8], '(refusal stored permanently)')
+print('Code:', r.get('flagCode','?'))
+print('Why:', r.get('flagReason','?'))
+print('Receipt ID:', r.get('id','?')[:8], '(flag stored permanently)')
 "
     ;;
   freight)
@@ -152,8 +152,8 @@ r=json.load(sys.stdin).get('receipt',{})
 print('Status:', r.get('status','?'))
 print('Receipt:', r.get('id','?')[:8])
 print('Note:', r.get('note','?'))
-if r.get('status') == 'refused':
-    print('Refused:', r.get('refusalReason','?'))
+if r.get('status') == 'flagged':
+    print('Flagged:', r.get('flagReason','?'))
 "
     ;;
   switch)
@@ -274,7 +274,7 @@ for m in d.get('memories',[]):
     api GET /v1/dashboard | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
-print(f\"Committed: {d.get('committed',0)}  Refused: {d.get('refused',0)}  Watches: {d.get('watches',0)}\")
+print(f\"Committed: {d.get('committed',0)}  Flagged: {d.get('flagged',0)}  Watches: {d.get('watches',0)}\")
 print(f\"Fleet runs: {d.get('fleetRuns',0)}  Last receipt: {d.get('lastReceiptId','—')[:12]}\")
 "
     ;;
@@ -310,7 +310,7 @@ Actions:
   offset <loc> <¢>    Commit an offset payment
   brief <loc>         File a climate brief with real sources
   watch <loc>         Watch a location (survives restart)
-  refuse <loc>        Test a forbidden claim (gets refused + stored)
+  flag <loc>        Test a forbidden claim (gets flagged + stored)
 
 Reports:
   report              Progress report from the scheduler
@@ -335,7 +335,7 @@ Quick demo:
   export CLIMATICO_TOKEN="<token>"
   ./climatico.sh fleet SJC 420
   ./climatico.sh report
-  ./climatico.sh refuse
+  ./climatico.sh flag
   ./climatico.sh receipts
   ./climatico.sh agents-start
 
@@ -513,7 +513,7 @@ print()
 # Orepath
 o = d.get('orepath', {})
 print('  ╔═══ OREPATH AGENT (compute-watcher) ═══╗')
-print(f'  ║  active: {o.get(\"active\")}  ·  runs filed: {o.get(\"runsFiled\",0)}  ·  committed: {o.get(\"totalCommitted\",0)}  ·  refused: {o.get(\"totalRefused\",0)}')
+print(f'  ║  active: {o.get(\"active\")}  ·  runs filed: {o.get(\"runsFiled\",0)}  ·  committed: {o.get(\"totalCommitted\",0)}  ·  flagged: {o.get(\"totalFlagged\",0)}')
 print(f'  ║  last spend: \${o.get(\"lastSpend\",0)}  ·  total offsets: \${o.get(\"totalOffsetCents\",0)/100:.2f}')
 hist = o.get('history', [])
 if hist:
@@ -535,7 +535,7 @@ print()
 # Summary
 s = d.get('summary', {})
 print('  Ledger:')
-print(f'    {s.get(\"committed\",0)} commits · {s.get(\"refused\",0)} refusals · {s.get(\"fleetRuns\",0)} fleet runs · {s.get(\"watches\",0)} watches')
+print(f'    {s.get(\"committed\",0)} commits · {s.get(\"flagged\",0)} flags · {s.get(\"fleetRuns\",0)} fleet runs · {s.get(\"watches\",0)} watches')
 print()
 
 # Inbox alerts

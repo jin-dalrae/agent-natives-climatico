@@ -6,7 +6,7 @@ export type ProgressReport = {
   hotspotTons: number;
   totalModeledTons: number;
   commitsThisPeriod: number;
-  refusalsThisPeriod: number;
+  flagsThisPeriod: number;
   fleetRunsThisPeriod: number;
   overBudgetLocations: { location: string; kgOver: number }[];
   switches: number;
@@ -24,11 +24,11 @@ export function buildReport(input: {
   receipts: Receipt[];
   handoffs: Handoff[];
   committed: number;
-  refused: number;
+  flagged: number;
   fleetRuns: number;
   watches: number;
 }): ProgressReport {
-  const { runs, receipts, committed, refused, fleetRuns } = input;
+  const { runs, receipts, committed, flagged, fleetRuns } = input;
 
   const lastRun = runs[0] ?? null;
   const overBudget = lastRun?.audit && lastRun.audit.overBudgetKg > 0
@@ -60,12 +60,12 @@ export function buildReport(input: {
   suggestions.push("Logistics (12 t/yr) is your biggest class — still modeled. Talk to your freight provider about data sharing.");
 
   return {
-    summary: `${fleetRuns} fleet runs, ${committed} commits, ${refused} refusals, ${switches} switches, ${refunds.length} refunds (${(totalRefundCents / 100).toFixed(2)} USD). ${totalModeledTons} tCO₂e/yr modeled across 7 classes.`,
+    summary: `${fleetRuns} fleet runs, ${committed} commits, ${flagged} flags, ${switches} switches, ${refunds.length} refunds (${(totalRefundCents / 100).toFixed(2)} USD). ${totalModeledTons} tCO₂e/yr modeled across 7 classes.`,
     hotspotClass: "logistics",
     hotspotTons: 12.0,
     totalModeledTons,
     commitsThisPeriod: committed,
-    refusalsThisPeriod: refused,
+    flagsThisPeriod: flagged,
     fleetRunsThisPeriod: fleetRuns,
     overBudgetLocations: overBudget,
     switches,

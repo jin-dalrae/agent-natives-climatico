@@ -13,7 +13,7 @@
 #   orepath refund <loc> <priorReceiptId> <priorCents> <newCents>
 #   orepath provider                # 3rd-party provider agent status
 #   orepath observe                 # watch Orepath agent live (10s refresh)
-#   orepath refuse [location]       # test a greenwash (gets refused + stored)
+#   orepath flag [location]       # test a greenwash (gets flagged + stored)
 #   orepath report                  # progress report
 #   orepath receipts [n]            # recent receipts
 #   orepath handoffs [n]            # recent handoffs
@@ -162,7 +162,7 @@ print(json.dumps(items))
     echo ""
     echo "Try: orepath whoami"
     echo "     orepath fleet SJC 420"
-    echo "     orepath refuse"
+    echo "     orepath flag"
     ;;
   where)
     echo "Repo root:    $REPO_ROOT"
@@ -177,7 +177,7 @@ print(json.dumps(items))
     ;;
   # Pass-through: every other subcommand goes to climatico.sh.
   # Token is already exported; URL is exported; everything just works.
-  discover|whoami|fleet|offset|brief|watch|freight|switch|refund|refuse|\
+  discover|whoami|fleet|offset|brief|watch|freight|switch|refund|flag|\
   report|receipts|handoffs|dashboard|memory|orepath|provider|observe|\
   status|agents-start|agents-stop|connect|help)
     # Special-case `connect`: the path arg defaults to the config's

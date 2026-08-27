@@ -7,7 +7,7 @@ type RunRecord = {
   location: string;
   spend: number;
   kgCO2e: number;
-  status: "committed" | "refused";
+  status: "committed" | "flagged";
   offsetCents: number;
   receiptId: string;
 };
@@ -16,8 +16,8 @@ type RunRecord = {
  * Simulates an Orepath employee's agent that monitors cloud spend and
  * proactively files fleet runs. Runs on alarm every ~15 min.
  */
-export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: number; active: boolean; history: RunRecord[]; totalCommitted: number; totalRefused: number; totalOffsetCents: number }> {
-  initialState = { lastSpend: 0, runsFiled: 0, active: true, history: [], totalCommitted: 0, totalRefused: 0, totalOffsetCents: 0 };
+export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: number; active: boolean; history: RunRecord[]; totalCommitted: number; totalFlagged: number; totalOffsetCents: number }> {
+  initialState = { lastSpend: 0, runsFiled: 0, active: true, history: [], totalCommitted: 0, totalFlagged: 0, totalOffsetCents: 0 };
 
   async onStart() {
     // nothing yet
@@ -57,7 +57,7 @@ export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: num
       location: loc,
       spend,
       kgCO2e: kg,
-      status: run.status === "committed" ? "committed" : "refused",
+      status: run.status === "committed" ? "committed" : "flagged",
       offsetCents,
       receiptId: run.offsetReceipt?.id ?? run.id,
     };
@@ -68,7 +68,7 @@ export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: num
       active: true,
       history,
       totalCommitted: this.state.totalCommitted + (run.status === "committed" ? 1 : 0),
-      totalRefused: this.state.totalRefused + (run.status === "refused" ? 1 : 0),
+      totalFlagged: this.state.totalFlagged + (run.status === "flagged" ? 1 : 0),
       totalOffsetCents: this.state.totalOffsetCents + offsetCents,
     });
 
@@ -91,7 +91,7 @@ export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: num
       lastSpend: this.state.lastSpend,
       active: this.state.active,
       totalCommitted: this.state.totalCommitted,
-      totalRefused: this.state.totalRefused,
+      totalFlagged: this.state.totalFlagged,
       totalOffsetCents: this.state.totalOffsetCents,
       history: this.state.history ?? [],
     };
@@ -123,7 +123,7 @@ export type OrepathAgentApi = {
     lastSpend: number;
     active: boolean;
     totalCommitted: number;
-    totalRefused: number;
+    totalFlagged: number;
     totalOffsetCents: number;
     history: RunRecord[];
   }>;

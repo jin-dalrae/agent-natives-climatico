@@ -52,7 +52,7 @@ echo
 echo "== Now: what an outside agent CAN also do (the write surface underneath) =="
 
 echo
-echo "== unauthenticated write is refused (401), not silently ignored =="
+echo "== unauthenticated write is flagged (401), not silently ignored =="
 curl -sS -o /tmp/climatico-401.json -w "  HTTP %{http_code}\n" \
   -X POST "$BASE/v1/actions" -H 'content-type: application/json' \
   -d '{"intent":"brief","location":"Houston, TX"}'
@@ -66,15 +66,15 @@ curl -sS -X POST "$BASE/v1/actions" \
   | python3 -c 'import json,sys; r=json.load(sys.stdin)["receipt"]; print(" ", r["status"], "-", r["note"])'
 
 echo
-echo "== a dishonest claim, by contrast, IS refused and the refusal is stored =="
-curl -sS -o /tmp/climatico-refuse.json \
+echo "== a dishonest claim, by contrast, IS flagged and the flag is stored =="
+curl -sS -o /tmp/climatico-flag.json \
   -X POST "$BASE/v1/actions" \
   -H "authorization: Bearer $TOKEN" \
   -H 'content-type: application/json' \
   -d '{"intent":"greenwash","location":"everywhere"}'
-python3 -c 'import json; r=json.load(open("/tmp/climatico-refuse.json"))["receipt"]; print(" ", r["status"], "-", r["refusalReason"])'
+python3 -c 'import json; r=json.load(open("/tmp/climatico-flag.json"))["receipt"]; print(" ", r["status"], "-", r["flagReason"])'
 
 echo
-echo "== every receipt, committed or refused, lives in the same permanent ledger =="
+echo "== every receipt, committed or flagged, lives in the same permanent ledger =="
 curl -sS "$BASE/v1/receipts" -H "authorization: Bearer $TOKEN" \
   | python3 -c 'import json,sys; rs=json.load(sys.stdin)["receipts"]; print("  " + str(len(rs)) + " receipts on file")'

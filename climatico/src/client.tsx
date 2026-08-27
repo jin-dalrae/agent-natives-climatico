@@ -230,7 +230,7 @@ function PipelineView({
                     <div>Projected Month: <code>{activeRun.audit.projectedMonthKg} kg</code></div>
                     <div>
                       Diff vs Budget:{" "}
-                      <span className={activeRun.audit.overBudgetKg > 0 ? "text-refuse" : "text-ok"}>
+                      <span className={activeRun.audit.overBudgetKg > 0 ? "text-flag" : "text-ok"}>
                         {activeRun.audit.overBudgetKg > 0 ? `+${activeRun.audit.overBudgetKg} kg over` : "Within budget"}
                       </span>
                     </div>
@@ -249,7 +249,7 @@ function PipelineView({
                     </div>
                   </div>
                 ) : (
-                  <p className="text-refuse">Audit refused / ungrounded.</p>
+                  <p className="text-flag">Audit flagged / ungrounded.</p>
                 )}
               </div>
             </div>
@@ -461,13 +461,13 @@ function GrowView({
                     ? "File a cloud spike"
                     : action === "brief"
                       ? "Ground a sell-side brief"
-                      : action === "refuse"
-                        ? "Refuse greenwash"
+                      : action === "flag"
+                        ? "Flag greenwash"
                         : "Run"}
                 </button>
                 {stage.id === "sell" ? (
-                  <button type="button" className="ghost" disabled={busy} onClick={() => onWrite("refuse")}>
-                    Refuse a green chain
+                  <button type="button" className="ghost" disabled={busy} onClick={() => onWrite("flag")}>
+                    Flag a green chain
                   </button>
                 ) : null}
               </div>
@@ -532,16 +532,16 @@ function LedgerView({ receipts }: { receipts: Receipt[] }) {
       <div className="grid g2">
         <div className="card">
           <span className="kicker">Receipts</span>
-          <h3>Every write, committed or refused ({receipts.length})</h3>
+          <h3>Every write, committed or flagged ({receipts.length})</h3>
           <p className="lede">
-            A refusal is saved the same way a commit is — same id, same subject, same token, same
-            timestamp. Click a row to see why it was accepted or refused.
+            A flag is saved the same way a commit is — same id, same subject, same token, same
+            timestamp. Click a row to see why it was accepted or flagged.
           </p>
           <div className="receipt-list">
             {receipts.map((r) => (
               <div
                 key={r.id}
-                className={`receipt-row ${r.status === "committed" ? "committed" : "refused"} ${
+                className={`receipt-row ${r.status === "committed" ? "committed" : "flagged"} ${
                   selectedReceipt?.id === r.id ? "selected" : ""
                 }`}
                 onClick={() => setSelectedReceipt(r)}
@@ -588,10 +588,10 @@ function LedgerView({ receipts }: { receipts: Receipt[] }) {
                 <p>Subject: <code>{selectedReceipt.subject}</code> · Token: <code>{selectedReceipt.tokenId}</code></p>
               </div>
 
-              {selectedReceipt.refusalCode ? (
-                <div className="field-group refuse-box">
-                  <label className="text-refuse">Why it was refused: {selectedReceipt.refusalCode}</label>
-                  <p>{selectedReceipt.refusalReason}</p>
+              {selectedReceipt.flagCode ? (
+                <div className="field-group flag-box">
+                  <label className="text-flag">Why it was flagged: {selectedReceipt.flagCode}</label>
+                  <p>{selectedReceipt.flagReason}</p>
                 </div>
               ) : null}
 
@@ -644,7 +644,7 @@ function ClerkPane() {
       </p>
       <div className="feed">
         {messages.length === 0 ? (
-          <p>Ask for the assessment, a refusal reason, or to run the fleet.</p>
+          <p>Ask for the assessment, a flag reason, or to run the fleet.</p>
         ) : (
           messages.map((msg: { id: string; role: string; parts: Array<{ type: string; text?: string }> }) => (
             <p key={msg.id} className={msg.role === "user" ? "you" : "bot"}>
@@ -809,8 +809,8 @@ function SwarmView({
 
             <div className="agent-box rogue">
               <div className="agent-title">
-                <strong className="text-refuse">3. A bad-faith claim</strong>
-                <span className="role-tag refuse">Marketing</span>
+                <strong className="text-flag">3. A bad-faith claim</strong>
+                <span className="role-tag flag">Marketing</span>
               </div>
               <p>Tries to file a "zero-carbon" claim with no evidence behind it.</p>
               <button
@@ -819,7 +819,7 @@ function SwarmView({
                 disabled={busy}
                 onClick={() => onRunAction("greenwash", clientType === "orepath" ? "Orepath battery" : "Zero carbon device")}
               >
-                Try the greenwash claim (it gets refused)
+                Try the greenwash claim (it gets flagged)
               </button>
             </div>
 
@@ -830,7 +830,7 @@ function SwarmView({
               </div>
               <p>Checks the ledger with a read-only token before trusting a claim.</p>
               <div className="buyer-stat">
-                Receipts checked: <b>{receipts.length}</b> (committed &amp; refused)
+                Receipts checked: <b>{receipts.length}</b> (committed &amp; flagged)
               </div>
             </div>
           </div>
@@ -873,7 +873,7 @@ function SwarmView({
               <span className="b-icon">🛡️</span>
               <div>
                 <strong>Policy check</strong>
-                <p>A refusal is saved the same way a commit is</p>
+                <p>A flag is saved the same way a commit is</p>
               </div>
             </div>
           </div>
@@ -937,9 +937,9 @@ function SwarmView({
                 <strong>4. Policy</strong>
                 <span className="role-tag ok">ledger</span>
               </div>
-              <p>Refuses anything outside the rules, and logs why.</p>
+              <p>Flags anything outside the rules, and logs why.</p>
               <div className="agent-stat">
-                Refusals stored: <b className="text-refuse">{receipts.filter((r) => r.status === "refused").length}</b>
+                Flags stored: <b className="text-flag">{receipts.filter((r) => r.status === "flagged").length}</b>
               </div>
             </div>
           </div>
@@ -979,10 +979,10 @@ function SwarmView({
                 <strong>2. Regulator / analyst</strong>
                 <span className="role-tag">evidence</span>
               </div>
-              <p>Uses the grounded offsets and refusals for Scope 3 disclosure.</p>
+              <p>Uses the grounded offsets and flags for Scope 3 disclosure.</p>
               <div className="agent-stat">
-                Committed: <b>{receipts.filter((r) => r.status === "committed").length}</b> · Refused:{" "}
-                <b className="text-refuse">{receipts.filter((r) => r.status === "refused").length}</b>
+                Committed: <b>{receipts.filter((r) => r.status === "committed").length}</b> · Flagged:{" "}
+                <b className="text-flag">{receipts.filter((r) => r.status === "flagged").length}</b>
               </div>
             </div>
           </div>
@@ -1166,7 +1166,7 @@ export function App() {
       });
       return;
     }
-    if (id === "refuse-greenwash") {
+    if (id === "flag-greenwash") {
       void write("/v1/actions", { intent: "greenwash", location: "Orepath supply chain" });
     }
   }
@@ -1177,7 +1177,7 @@ export function App() {
     pipeline: "Fleet: ingest, audit, settle",
     swarm: "Who's talking to whom",
     impact: "Impact & abatement — the modeled cascade and the same business, run differently",
-    ledger: "Receipts & refusals",
+    ledger: "Receipts & flags",
     inbox: "Inbox",
     agent: "Ask the clerk",
   };
@@ -1269,8 +1269,8 @@ export function App() {
                 <div className="d">writes that landed</div>
               </div>
               <div className="metric">
-                <div className="k">Refused</div>
-                <div className="v">{d?.refused ?? 0}</div>
+                <div className="k">Flagged</div>
+                <div className="v">{d?.flagged ?? 0}</div>
                 <div className="d">receipts that said no</div>
               </div>
               <div className="metric">
@@ -1365,7 +1365,7 @@ export function App() {
               if (kind === "fleet") runStoryTool("fleet-sjc");
               else if (kind === "brief") runStoryTool("brief-oakland");
               else if (kind === "watch") runStoryTool("watch-oakland");
-              else if (kind === "refuse") runStoryTool("refuse-greenwash");
+              else if (kind === "flag") runStoryTool("flag-greenwash");
             }}
           />
         ) : null}
@@ -1420,7 +1420,7 @@ export function App() {
             <h3>The cascade — and the same business, run differently</h3>
             <p className="lede">
               CO₂e is the modeled core. Water, air pollution and e-waste are upstream knock-ons, named
-              but not scored — Climatico refuses to print a number it can't back. Each row is a business
+              but not scored — Climatico won't print a number it can't back. Each row is a business
               source an agent already touches (a PO, a booking, a port). Record a reduction plan for any
               row below — the alternative, and the modeled projection over the next two years.
             </p>

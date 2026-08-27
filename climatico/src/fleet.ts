@@ -53,7 +53,7 @@ export async function runFleet(
   if (!ingest.ok) {
     return {
       id: runId,
-      status: "refused",
+      status: "flagged",
       ingest,
       audit: null,
       offsetReceipt: null,
@@ -84,17 +84,17 @@ export async function runFleet(
   push("audit", "settle", "fleet.audit", "emissions_scored", audit);
 
   if (!evidence.grounded) {
-    push("audit", "ledger", "fleet.audit", "refused", {
+    push("audit", "ledger", "fleet.audit", "flagged", {
       code: "ungrounded",
       reason: "Audit will not score emissions without live factor evidence.",
     });
     return {
       id: runId,
-      status: "refused",
+      status: "flagged",
       ingest,
       audit,
       offsetReceipt: null,
-      settlement: { action: "refused", reason: "ungrounded_factors" },
+      settlement: { action: "flagged", reason: "ungrounded_factors" },
       handoffs,
       createdAt: sink.now,
     };
@@ -131,19 +131,19 @@ export async function runFleet(
     amountCents,
     receiptId: receipt.id,
     status: receipt.status,
-    refusalCode: receipt.refusalCode,
+    flagCode: receipt.flagCode,
   });
 
   return {
     id: runId,
-    status: receipt.status === "committed" ? "committed" : "refused",
+    status: receipt.status === "committed" ? "committed" : "flagged",
     ingest,
     audit,
     offsetReceipt: receipt,
     settlement: {
       action: "offset",
       amountCents,
-      reason: receipt.status === "committed" ? "over_budget" : receipt.refusalCode,
+      reason: receipt.status === "committed" ? "over_budget" : receipt.flagCode,
     },
     handoffs,
     createdAt: sink.now,
@@ -165,7 +165,7 @@ function ingestUsage(event: UsageEvent) {
       spendUsd: spendUsd || 0,
       monthlyBudgetKg,
       monthToDateKg,
-      reason: "Ingest refused: every fleet run needs a location (region or site).",
+      reason: "Ingest flagged: every fleet run needs a location (region or site).",
     };
   }
   if (!Number.isFinite(spendUsd) || spendUsd <= 0) {
@@ -176,7 +176,7 @@ function ingestUsage(event: UsageEvent) {
       spendUsd: 0,
       monthlyBudgetKg,
       monthToDateKg,
-      reason: "Ingest refused: spendUsd must be > 0. This is a usage spike, not a slogan.",
+      reason: "Ingest flagged: spendUsd must be > 0. This is a usage spike, not a slogan.",
     };
   }
 

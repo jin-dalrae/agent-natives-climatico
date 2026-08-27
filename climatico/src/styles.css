@@ -17,8 +17,8 @@
   --clay-soft: #f5ebe0;
   --ok: #2f5f45;
   --ok-bg: #e2ede8;
-  --refuse: #b44a32;
-  --refuse-bg: #f8e6e1;
+  --flag: #b44a32;
+  --flag-bg: #f8e6e1;
   --warn: #8a5520;
   --warn-bg: #f5ebe0;
   --shadow: 0 8px 24px rgba(31, 46, 23, 0.05);
@@ -67,8 +67,8 @@ button.ghost {
   border-color: var(--line-2);
 }
 button.danger {
-  background: var(--refuse);
-  border-color: var(--refuse);
+  background: var(--flag);
+  border-color: var(--flag);
   color: #fff;
 }
 button:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -279,7 +279,7 @@ a { color: var(--accent-deep); }
   border-radius: 999px;
 }
 .chip.ok { color: var(--ok); background: var(--ok-bg); }
-.chip.no { color: var(--refuse); background: var(--refuse-bg); }
+.chip.no { color: var(--flag); background: var(--flag-bg); }
 .chip.wa { color: var(--warn); background: var(--warn-bg); }
 .chip.info { color: var(--muted); border: 1px solid var(--line); }
 
@@ -666,8 +666,8 @@ label {
   border-color: var(--accent);
   background: #f7fbf8;
 }
-.receipt-row.refused {
-  border-left: 4px solid var(--refuse);
+.receipt-row.flagged {
+  border-left: 4px solid var(--flag);
 }
 .receipt-row.committed {
   border-left: 4px solid var(--ok);
@@ -722,14 +722,14 @@ label {
   margin: 0;
   font-size: 13px;
 }
-.refuse-box {
-  background: var(--refuse-bg);
+.flag-box {
+  background: var(--flag-bg);
   padding: 10px 12px;
   border-radius: 8px;
-  border-left: 4px solid var(--refuse);
+  border-left: 4px solid var(--flag);
 }
 .text-ok { color: var(--ok); font-weight: 600; }
-.text-refuse { color: var(--refuse); font-weight: 600; }
+.text-flag { color: var(--flag); font-weight: 600; }
 .highlight { color: var(--accent-deep); font-size: 15px; }
 
 /* HOTSPOTS REFINEMENT */
@@ -868,7 +868,7 @@ label {
   gap: 8px;
 }
 .agent-box.rogue {
-  background: var(--refuse-bg);
+  background: var(--flag-bg);
   border-color: #e5b3a8;
 }
 .agent-title {
@@ -893,9 +893,9 @@ label {
   color: var(--ok);
   font-weight: 600;
 }
-.role-tag.refuse {
+.role-tag.flag {
   background: #f1cfc7;
-  color: var(--refuse);
+  color: var(--flag);
   font-weight: 600;
 }
 .agent-box p {

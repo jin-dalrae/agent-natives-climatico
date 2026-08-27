@@ -17,7 +17,7 @@ export type FolderScan = {
 
 export type AutoAssessment = {
   classId: string;
-  status: "live" | "modeled" | "refused";
+  status: "live" | "modeled" | "flagged";
   liveNote: string;
   evidence: number;
   grounded: boolean;

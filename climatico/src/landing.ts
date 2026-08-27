@@ -4,9 +4,9 @@ const LANDING_HTML = `<!doctype html>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Climatico — climate writes for agents</title>
-<meta name="description" content="The attribution layer for agent-native companies. AI agents file climate writes; the system commits or refuses, every time, with durable evidence." />
+<meta name="description" content="The attribution layer for agent-native companies. AI agents file climate writes; the system commits or flags, every time, with durable evidence." />
 <meta property="og:title" content="Climatico" />
-<meta property="og:description" content="Climate writes for AI agents. Commit or refuse — both are receipts." />
+<meta property="og:description" content="Climate writes for AI agents. Commit or flag — both are receipts." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="/assets/climatico-logo.svg" type="image/svg+xml" />
 <style>
@@ -20,7 +20,7 @@ const LANDING_HTML = `<!doctype html>
     --accent-deep: #1f5a40;
     --clay: #b96846;
     --leaf: #7fb84f;
-    --refuse: #b04848;
+    --flag: #b04848;
     --shadow: 0 2px 8px rgba(15, 28, 20, 0.04);
   }
   * { box-sizing: border-box; }
@@ -111,7 +111,7 @@ const LANDING_HTML = `<!doctype html>
   .meta .item .v { font-family: "Newsreader", "Iowan Old Style", "Georgia", serif; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
   .meta .item .k { font-size: 12px; color: var(--muted); }
   .meta .item .k.ok { color: var(--accent); }
-  .meta .item .k.no { color: var(--refuse); }
+  .meta .item .k.no { color: var(--flag); }
   .probe {
     background: #f4f5f1;
     border: 1px solid var(--line);
@@ -156,8 +156,8 @@ const LANDING_HTML = `<!doctype html>
 
 <h1>Climate writes for AI agents.</h1>
 <p class="lede">
-  <b>A refusal is a receipt.</b> Climatico is the write surface for agent-native companies.
-  An agent files a climate action; Climatico commits it, or refuses it, with durable evidence — every time, the same shape.
+  <b>A flag is a receipt.</b> Climatico is the write surface for agent-native companies.
+  An agent files a climate action; Climatico commits it, or flags it, with durable evidence — every time, the same shape.
 </p>
 
 <div class="cta-row">
@@ -167,7 +167,7 @@ const LANDING_HTML = `<!doctype html>
 
 <div class="meta" id="meta">
   <div class="item"><div class="v" id="m-committed">—</div><div class="k">writes committed</div></div>
-  <div class="item"><div class="v" id="m-refused">—</div><div class="k">refused &amp; stored</div></div>
+  <div class="item"><div class="v" id="m-flagged">—</div><div class="k">flagged &amp; stored</div></div>
   <div class="item"><div class="v" id="m-fleet">—</div><div class="k">fleet runs</div></div>
   <div class="item"><div class="v" id="m-status">…</div><div class="k" id="m-status-k">checking</div></div>
 </div>
@@ -177,7 +177,7 @@ const LANDING_HTML = `<!doctype html>
     <div class="card">
       <span class="kicker"><span class="dot"></span>The pitch</span>
       <h3>For compute-heavy agent fleets</h3>
-      <p>A cloud bill spikes; Climatico ingests, audits against live web evidence, and either commits an offset or stores the refusal. Ingest → audit → settle, durable at every step.</p>
+      <p>A cloud bill spikes; Climatico ingests, audits against live web evidence, and either commits an offset or stores the flag. Ingest → audit → settle, durable at every step.</p>
     </div>
     <div class="card">
       <span class="kicker"><span class="dot"></span>The deal</span>
@@ -194,7 +194,7 @@ const LANDING_HTML = `<!doctype html>
     <div class="card">
       <span class="kicker"><span class="dot"></span>Honest limits</span>
       <h3>Modeled ≠ measured</h3>
-      <p>Seven emission classes with error bars. Compute is live; the rest is modeled until grounded. We refuse to print a number we can't back. Hardware / freight PO write is next, not stubbed.</p>
+      <p>Seven emission classes with error bars. Compute is live; the rest is modeled until grounded. We won't print a number we can't back. Hardware / freight PO write is next, not stubbed.</p>
     </div>
   </div>
 </div>
@@ -206,7 +206,7 @@ const LANDING_HTML = `<!doctype html>
     <li>Mint a scoped credential: <code>POST /v1/credentials</code> — scopes freeze at mint</li>
     <li>File a grounded brief: <code>POST /v1/actions</code> with <code>intent: brief, location: "Houston, TX"</code></li>
     <li>Run the fleet on a spike: <code>POST /v1/fleet/run</code> — <code>SJC</code>, <code>$420</code></li>
-    <li>Test the policy: <code>POST /v1/actions</code> with <code>intent: greenwash</code> — refused, stored, never dropped</li>
+    <li>Test the policy: <code>POST /v1/actions</code> with <code>intent: greenwash</code> — flagged, stored, never dropped</li>
   </ol>
 </div>
 
@@ -232,7 +232,7 @@ const LANDING_HTML = `<!doctype html>
       if (!r.ok) throw new Error('not ok');
       const d = await r.json();
       document.getElementById('m-committed').textContent = d.committed ?? 0;
-      document.getElementById('m-refused').textContent = d.refused ?? 0;
+      document.getElementById('m-flagged').textContent = d.flagged ?? 0;
       document.getElementById('m-fleet').textContent = d.fleetRuns ?? 0;
       document.getElementById('m-status').textContent = 'LIVE';
       document.getElementById('m-status-k').textContent = 'system status';

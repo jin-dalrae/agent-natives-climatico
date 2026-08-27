@@ -32,13 +32,13 @@ its own, not a form other agents fill out for approval.
 
 ## The one big idea (remember this)
 
-**A refusal is a receipt.**
+**A flag is a receipt.**
 
 - If an agent asks to file a climate action and we say yes → we save a receipt.
 - If an agent asks something shady (like "delete my account" or "call this
   green" with no proof) → we say **no** and we **save that too**.
 
-Committed and refused live in the same notebook, with the same shape. Nothing
+Committed and flagged live in the same notebook, with the same shape. Nothing
 is silently dropped. If a judge checks later, every attempt is on the record.
 
 Because: *"We would rather return nothing than a plausible climate paragraph."*
@@ -77,12 +77,12 @@ a human to approve it.
 | `refund` | Claim back the difference after a `switch` | "Refund the delta on the prior offset" |
 | `run_fleet` | Turn a spend spike into a receipt | "$420 cloud bill in SJC → how many kg → offset if over budget" |
 
-### What gets refused (and stored)
+### What gets flagged (and stored)
 
 `payout`, `wire_transfer`, `delete_account`, `greenwash` (a climate claim with no
 evidence), `admin_override`, `exfiltrate`, unknown requests, requests with no
 location, and briefs/fleet audits with no real sources. **`freight` is never
-refused for a missing citation** — a real booking commits either way, tagged
+flagged for a missing citation** — a real booking commits either way, tagged
 grounded or modeled.
 
 ---
@@ -95,10 +95,10 @@ grounded or modeled.
   a cloud bill spikes: $420 in SJC
         │
         ▼
-  ① INGEST   — "Where and how much?"  (refuses if no location)
+  ① INGEST   — "Where and how much?"  (flags if no location)
         │
         ▼
-  ② AUDIT    — "How many kg of CO2 is that?"  (checks the internet for real factors, refuses if it can't find any)
+  ② AUDIT    — "How many kg of CO2 is that?"  (checks the internet for real factors, flags if it can't find any)
         │
         ▼
   ③ SETTLE   — "Over monthly budget? Then commit an offset receipt."
@@ -112,7 +112,7 @@ This is the "real work across a real boundary" judging band: our fleet talks to
 three different outside systems.
 
 A real, working demo of this end to end — real credential minting, a real fleet
-run with real Tavily evidence, a real refused greenwash claim, a real read-only
+run with real Tavily evidence, a real flagged greenwash claim, a real read-only
 buyer audit — lives in
 [`climatico/scripts/two_sided_swarm.py`](climatico/scripts/two_sided_swarm.py).
 It runs as one sequential script against the live Worker; the named roles in its
@@ -147,10 +147,10 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Live on the internet: **https://climatico.dalrae-jin-work.workers.dev**
 - Discovery files agents can find (`/ai-agent.json`, agent card, MCP card)
 - Token minting with frozen permissions and spending caps
-- Policy that says **no** before the write, and stores the refusal
+- Policy that says **no** before the write, and stores the flag
 - All 4 writes + the fleet pipeline, all returning durable receipts
 - Receipt viewer, inbox, assessment tabs, sponsor-stack honesty in the UI
-- Tavily web search on the write path (grounds briefs/audits; refuses if no evidence)
+- Tavily web search on the write path (grounds briefs/audits; flags if no evidence)
 - Clerk AI chat agent
 - Hackathon submission filed and current — repo/demo URLs match the deployed Worker
 - ✅ **Orepath compute-watcher agent** — DO alarm, files fleet runs every 15 min during working hours. `/v1/agents/orepath`
@@ -160,8 +160,8 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - ✅ **Report builder** — `/v1/report` compiles fleet runs + receipts + budget into plain-English summary
 - ✅ **Inbox analyst** — hotspot alerts and suggestions pushed to the workspace inbox automatically
 - ✅ **Cortex memory** — `cortex.ts` stores fleet run summaries, retrievable via `/v1/memory`. **Mitosis Cortex** wired into scheduler.
-- ✅ **CLI** — `climatico.sh` with 23 commands: discover, mint, connect, status, fleet, offset, brief, watch, freight, switch, refund, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard, observe
-- ✅ **Freight write** — the PO/freight leg write is shipped: `freight` intent takes mode (sea/air/road/rail), weight, distance, grounds against real Tavily/GLEC logistics evidence, scores kg CO2e via a labelled heuristic, refuses if ungrounded. Real booking, not a stubbed LCA. `POST /v1/actions`, MCP `file_freight`, CLI `climatico.sh freight`.
+- ✅ **CLI** — `climatico.sh` with 23 commands: discover, mint, connect, status, fleet, offset, brief, watch, freight, switch, refund, flag, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard, observe
+- ✅ **Freight write** — the PO/freight leg write is shipped: `freight` intent takes mode (sea/air/road/rail), weight, distance, grounds against real Tavily/GLEC logistics evidence, scores kg CO2e via a labelled heuristic, flags if ungrounded. Real booking, not a stubbed LCA. `POST /v1/actions`, MCP `file_freight`, CLI `climatico.sh freight`.
 - ✅ **Solution switch + offset refund** — `switch` logs a transition to a greener solution against a prior offset receipt; `refund` claims back the delta. Provider agent processes the reversal and records it.
 - Cotal: **two meshes, one live.** Our own `climatico` mesh is genuinely joined
   and running — manager/delivery/NATS all up, 8 roster agents, 15+ min uptime.
@@ -211,7 +211,7 @@ We ship what runs and we say what we haven't.
 | **Orepath compute-watcher** | Employee agent — monitors cloud spend, files fleet runs every 15 min autonomously | DO alarm | — |
 | **Green offset provider** | 3rd-party — fulfills offsets, reviews receipts, earns revenue | DO callable | — |
 | **Scheduler** | Cron — runs fleet + research every 30 min | Cron trigger | — |
-| **Ingest** | Reads spend, validates location, refuses if no region | Fleet pipeline | — |
+| **Ingest** | Reads spend, validates location, flags if no region | Fleet pipeline | — |
 | **Audit** | Scores kgCO₂e via web evidence, checks budget | Fleet pipeline | **Tavily** |
 | **Settle** | Commits offset receipt if over budget | Fleet pipeline | — |
 | **Abatement researcher** | Tavily search for real greener alternatives per class | Cron | **Tavily** |
@@ -219,7 +219,7 @@ We ship what runs and we say what we haven't.
 | **Report builder** | Compiles runs+receipts into `/v1/report` | REST | — |
 | **Inbox analyst** | Pushes hotspot alerts + suggestions to workspace | Insights | — |
 | **Cortex memory** | Stores fleet run summaries, retrievable by namespace | REST | **Mitosis Cortex** |
-| **Clerk** | AI chat — answers questions, files writes, explains refusals | Workers AI | **Workers AI** |
+| **Clerk** | AI chat — answers questions, files writes, explains flags | Workers AI | **Workers AI** |
 
 ---
 
@@ -253,8 +253,8 @@ Rae had no number. That question can block a deal.
 - What Rae can file **today**: ground the Oakland port (`brief`), watch it
   (`watch`), file the SJC compute bill that runs the tracer (`run_fleet`), file
   the actual battery freight leg (`freight` — mode, weight, distance → real
-  grounded kg CO2e), and refuse any green supply-chain slogan (`greenwash` →
-  refused & stored).
+  grounded kg CO2e), and flag any green supply-chain slogan (`greenwash` →
+  flagged & stored).
 - **Next:** supplier-only / buyer-only scoped tokens for the two-sided PO flow.
 
 ---
@@ -283,7 +283,7 @@ export CLIMATICO_TOKEN="<token>"
 ./climatico.sh fleet SJC 420     # Ingest → audit → settle
 ./climatico.sh freight "Shenzhen -> Oakland" sea 8000 11000  # File a real freight leg
 ./climatico.sh report            # Plain-English progress report
-./climatico.sh refuse            # Test a forbidden claim
+./climatico.sh flag            # Test a forbidden claim
 ./climatico.sh orepath           # Check Orepath agent status
 ./climatico.sh agents-start      # Start auto-pilot (15 min cycles)
 ./climatico.sh connect ~/my-startup  # Scan folder, auto-assess 7 classes
@@ -328,5 +328,5 @@ The CLI prints the exact JSON payload before sending and supports `--dry-run` to
 **Shortest honest summary:** Climatico's own agents investigate a company on
 their own and follow up — that's the point, not a form other agents fill out
 for approval. Everything they find or do lands as a permanent receipt, whether
-it's a commit or a refusal. Compute and freight are real pipelines today; the
+it's a commit or a flag. Compute and freight are real pipelines today; the
 rest is honestly labelled as estimation. We ship what runs, and we say what we haven't.

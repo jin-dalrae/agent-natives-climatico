@@ -244,7 +244,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       },
       principal,
     );
-    return json(request, { receipt }, receipt.status === "refused" ? 422 : 201);
+    return json(request, { receipt }, receipt.status === "flagged" ? 422 : 201);
   }
 
   if (path === "/v1/fleet/run" && request.method === "POST") {
@@ -259,7 +259,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     }>(request)) ?? {};
     const ledger = await getLedger(env);
     const run = await ledger.runFleet(body, principal);
-    return json(request, { run }, run.status === "refused" ? 422 : 201);
+    return json(request, { run }, run.status === "flagged" ? 422 : 201);
   }
 
   if (path === "/v1/fleet/runs" && request.method === "GET") {
@@ -312,7 +312,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       receipts,
       handoffs,
       committed: d.committed,
-      refused: d.refused,
+      flagged: d.flagged,
       fleetRuns: d.fleetRuns ?? 0,
       watches: d.watches,
     });
@@ -373,7 +373,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       inboxAlerts: workspace.inbox.filter((m) => m.tone === "no" || m.tone === "wa").slice(0, 5),
       summary: {
         committed: d.committed,
-        refused: d.refused,
+        flagged: d.flagged,
         fleetRuns: d.fleetRuns ?? 0,
         watches: d.watches,
       },

@@ -8,7 +8,7 @@ export type EmissionClass = {
   modeledT: number;
   uncertaintyPct: number;
   restsOn: string;
-  status: "modeled" | "live" | "refused";
+  status: "modeled" | "live" | "flagged";
   liveNote: string | null;
 };
 
@@ -109,9 +109,9 @@ export const OREPATH: FounderStory = {
       live: true,
     },
     {
-      id: "refuse-greenwash",
-      title: "Refuse a green chain claim",
-      how: "Tries to claim a green supply chain and gets refused. The refusal is saved as proof.",
+      id: "flag-greenwash",
+      title: "Flag a green chain claim",
+      how: "Tries to claim a green supply chain and gets flagged. The flag is saved as proof.",
       live: true,
     },
     {
@@ -130,7 +130,7 @@ export type OpsStage = {
   moment: string;
   climatico: string;
   live: boolean;
-  write?: "fleet" | "brief" | "watch" | "refuse";
+  write?: "fleet" | "brief" | "watch" | "flag";
 };
 
 export type GrowthQuarter = {
@@ -163,7 +163,7 @@ export const OREPATH_GROWTH = {
       verb: "Sell",
       company: "11 paying customers, 4 pilots. A cell buyer asks for Orepath's own footprint, not the mines'.",
       moment: "That question lands in an agent's inbox, not a slow PDF back-and-forth.",
-      climatico: "Ground a brief with real sources. Refuse any green-chain slogan.",
+      climatico: "Ground a brief with real sources. Flag any green-chain slogan.",
       live: true,
       write: "brief" as const,
     },
@@ -289,7 +289,7 @@ export function buildWorkspace(input: {
     return { ...row, status: "modeled" as const, liveNote: null };
   });
 
-  const hasTokenActivity = dashboard.committed + dashboard.refused > 0;
+  const hasTokenActivity = dashboard.committed + dashboard.flagged > 0;
   const hasGrounded = receipts.some((r) => r.status === "committed" && r.evidence.length > 0);
   const hasFleet = (dashboard.fleetRuns ?? 0) > 0;
   const hasOffset = receipts.some((r) => r.intent === "offset" && r.status === "committed");
@@ -312,7 +312,7 @@ export function buildWorkspace(input: {
       level: 2,
       name: "L2 · grounded write",
       done: hasGrounded,
-      how: "File a brief or assessment. If we can't find real sources, we refuse instead of guessing.",
+      how: "File a brief or assessment. If we can't find real sources, we flag instead of guessing.",
     },
     {
       level: 3,
@@ -350,7 +350,7 @@ export function buildWorkspace(input: {
       body:
         lastRun.audit.grounded
           ? `Compute class scored ${lastRun.audit.kgCO2e} kgCO2e from $${lastRun.ingest.spendUsd} spend. Factor is a published heuristic, cited against ${lastRun.audit.evidence.length} live sources.`
-          : "Audit refused to score: no live factor evidence.",
+          : "Audit won't score: no live factor evidence.",
       action:
         over > 0
           ? "Settle the offset (already attempted if the token allows) or cut spend in this region."
@@ -369,8 +369,8 @@ export function buildWorkspace(input: {
       title:
         r.status === "committed"
           ? `Offset committed · ${(r.amountCents ?? 0) / 100} USD`
-          : `Offset refused · ${r.refusalCode}`,
-      body: r.refusalReason ?? `Receipt ${r.id.slice(0, 8)} on the ledger. Retry-safe via idempotencyKey.`,
+          : `Offset flagged · ${r.flagCode}`,
+      body: r.flagReason ?? `Receipt ${r.id.slice(0, 8)} on the ledger. Retry-safe via idempotencyKey.`,
       action:
         r.status === "committed"
           ? "Show this receipt to a buyer agent with climatico:read only."
@@ -379,15 +379,15 @@ export function buildWorkspace(input: {
     });
   }
 
-  const refused = receipts.filter((r) => r.status === "refused").slice(0, 3);
-  for (const r of refused) {
+  const flagged = receipts.filter((r) => r.status === "flagged").slice(0, 3);
+  for (const r of flagged) {
     inbox.push({
-      id: `refuse-${r.id}`,
+      id: `flag-${r.id}`,
       from: "policy",
       channel: "ledger",
       tone: "no",
-      title: `Refused ${r.intent}${r.location ? ` @ ${r.location}` : ""}`,
-      body: r.refusalReason ?? r.refusalCode ?? "policy",
+      title: `Flagged ${r.intent}${r.location ? ` @ ${r.location}` : ""}`,
+      body: r.flagReason ?? r.flagCode ?? "policy",
       action: "This is saved as proof. To succeed, change the claim itself — not the wording.",
       createdAt: r.createdAt,
     });
@@ -426,7 +426,7 @@ export function buildWorkspace(input: {
     tone: tavilyKey ? "ok" : "wa",
     title: tavilyKey ? "Tavily is on the write path" : "Tavily is keyless — claim 26HACK",
     body: tavilyKey
-      ? "Briefs and audits use your key. Grounding still refuses empty results."
+      ? "Briefs and audits use your key. Grounding still flags empty results."
       : "Keyless search works for the demo. Coupon 26HACK at app.tavily.com adds 8,000 credits (plus 1,000 free).",
     action: tavilyKey
       ? "No action."
@@ -490,7 +490,7 @@ export function buildWorkspace(input: {
       name: "Tavily",
       role: "Live web evidence",
       status: tavilyKey ? "live" : "booth",
-      insight: "Ungrounded briefs and audits are refused. That is the product.",
+      insight: "Ungrounded briefs and audits are flagged. That is the product.",
       how: "Coupon 26HACK — two days only.",
       href: "https://app.tavily.com",
     },
