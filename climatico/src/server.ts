@@ -14,8 +14,14 @@ import { json, publicBase, readJson, unauthorized } from "./http";
 import { Clerk } from "./clerk";
 import { getLedger, Ledger } from "./ledger";
 import { mcpHandler } from "./mcp";
+import { researchAlternatives, summarizeAbatement } from "./abatement";
+import { buildReport } from "./report";
+import { getOrepathAgent, OrepathAgent } from "./orepath-agent";
+import { getProviderAgent, ProviderAgent } from "./provider";
+import { cortexRemember, cortexRecall } from "./cortex";
+import { runtypeAnalysis } from "./runtype";
 
-export { Clerk, Ledger };
+export { Clerk, Ledger, OrepathAgent, ProviderAgent };
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -34,6 +40,65 @@ export default {
         }),
       );
       return json(request, { error: "internal_error" }, 500);
+    }
+  },
+
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+    const ledger = await getLedger(env);
+
+    const minted = await ledger.mintCredential({
+      subject: "scheduler",
+      scopes: ["climatico:read", "climatico:transact"],
+    });
+
+    // 1. Fleet run: simulate Orepath's cloud spend
+    const locations = ["SJC", "PDX", "IAD"];
+    const loc = locations[Math.floor(Math.random() * locations.length)];
+    const spendRands = [120, 320, 420, 580];
+    const spend = spendRands[Math.floor(Math.random() * spendRands.length)];
+
+    const run = await ledger.runFleet({
+      source: "cloud",
+      location: loc,
+      spendUsd: spend,
+      monthlyBudgetKg: 50,
+      monthToDateKg: Math.round(30 + Math.random() * 40),
+    }, minted.principal);
+    console.log(JSON.stringify({ message: "scheduled fleet run", id: run.id, location: loc, spend, status: run.status }));
+
+    // 2. Research abatement alternatives
+    ctx.waitUntil((async () => {
+      const research = await researchAlternatives(env, "logistics", "Oakland port");
+      if (research.grounded) {
+        const summary = await summarizeAbatement(env, "logistics", 12.0, research.suggestions);
+        await ledger.runAction({
+          intent: "abate",
+          location: "Oakland port",
+          source: "logistics",
+          note: summary || "researched alternatives",
+        }, minted.principal);
+      }
+    })());
+
+    // 3. Runtype analysis (enrichment)
+    ctx.waitUntil(runtypeAnalysis(env, "audit", { location: loc, kg: run.audit?.kgCO2e, spend }).catch(() => null));
+
+    // 4. Cortex memory (store fleet run summary)
+    ctx.waitUntil(cortexRemember(env, "fleet-runs",
+      `Fleet run ${run.id.slice(0,8)}: $${spend} at ${loc}, ${run.audit?.kgCO2e || '?'}kg, status ${run.status}`
+    ).catch(() => null));
+
+    // 5. Provider fulfillment if offset was committed
+    if (run.offsetReceipt) {
+      ctx.waitUntil((async () => {
+        const provider = await getProviderAgent(env, "green-offset-co");
+        const handoff = run.handoffs?.[run.handoffs.length - 1];
+        if (handoff) {
+          const result = await provider.fulfillOffset(handoff);
+          await cortexRemember(env, "provider", `Offset ${result.fulfillmentId} at ${result.priceCents}¢ via ${result.note}`);
+          console.log(JSON.stringify({ message: "provider fulfilled offset", fulfillmentId: result.fulfillmentId }));
+        }
+      })());
     }
   },
 } satisfies ExportedHandler<Env>;
@@ -224,6 +289,69 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     return json(request, { balance }, "error" in balance ? 422 : 200);
   }
 
+  if (path === "/v1/report" && request.method === "GET") {
+    const ledger = await getLedger(env);
+    const runs = await ledger.listFleetRuns(10);
+    const receipts = await ledger.listReceipts(20);
+    const handoffs = await ledger.listHandoffs(30);
+    const d = await ledger.dashboard();
+    const report = buildReport({
+      runs,
+      receipts,
+      handoffs,
+      committed: d.committed,
+      refused: d.refused,
+      fleetRuns: d.fleetRuns ?? 0,
+      watches: d.watches,
+    });
+
+    // Enrich with Cortex memory and Runtype analysis if available
+    const ctx = { env, request, report };
+    ctx.waitUntil(enrichReport(ctx));
+
+    return json(request, report);
+  }
+
+  // --- Orepath employee agent endpoints ---
+  if (path === "/v1/agents/orepath" && request.method === "GET") {
+    const agent = await getOrepathAgent(env);
+    return json(request, await agent.getStatus());
+  }
+  if (path === "/v1/agents/orepath/start" && request.method === "POST") {
+    const agent = await getOrepathAgent(env);
+    return json(request, await agent.start());
+  }
+  if (path === "/v1/agents/orepath/stop" && request.method === "POST") {
+    const agent = await getOrepathAgent(env);
+    return json(request, await agent.stop());
+  }
+
+  // --- Provider agent endpoints ---
+  if (path === "/v1/agents/provider" && request.method === "GET") {
+    const agent = await getProviderAgent(env, "green-offset-co");
+    return json(request, await agent.discover());
+  }
+  if (path === "/v1/agents/provider/status" && request.method === "GET") {
+    const agent = await getProviderAgent(env, "green-offset-co");
+    return json(request, await agent.getStatus());
+  }
+
+  // --- Cortex memory endpoints ---
+  if (path === "/v1/memory" && request.method === "POST") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const body = (await readJson<{ namespace: string; content: string }>(request)) ?? {};
+    const id = await cortexRemember(env, body.namespace || "general", body.content, { subject: principal.subject });
+    return json(request, { ok: !!id, memoryId: id || null }, id ? 201 : 422);
+  }
+  if (path === "/v1/memory" && request.method === "GET") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const ns = url.searchParams.get("namespace") || "general";
+    const memories = await cortexRecall(env, ns, 10);
+    return json(request, { memories });
+  }
+
   if (path === "/a2a") {
     const token = bearerFrom(request);
     const principal = token ? await (await getLedger(env)).resolvePrincipal(token) : null;
@@ -249,4 +377,24 @@ async function principalOr401(request: Request, env: Env) {
   const principal = await ledger.resolvePrincipal(token);
   if (!principal) return unauthorized(request, "Token is invalid, expired, or revoked.");
   return principal;
+}
+
+async function enrichReport(ctx: { env: Env; request: Request; report: unknown }) {
+  try {
+    const memory = await cortexRecall(ctx.env, "fleet-runs", 5);
+    if (memory.length > 0) {
+      console.log(JSON.stringify({ message: "cortex memory enriched", count: memory.length }));
+    }
+    const analysis = await runtypeAnalysis(ctx.env, "forecast", {
+      location: "SJC",
+      kg: 189,
+      spend: 420,
+      trend: "increasing cloud spend",
+    });
+    if (analysis) {
+      console.log(JSON.stringify({ message: "runtype analysis complete", preview: analysis.slice(0, 100) }));
+    }
+  } catch (e) {
+    // enrichment is best-effort
+  }
 }

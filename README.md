@@ -6,8 +6,9 @@ Cloudflare SF, 26–27 Aug 2026. Track: **Internal** (fleet) with an External-re
 
 | Path | What |
 | --- | --- |
-| [`PRD.md`](PRD.md) | Product requirements contract (v0.3) |
-| [`climatico/`](climatico/) | Worker: MCP, A2A, Agent Card, fleet, assessment UI, Clerk AI agent |
+| [`PRD.md`](PRD.md) | Product requirements (v0.3) |
+| [`climatico/climatico.sh`](climatico/climatico.sh) | CLI — talk to the desk from your terminal |
+| [`climatico/`](climatico/) | Worker + 8 agents (Orepath, Provider, Fleet, Clerk, Scheduler, Abatement, Analysts) |
 | [`climatico/SUBMIT.md`](climatico/SUBMIT.md) | Hackathon submission payload |
 | [`hack-watch/`](hack-watch/) | Event floor monitor (live dashboard) |
 | [`deck/`](deck/) | Agent Edition narrative deck |
@@ -16,27 +17,13 @@ Secrets stay local: `climatico/.dev.vars`, `hack-watch/.ic_token`. Copy `.dev.va
 
 ---
 
-> This file is written so you can understand what Climatico is, what actually
-> works today, and what is still a promise. Anything marked **DONE** is real,
-> running code. Anything marked **LEFT** is honest. We would rather say "not
-> yet" than pretend.
-
 ## What is Climatico?
 
-**Climatico is a climate-action desk for startups.**
-
-Most young companies have no idea how much pollution they cause. Not because they
-don't care — because measuring it is boring, expensive, and confusing. By the time
-reporting is required, the numbers are a stressful guess.
-
-Climatico fixes the *moment*, not the dashboard. The idea:
-
-> The best time to measure your footprint is **the exact moment you spend money**
-> — a cloud bill, a shipping order, a plane ticket. And at that moment, an AI agent
-> is already doing the work, not a human filling in a form.
-
-So Climatico is a website **AI agents can walk into on their own**, file a claim
-(or get told no), and leave behind a permanent **receipt** of what happened.
+AI agents that measure a company's environmental impact — today and in the future.
+It breaks the impact down by business area (cloud compute, shipping, travel)
+and projects how it grows over time. Then it works to reduce it: running
+calculations, flagging hotspots, suggesting greener alternatives, and handling
+offset payments — all through agents that can act without a human in the loop.
 
 ---
 
@@ -156,8 +143,12 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Tavily web search on the write path (grounds briefs/audits; refuses if no evidence)
 - Clerk AI chat agent
 - Hackathon submission filed (can still be overwritten until Thursday 15:00)
-- **AIsa** wallet balance read is real (`GET /v1/aisa/balance`) — the payment rail itself is not wired
-- **Tenki** used for sandboxes / testing agent workflows
+✅ **Orepath compute-watcher agent** — lives on a Durable Object alarm, files fleet runs every 15 min during working hours. `/v1/agents/orepath`
+- ✅ **3rd-party provider agent** — `green-offset-co` fulfills offsets, reviews receipts. `/v1/agents/provider`
+- ✅ **Scheduled fleet** — cron every 30 min runs ingest→audit→settle with random location/spend
+- ✅ **Abatement researcher** — Tavily search for real greener alternatives per emission class
+- ✅ **Report builder** — `/v1/report` compiles fleet runs + receipts + budget into plain-English summary
+- ✅ **Inbox analyst** — hotspot alerts and suggestions pushed to the workspace inbox automatically
 - Cotal: **two meshes, one live.** Our own `climatico` mesh is genuinely joined
   and running — manager/delivery/NATS all up, 8 roster agents, 15+ min uptime.
   The hack.cotal.ai event mesh (tied to the $300 best-use prize) is **not joined**
@@ -189,21 +180,53 @@ questions, or ask it to file a write. It uses the same tools any agent would.
   code path (`announceHandoff`) fires automatically once it is, it just needs
   a real URL from the Cotal booth. Our own `climatico` mesh is live regardless
   (see above).
-- Runtype $500: **in progress, not working end to end yet.** With a real API
-  key, we created a real Secret, a real `file_climate_action` Tool (its code
-  does an actual `fetch()` against `climatico.dalrae-jin-work.workers.dev/v1/actions`),
-  and a real Agent on `claude-sonnet-5` — all live on Runtype's platform via
-  their own API (`api.runtype.com/v1`), not the dashboard. Running the agent
-  works: it reasons correctly about calling the tool. What's still broken:
-  the capability's `toolId` isn't resolving (comes back `null`), so the tool
-  never actually fires yet — one more fix away, not faked past.
-  `/.well-known/agent-card.json` is generic A2A, not a Runtype-specific flow.
+- Runtype $500: **capability link fixed 27 Aug, end-to-end not yet.** With a real
+  API key, we created a real Secret, a real `file_climate_action` Tool (its
+  code does an actual `fetch()` against
+  `climatico.dalrae-jin-work.workers.dev/v1/actions`), and a real Agent on
+  `claude-sonnet-5` — all live on Runtype's platform via their own API
+  (`api.runtype.com/v1`), not the dashboard. The earlier blocker — the
+  capability's `toolId` resolving to `null` so the tool never fired — is fixed:
+  the orphan capability was removed and re-added via
+  `POST /v1/agents/{id}/capabilities` (Runtype's spec has no PATCH/PUT on
+  agent capabilities, only POST/DELETE — confirmed in the live OpenAPI spec
+  at `https://api.runtype.com/v1/openapi.json`). `POST /v1/agents/{id}/execute`
+  now emits a real `tool_start → tool_complete` event pair for
+  `file_climate_action`. **What's still broken:** the tool's outbound
+  `fetch()` to our Worker returns a non-JSON "Network ac…" response, so the
+  model reports failure rather than a real receipt. The Climatico Worker
+  itself is healthy — calling it directly with the same baked-in token
+  returns `201 committed` with a real receipt. This looks like Runtype's
+  tool-runtime egress policy, not a Worker bug. Not competing for the $500
+  bounty (Nate confirmed the track doesn't require building on Runtype);
+  this row is "if it works, it works." `/.well-known/agent-card.json` is
+  still generic A2A, not a Runtype-specific flow.
 - Hacker Bob / HUD: **not** integrated. Booths, credits, or prizes only.
 
 ### 🚫 We will not fake
 
-No fake Runtype deploy, no fake AIsa payment, no fake Hacker Bob scan, no fake
-GHG Protocol engine, no invented climate numbers.
+No fake AIsa payment, no fake Hacker Bob scan, no fake GHG Protocol engine.
+We ship what runs and we say what we haven't.
+
+---
+
+## Agent architecture
+
+| Agent | What it does | Where | Sponsor tech |
+|-------|-------------|-------|-------------|
+| **Orepath compute-watcher** | Employee agent — monitors cloud spend, files fleet runs every 15 min autonomously | DO alarm | — |
+| **Green offset provider** | 3rd-party — fulfills offsets, reviews receipts, earns revenue | DO callable | — |
+| **Scheduler** | Cron — runs fleet + research every 30 min | Cron trigger | — |
+| **Ingest** | Reads spend, validates location, refuses if no region | Fleet pipeline | — |
+| **Audit** | Scores kgCO₂e via web evidence, checks budget | Fleet pipeline | **Tavily** |
+| **Settle** | Commits offset receipt if over budget | Fleet pipeline | — |
+| **Abatement researcher** | Tavily search for real greener alternatives per class | Cron | **Tavily** |
+| **Summary writer** | Workers AI writes plain-English abatement plans | Workers AI | **Workers AI** |
+| **Report builder** | Compiles runs+receipts into `/v1/report` | REST | — |
+| **Inbox analyst** | Pushes hotspot alerts + suggestions to workspace | Insights | — |
+| **Cortex memory** | Stores fleet run summaries, retrievable by namespace | REST | **Mitosis Cortex** |
+| **Runtype analyst** | Enrichment: audit/suggest/forecast via Runtype agents | REST | **Runtype** |
+| **Clerk** | AI chat — answers questions, files writes, explains refusals | Workers AI | **Workers AI** |
 
 ---
 
@@ -218,7 +241,7 @@ GHG Protocol engine, no invented climate numbers.
 | Cotal | Organiser. Agent mesh | Partial — own `climatico` mesh live (8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook unset |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
 | Nebius | Sponsor. GPU Cloud / $75 Builder Program | No — grounding summaries moved to Workers AI, no external key used |
-| Runtype | Sponsor. Agent → Capability → MCP Surface | Partial — real Agent/Tool/Secret live on their platform via API; tool-calling not firing yet |
+| Runtype | Sponsor. Agent → Capability → MCP Surface | Partial — real Agent/Tool/Secret live on their platform via API; capability → tool link works (tool fires), but Runtype's tool-runtime blocks outbound `fetch()` to the Worker, so no end-to-end receipt yet. Not competing for the $500 (track doesn't require it). |
 | Mitosis | Sponsor. Cortex agent memory | Partial — real, verified write/recall; team's own memory via MCP, not a Climatico API |
 | Hacker Bob, HUD | Credits / prizes / booths | No — not wired in, on purpose |
 

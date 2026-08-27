@@ -4,6 +4,9 @@
   "main": "src/server.ts",
   "compatibility_date": "2026-08-26",
   "compatibility_flags": ["nodejs_compat"],
+  "triggers": {
+    "crons": ["*/30 * * * *"]
+  },
   "vars": {
     "PRODUCT_NAME": "Climatico",
     "PUBLIC_BASE_URL": ""
@@ -32,13 +35,19 @@
   "durable_objects": {
     "bindings": [
       { "name": "Ledger", "class_name": "Ledger" },
-      { "name": "Clerk", "class_name": "Clerk" }
+      { "name": "Clerk", "class_name": "Clerk" },
+      { "name": "OrepathAgent", "class_name": "OrepathAgent" },
+      { "name": "ProviderAgent", "class_name": "ProviderAgent" }
     ]
   },
   "migrations": [
     {
       "tag": "v1",
       "new_sqlite_classes": ["Ledger", "Clerk"]
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["OrepathAgent", "ProviderAgent"]
     }
   ],
   "observability": {
