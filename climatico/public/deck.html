@@ -97,7 +97,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   min-height: 100vh;
   scroll-snap-align: start;
   display: flex; flex-direction: column; justify-content: center;
-  padding: 48px 56px;
+  padding: 36px 40px;
   border-bottom: 1px solid var(--line-2);
 }
 .inner { width: 100%; max-width: 1080px; margin: 0 auto; }
@@ -115,14 +115,14 @@ h2.slide-title { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.12; }
   line-height: 1.45; color: var(--muted); max-width: 66ch; margin-top: 10px;
 }
 
-.grid { display: grid; gap: 16px; margin-top: 24px; }
+.grid { display: grid; gap: 12px; margin-top: 20px; }
 .g2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
 .g3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
 .g4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
 .g5 { grid-template-columns: repeat(5, minmax(0,1fr)); }
 .card {
   background: var(--panel); border: 1px solid var(--line);
-  padding: 18px 18px;
+  padding: 14px 15px;
 }
 .card h3 { font-size: 15px; margin-bottom: 5px; line-height: 1.2; }
 .card p { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.55; }
@@ -318,15 +318,17 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <path d="M50 44.6A24 24 0 1 1 50 19.4l-8.17 5.71a14 14 0 1 0 0 13.78Z" fill="var(--accent)"/>
         <path d="M33.15 33.28C48.1 29.24 54.7 19.49 51.2 9.41c-11.87 5.04-17.59 12.1-18.05 23.87Z" fill="var(--accent-2)"/>
       </svg>
-      <span class="tag">Website edition · Agent Edition · Internal track</span>
+      <span class="tag">Website edition · Agent Edition · Internal track · 13 agents</span>
     </div>
     <h1>Helping startups scale<br>sustainably, from <em>day one.</em></h1>
-    <p class="lede">That is why we built Climatico. Website edition: a founder sees their own EI and a task list before early habits become permanent. Agent Edition: the same product, but an AI agent can submit data to it directly.</p>
+    <p class="lede">That is why we built Climatico. Website edition: a founder sees their own EI and a task list before early habits become permanent. Agent Edition: the same product, but any AI agent can submit data to it directly — and a fleet of agents runs the calculation, evidence, suggestions, and offset settlement without a human in the loop.</p>
     <div class="cover-meta">
       <div><span>Event</span><b>Agent Natives · Cloudflare SF · 26–27 Aug 2026</b></div>
-      <div><span>Runtime</span><b>One Worker · Durable Object SQLite</b></div>
+      <div><span>Runtime</span><b>One Worker · 4 DOs · SQLite ledger</b></div>
       <div><span>Cold start</span><b>/ai-agent.json · mint · write</b></div>
       <div><span>Fleet</span><b>ingest → audit → settle</b></div>
+      <div><span>Agents</span><b>13 — Orepath, Provider, Scheduler, 3× Fleet, 4× Analysts, Clerk, Abatement, Cortex</b></div>
+      <div><span>Surfaces</span><b>/mcp · /a2a · /v1/* · CLI</b></div>
       <div><span>Desk</span><b id="coverBase">127.0.0.1:8787</b></div>
         <div><span>Dashboard</span><b><a href="/app?tab=assess&from=deck" id="coverDash">Open live desk</a></b></div>
     </div>
@@ -490,15 +492,11 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
     <div class="grid g2" style="margin-top:16px;">
       <div class="card">
         <span class="kicker">Writes the desk accepts</span>
-        <p><span class="inline">brief</span> <span class="inline">watch</span> <span class="inline">offset</span> <span class="inline">assess</span> <span class="inline">run_fleet</span></p>
+        <p><span class="inline">brief</span> <span class="inline">watch</span> <span class="inline">offset</span> <span class="inline">assess</span> <span class="inline">abate</span> <span class="inline">switch</span> <span class="inline">refund</span> <span class="inline">freight</span> <span class="inline">run_fleet</span></p>
       </div>
       <div class="card">
         <span class="kicker">Flagged and stored</span>
-        <p><span class="chip no">payout</span> <span class="chip no">greenwash</span> <span class="chip no">exfiltrate</span> <span class="chip no">ungrounded</span></p>
-      </div>
-      <div class="card">
-        <span class="kicker">The rule</span>
-        <p>The policy never runs after the write. Checks before save, not after.</p>
+        <p><span class="chip no">payout</span> <span class="chip no">greenwash</span> <span class="chip no">exfiltrate</span> <span class="chip no">ungrounded</span> · unknown intent, no location, over ceiling. The policy never runs after the write.</p>
       </div>
     </div>
   </div>
@@ -508,15 +506,17 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <div class="inner wide">
     <div class="eyebrow">Agent Edition · the Worker in climatico/</div>
     <h2 class="slide-title">The dashboard shows the same data that agents submit.</h2>
-    <p class="lede">Assess / Inbox / Agent / Onboard / Stack. Humans read the same ledger agents write. Website edition is the founder dashboard; this is the Agent Edition desk on the Worker.</p>
+    <p class="lede">Assess / Grow / Fleet Pipeline / 3-Sided Swarm / Impact &amp; Abate / Ledger &amp; Receipts / Inbox / Agent Clerk. Humans read the same ledger agents write. Website edition is the founder dashboard; this is the Agent Edition desk on the Worker.</p>
     <div class="browser">
       <div class="browser-bar">
         <div class="browser-tabs" id="deskTabs" role="tablist">
           <button type="button" data-tab="assess" aria-current="true">Assess</button>
+          <button type="button" data-tab="pipeline">Fleet Pipeline</button>
+          <button type="button" data-tab="swarm">3-Sided Swarm</button>
+          <button type="button" data-tab="impact">Impact &amp; Abate</button>
+          <button type="button" data-tab="ledger">Ledger &amp; Receipts</button>
           <button type="button" data-tab="inbox">Inbox</button>
-          <button type="button" data-tab="agent">Agent</button>
-          <button type="button" data-tab="onboard">Onboard</button>
-          <button type="button" data-tab="stack">Stack</button>
+          <button type="button" data-tab="agent">Agent Clerk</button>
         </div>
         <div class="url" id="deskUrl">http://127.0.0.1:8787/?tab=assess&amp;from=deck</div>
         <button type="button" class="ghost" id="openDesk">Open dashboard</button>
@@ -532,7 +532,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 <section class="slide" id="slide-7" data-name="Cold start">
   <div class="inner">
     <div class="eyebrow">What a judge actually scores</div>
-    <h2 class="slide-title">Five calls from a URL to a durable write.</h2>
+    <h2 class="slide-title">A stranger agent, zero setup, five calls to a permanent record.</h2>
     <p class="lede">Internal track, External-shaped discovery. The 30-point field is what an unfamiliar agent can actually trigger — <span class="inline">/ai-agent.json</span>, not the marketing description.</p>
     <div class="steps">
       <div class="step">
@@ -581,7 +581,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <text x="248" y="148" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".6" font-family="IBM Plex Mono, monospace">scopes freeze</text>
         <g font-family="IBM Plex Mono, monospace" font-size="11" fill="currentColor">
           <rect x="368" y="40" width="200" height="32" fill="none" stroke="currentColor" stroke-width="1.2"/>
-          <text x="378" y="61">MCP /mcp · 9 tools</text>
+          <text x="378" y="61">MCP /mcp · 15 tools</text>
           <rect x="368" y="82" width="200" height="32" fill="none" stroke="currentColor" stroke-width="1.2"/>
           <text x="378" y="103">A2A /a2a · SendMessage</text>
           <rect x="368" y="124" width="200" height="32" fill="none" stroke="currentColor" stroke-width="1.2"/>
@@ -706,14 +706,8 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         </ul>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="slide" id="slide-10-classes" data-name="Seven classes">
-  <div class="inner">
-    <div class="eyebrow">Assessment · seven classes</div>
-    <h2 class="slide-title">Cloud compute is live. The rest are modeled until evidenced.</h2>
-    <div class="card" style="margin-top:20px;">
+    <div class="card" style="margin-top:14px;">
+      <span class="kicker">Assessment · seven classes</span>
       <table>
         <thead><tr><th>Class</th><th>Scope</th><th>Default</th><th>±</th><th>Live today</th></tr></thead>
         <tbody>
@@ -810,55 +804,62 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <div class="inner wide">
     <div class="eyebrow">Agent Edition &middot; an agent army on both sides of one ledger</div>
     <h2 class="slide-title">Client swarm &harr; Climatico service &rarr; buyer ecosystem.</h2>
-    <p class="lede">Enterprise clients file operations, Climatico enforces policy and settles receipts, and downstream buyers verify with read-only credentials. One ledger underneath all three.</p>
-    <div class="grid g3" style="margin-top:24px;">
+    <p class="lede">The same ledger grew a real cast of investigating agents this weekend. Orepath's own compute-watcher files what it finds autonomously, Climatico's fleet enforces policy and settles receipts, third-party providers deliver services through the same surface, and downstream buyers verify with read-only credentials. One ledger underneath all of it.</p>
+    <div class="grid g3">
       <div class="card" style="border-color: var(--warn);">
-        <span class="chip wa">Client army</span>
+        <span class="chip wa" style="margin-bottom:8px;">Client army</span>
         <h3>Orepath + Hardware Co</h3>
-        <p><b>TracerFleetAgent</b> spikes $420 in SJC. <b>PortLogisticsAgent</b> grounds Oakland port. <b>FactoryProcurementAgent</b> files factory POs. <b>MarketingBot</b> tries a greenwash.</p>
+        <p><b>compute-watcher</b> (Durable Object alarm) spikes cloud spend every 15 min during working hours. <b>PortLogisticsAgent</b> grounds the Oakland port. Hardware Co&rsquo;s <b>FactoryProcurementAgent</b> files factory POs; <b>OceanFreightAgent</b> watches the port. A rogue <b>MarketingBot</b> tries to mint a green claim on purpose.</p>
       </div>
       <div class="card" style="border-color: var(--ok);">
-        <span class="chip ok">Service army</span>
-        <h3>Climatico ingest &rarr; audit &rarr; settle</h3>
-        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e via Tavily. <b>Settle</b> commits offset. <b>Policy</b> flags forbidden intents. Every handoff is a row.</p>
+        <span class="chip ok" style="margin-bottom:8px;">Service army</span>
+        <h3>Climatico: 10 agents in one Worker</h3>
+        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e against live Tavily sources. <b>Settle</b> commits a token-capped offset. <b>Policy</b> flags forbidden intents &mdash; and records the rejection. <b>Scheduler</b> (cron) runs all three plus Tavily abatement research every 30 min. <b>Abatement researcher</b> + <b>summary writer</b> (Workers AI) find real greener alternatives. <b>Report builder</b> compiles <code>/v1/report</code>. <b>Inbox analyst</b> pushes hotspot alerts. <b>Clerk</b> (Workers AI) answers questions. Every handoff is a row.</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
-        <span class="chip info">Buyer ecosystem</span>
-        <h3>EV OEM read-only auditor</h3>
-        <p>The buyer mints <span class="inline">climatico:read</span>-only. Audits ledger before accepting claims. Transact rights: none. Proof that cannot write.</p>
+        <span class="chip info" style="margin-bottom:8px;">3rd-party + buyer</span>
+        <h3>Provider agent &middot; EV OEM auditor</h3>
+        <p><b>green-offset-co</b> (Durable Object) fulfills offsets the fleet writes, reviews receipts, earns revenue &mdash; delivered <em>through</em> the same surface. The buyer mints a <span class="inline">climatico:read</span>-only credential and audits the ledger before accepting any supplier claim. Transact rights: none. Proof of attribution that cannot write.</p>
       </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <span class="kicker">The boundary &middot; what every agent must cross</span>
+      <p><span class="inline">/.well-known/agent-card.json</span> A2A discovery &middot; <span class="inline">/v1/credentials</span> scopes freeze at mint (5&nbsp;000&cent; ceiling) &middot; <span class="inline">/mcp &middot; /a2a &middot; /v1/*</span> one policy underneath &middot; <span class="inline">SQLite Ledger</span> the settlement of record &middot; <span class="inline">climatico.sh</span> CLI for human operators. In the UI this is the <b>3-Sided Swarm</b> tab, deployed and live.</p>
     </div>
   </div>
 </section>
 
-<section class="slide" id="slide-boundary" data-name="The boundary">
+<section class="slide" id="slide-privacy" data-name="Privacy">
   <div class="inner wide">
-    <div class="eyebrow">The boundary &middot; what every agent must cross</div>
-    <h2 class="slide-title">One policy underpins the entire swarm.</h2>
-    <div class="grid g4" style="margin-top:24px;">
-      <div class="card">
-        <span class="chip info">Discovery</span>
-        <h3>/.well-known/agent-card.json</h3>
-        <p>A2A agent card for discovery</p>
+    <div class="eyebrow">Privacy &middot; signal-only, like Salesforce / Google / Workday</div>
+    <h2 class="slide-title">Your business information is very secure in Climatico.</h2>
+    <p class="lede">When <code>climatico.sh connect ~/my-startup</code> runs, it scans the folder <em>on the startup's machine</em> and extracts only derived signals. The server never sees file contents. The CLI prints the exact JSON payload before sending and supports <code>--dry-run</code> to inspect without transmitting.</p>
+    <div class="grid g2">
+      <div class="card" style="border-color: var(--ok);">
+        <span class="chip ok" style="margin-bottom:8px;">Stays on your machine</span>
+        <ul class="ticks">
+          <li><b>File contents</b> of <code>package.json</code>, <code>wrangler.*</code>, <code>README.md</code>, <code>.env</code>, source code</li>
+          <li><b>Any other file</b> in the folder</li>
+          <li>Your data, your records, your secrets</li>
+        </ul>
       </div>
-      <div class="card">
-        <span class="chip wa">Auth</span>
-        <h3>/v1/credentials</h3>
-        <p>Scopes freeze at mint. 5&nbsp;000&cent; ceiling.</p>
-      </div>
-      <div class="card">
-        <span class="chip ok">Protocol</span>
-        <h3>/mcp /a2a /v1/*</h3>
-        <p>MCP, A2A, REST all under one policy</p>
-      </div>
-      <div class="card">
-        <span class="chip info">Ledger</span>
-        <h3>SQLite DO</h3>
-        <p>Settlement of record. Durable.</p>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip acc" style="margin-bottom:8px;">Leaves (small JSON only)</span>
+        <ul class="ticks">
+          <li><b>Vendor names</b> from deps: <code>"stripe"</code>, <code>"datadog"</code></li>
+          <li><b>Cloud provider</b> from config: <code>"Cloudflare Workers"</code></li>
+          <li><b>README keyword hits</b>: <code>"mentions shipping"</code></li>
+          <li><b>kind, class, confidence</b> &mdash; no values, no snippets</li>
+        </ul>
       </div>
     </div>
-    <div class="card" style="margin-top:20px;">
-      <p>In the UI this is the <b>3-Sided Swarm</b> tab, deployed and live.</p>
+    <div class="card" style="margin-top:14px;">
+      <span class="kicker">Why this is the same model as the SaaS tools you already trust</span>
+      <p><b>Salesforce</b> reads your org's metadata, not your records. &nbsp; <b>Google</b> reads your ad counts, not your emails. &nbsp; <b>Workday</b> reads your headcount, not your salary data. &nbsp; <b>Climatico</b> reads your signals, not your source. We do not store your files. We do not train on them. We do not send them to third parties.</p>
+    </div>
+    <div class="card" style="margin-top:14px;border-color: var(--warn);">
+      <span class="kicker">This is a binding constraint, not a feature</span>
+      <p>The CLI source is auditable. The server's <code>/v1/connect</code> handler does not accept a <code>file_contents</code> or <code>path_contents</code> field &mdash; by design, by contract, by source code. Future data connections (Salesforce, Google billing, Workday) will follow the same pattern: extract rollups locally, send rollups, never records.</p>
     </div>
   </div>
 </section>
@@ -896,60 +897,50 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 </section>
 
 
-<section class="slide" id="slide-impact" data-name="Impact overview">
+<section class="slide" id="slide-impact" data-name="Impact & abatement">
   <div class="inner wide">
     <div class="eyebrow">Modeled impact &amp; abatement &middot; not measured</div>
     <h2 class="slide-title">The footprint behind the business &mdash; and how to run the same business differently.</h2>
-    <p class="lede">Orepath today, modeled: <b style="color:var(--ink)">~37.7 tCO&#8322;e/yr</b> across seven classes. CO&#8322;e is the modeled core. Water, air pollution and e-waste sit upstream and downstream &mdash; labelled here but <b>not yet broken out per class</b>.</p>
-    <div class="grid g4" style="margin-top:24px;">
+    <p class="lede">Orepath today, modeled: <b style="color:var(--ink)">~37.7 tCO&#8322;e/yr</b> across seven classes. CO&#8322;e is the modeled core. Water, air pollution and e-waste sit upstream and downstream &mdash; labelled here but <b>not yet broken out per class</b>, because Climatico won&rsquo;t print a number it can&rsquo;t back up. Alternatives are the same business, run a different way &mdash; each keyed to the business source that drives the tonne.</p>
+
+    <div class="grid g4" style="margin-top:16px;">
       <div class="stat"><b>37.7 t</b><span>today &middot; modeled</span></div>
       <div class="stat"><b>48 t</b><span>+12m if abating</span></div>
       <div class="stat"><b>62 t</b><span>+24m clima path</span></div>
-      <div class="stat"><b>132 t</b><span>+24m if nothing</span></div>
+      <div class="stat"><b>132 t</b><span>+24m if nothing changes</span></div>
     </div>
-  </div>
-</section>
 
-<section class="slide" id="slide-impact-cascade" data-name="Cascade table">
-  <div class="inner wide">
-    <div class="eyebrow">Cascade &middot; business source &rarr; impact &rarr; alternative</div>
-    <h2 class="slide-title">Each class is a PO, a booking, a port.</h2>
-    <div class="card" style="margin-top:20px;">
+    <div class="card" style="margin-top:16px;">
+      <span class="kicker">Cascade &middot; business source &rarr; impact &rarr; alternative &rarr; modelled abatement</span>
       <table>
-        <thead><tr><th>Business source</th><th>Impact</th><th>Upstream</th><th>Alternative</th><th>Abatement</th></tr></thead>
+        <thead><tr><th>Business source</th><th>Impact (t CO&#8322;e/yr &middot; modeled)</th><th>Where it&rsquo;s felt upstream</th><th>Alternative &mdash; same business, different run</th><th>Abatement (modelled)</th></tr></thead>
         <tbody>
-          <tr><td class="k">Cloud compute</td><td>8.5 t</td><td>water, power</td><td>carbon-aware scheduling</td><td>largest share</td></tr>
-          <tr><td class="k">Logistics</td><td>12.0 t</td><td>NOx, PM, diesel</td><td>Oakland &rarr; rail</td><td>biggest lever</td></tr>
-          <tr><td class="k">Electricity</td><td>5.6 t</td><td>grid mix</td><td>on-site solar</td><td>moves to measured</td></tr>
-          <tr><td class="k">Travel</td><td>4.8 t</td><td>aviation</td><td>virtual-first</td><td>per-trip cut</td></tr>
-          <tr><td class="k">Hardware</td><td>3.2 t</td><td>mining, e-waste</td><td>remanufactured</td><td>longer life</td></tr>
-          <tr><td class="k">Vendors</td><td>2.1 t</td><td>upstream power</td><td>consolidate</td><td>licence cut</td></tr>
-          <tr><td class="k">Direct</td><td>1.5 t</td><td>combustion</td><td>near zero</td><td>&mdash;</td></tr>
+          <tr><td class="k">Cloud &amp; AI compute</td><td>8.5 &plusmn;30%</td><td>data-centre power &amp; cooling water</td><td>carbon-aware scheduling; move batch to a low-carbon region</td><td>largest share of compute</td></tr>
+          <tr><td class="k">Logistics (Rae&rsquo;s biggest)</td><td>12.0 &plusmn;35%</td><td>freight diesel &rarr; local NOx &amp; PM air</td><td>Oakland &rarr; rail / intermodal; route optimisation</td><td><b>biggest lever</b> &middot; freight write shipped</td></tr>
+          <tr><td class="k">Purchased electricity</td><td>5.6 &plusmn;15%</td><td>location-based grid mix</td><td>cleaner utility or on-site solar &mdash; a bill makes it <i>measured</i></td><td>moves class to measured</td></tr>
+          <tr><td class="k">Travel &amp; commuting</td><td>4.8 &plusmn;25%</td><td>aviation contrails</td><td>virtual-first; rail over air where it fits</td><td>per-trip cut</td></tr>
+          <tr><td class="k">Hardware &amp; electronics</td><td>3.2 &plusmn;40%</td><td>mining + e-waste end-of-life</td><td>remanufactured units; extend refresh beyond 4 years</td><td>longer device life</td></tr>
+          <tr><td class="k">Vendors &amp; SaaS</td><td>2.1 &plusmn;50%</td><td>supplier electricity upstream</td><td>consolidate vendors; right-size licences</td><td>licence-led cut</td></tr>
+          <tr><td class="k">Direct emissions</td><td>1.5 &plusmn;20%</td><td>combustion &amp; fugitive</td><td>near zero for a cloud-only team</td><td>&mdash;</td></tr>
         </tbody>
       </table>
     </div>
-  </div>
-</section>
 
-<section class="slide" id="slide-impact-notes" data-name="Impact notes">
-  <div class="inner wide">
-    <div class="eyebrow">Projections &amp; limits</div>
-    <h2 class="slide-title">What we model, and where we won't fake.</h2>
-    <div class="grid g3" style="margin-top:24px;">
+    <div class="grid g3" style="margin-top:14px;">
       <div class="card" style="border-color: var(--ok);">
-        <span class="chip ok">Long-run</span>
-        <h3>−70 t at +24m</h3>
-        <p>Abating path: 62 t vs 132 t if nothing changes. ~53% reduction, projected.</p>
+        <span class="chip ok" style="margin-bottom:8px;">Long-run projection</span>
+        <h3>−70 tCO&#8322;e/yr at +24m (clima vs default)</h3>
+        <p>At +24 months the abating path runs at 62 t vs 132 t if nothing changes &mdash; a modelled ~53% reduction from how the same revenue is produced. A projection, clearly labelled, not a measured cut.</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
-        <span class="chip info">Why source</span>
-        <h3>PO, booking, port</h3>
-        <p>Each class is a system an agent already touches. That's when we file it.</p>
+        <span class="chip info" style="margin-bottom:8px;">Why it&rsquo;s the business source</span>
+        <h3>Each class is a PO, a booking, a port</h3>
+        <p>Not a dashboard metric &mdash; a system an agent already touches. That is the moment Climatico files it: the region, the freight mode, the server, the licence.</p>
       </div>
       <div class="card" style="border-color: var(--warn);">
-        <span class="chip wa">No fake</span>
-        <h3>Water &amp; air</h3>
-        <p>Named as knock-ons but not scored. We won't mint what we can't prove.</p>
+        <span class="chip wa" style="margin-bottom:8px;">Where we won&rsquo;t fake</span>
+        <h3>Water &amp; air rows are upstream, not scored</h3>
+        <p>CO&#8322;e is the modelled and filed core. Water, NOx/PM and e-waste are named as knock-ons &mdash; but the desk won&rsquo;t mint a pollution or handprint number it cannot back with evidence.</p>
       </div>
     </div>
   </div>
@@ -957,53 +948,35 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 
 <section class="slide" id="slide-cotal" data-name="Mesh resident">
   <div class="inner">
-    <div class="eyebrow">Cotal &middot; $300 best-use</div>
+    <div class="eyebrow">Cotal &middot; $300 best-use &mdash; a resident bot is live</div>
     <h2 class="slide-title">A resident auditor, awake on #team.climatico.</h2>
-    <p class="lede"><span class="inline" style="color:var(--ok)">meshaudit</span> joins <span class="inline">wss://hack.cotal.ai/mesh-ws</span> as its own actor, subscribes <span class="inline">#team.climatico</span>, and serves each region mention through Nebius.</p>
-    <div class="grid g3" style="margin-top:24px;">
+    <p class="lede"><span class="inline" style="color:var(--ok)">meshaudit</span> joins <span class="inline">wss://hack.cotal.ai/mesh-ws</span> as its own actor, subscribes <span class="inline">#team.climatico</span>, and serves each region mention through Nebius (<span class="inline">custom:nebius</span> &rarr; DeepSeek-V4) &mdash; a real Hermes peer, not a fake write.</p>
+    <div class="grid g3">
       <div class="card" style="border-color: var(--ok);">
-        <span class="chip ok">Live</span>
+        <span class="chip ok" style="margin-bottom:8px;">Live</span>
         <h3>Join &middot; subscribe &middot; act</h3>
         <ul class="ticks">
           <li>hermes-agent 0.16 on the pinned line</li>
           <li>Subscribed to <b>#team.climatico</b> + #announce</li>
-          <li>Runs tools on a live turn</li>
+          <li>Runs tools &mdash; inspected its own env on a live turn</li>
         </ul>
       </div>
-      <div class="card" style="border-color: var(--accent);">
-        <span class="chip info">Nebius model</span>
-        <h3>custom:nebius</h3>
-        <p>Routes through DeepSeek-V4 for each region mention. A real Hermes peer.</p>
+      <div class="card">
+        <span class="chip info" style="margin-bottom:8px;">What it took</span>
+        <h3>Small connector surgery</h3>
+        <ul class="ticks">
+          <li>Cotal spawn strips scratch env, so the launcher reads <span class="inline">NEBIUS_API_KEY</span> from .dev.vars</li>
+          <li>Writes <span class="inline">providers.nebius</span> + <span class="inline">model.provider: custom:nebius</span> into the isolated profile</li>
+          <li>Persona + launcher in <span class="inline">climatico/scripts/run_meshaudit.sh</span></li>
+        </ul>
       </div>
       <div class="card" style="border-color: var(--warn);">
-        <span class="chip wa">Honest limit</span>
-        <h3>Connector patch</h3>
-        <p>Edits node_modules. <span class="inline">cotal update</span> resets it. Full audit is next.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" id="slide-cotal-setup" data-name="Cotal setup">
-  <div class="inner">
-    <div class="eyebrow">What it took</div>
-    <h2 class="slide-title">Small connector surgery.</h2>
-    <div class="grid g2" style="margin-top:24px;">
-      <div class="card">
-        <span class="kicker">Profile isolation</span>
-        <p>Cotal spawn strips scratch env. Launcher reads <span class="inline">NEBIUS_API_KEY</span> from .dev.vars.</p>
-      </div>
-      <div class="card">
-        <span class="kicker">Nebius routing</span>
-        <p>Writes <span class="inline">providers.nebius</span> + <span class="inline">model.provider: custom:nebius</span> into isolated profile.</p>
-      </div>
-      <div class="card">
-        <span class="kicker">Launcher script</span>
-        <p>Persona + launcher in <span class="inline">climatico/scripts/run_meshaudit.sh</span></p>
-      </div>
-      <div class="card">
-        <span class="kicker">No fake</span>
-        <p>Live listener + Nebius routing proven. A full posted audit is next.</p>
+        <span class="chip wa" style="margin-bottom:8px;">Honest limit</span>
+        <h3>Named, not faked</h3>
+        <ul class="ticks">
+          <li>Connector patch edits node_modules &mdash; a <span class="inline">cotal update</span> resets it</li>
+          <li>Live listener + Nebius routing proven; a full posted audit is next</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -1020,8 +993,11 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 cp .dev.vars.example .dev.vars
 npm install &amp;&amp; npx wrangler types
 npm run dev          <span class="c"># 127.0.0.1:8787</span>
-npm run demo         <span class="c"># this slide, in a shell</span></pre>
-        <p style="margin-top:12px;">Mint, prove the 401, file a Houston brief, commit an offset, store a greenwash flag, run the fleet under and over budget.</p>
+npm run demo         <span class="c"># this slide, in a shell</span>
+./climatico.sh fleet SJC 420   <span class="c"># CLI: 23 commands</span>
+./climatico.sh orepath         <span class="c"># check Orepath agent</span>
+./climatico.sh agents-start    <span class="c"># start the auto-pilot</span></pre>
+        <p style="margin-top:12px;">Mint, prove the 401, file a Houston brief, commit an offset, store a greenwash flag, run the fleet under and over budget. CLI runs the same flows from any terminal.</p>
       </div>
       <div class="card">
         <span class="kicker">Surfaces a probe will find</span>
@@ -1029,11 +1005,16 @@ npm run demo         <span class="c"># this slide, in a shell</span></pre>
           <tr><td class="k">/ai-agent.json</td><td>event probe</td></tr>
           <tr><td class="k">/.well-known/agent-card.json</td><td>A2A card</td></tr>
           <tr><td class="k">/v1/credentials</td><td>mint, scopes freeze</td></tr>
-          <tr><td class="k">/mcp</td><td>9 tools, bearer required</td></tr>
+          <tr><td class="k">/mcp</td><td>15 tools, bearer required</td></tr>
           <tr><td class="k">/a2a</td><td>SendMessage</td></tr>
-          <tr><td class="k">/v1/actions</td><td>the write</td></tr>
+          <tr><td class="k">/v1/actions</td><td>the write (brief, watch, offset, assess, abate, switch, refund, freight)</td></tr>
           <tr><td class="k">/v1/fleet/run</td><td>ingest → audit → settle</td></tr>
+          <tr><td class="k">/v1/report</td><td>plain-English progress + suggestions</td></tr>
+          <tr><td class="k">/v1/agents/orepath</td><td>Orepath employee agent (auto-fleet)</td></tr>
+          <tr><td class="k">/v1/agents/provider</td><td>3rd-party offset provider</td></tr>
+          <tr><td class="k">/v1/memory</td><td>Cortex memory store / recall</td></tr>
           <tr><td class="k">/v1/workspace</td><td>same feed as the desk</td></tr>
+          <tr><td class="k">climatico/climatico.sh</td><td>CLI — 23 commands</td></tr>
         </table>
       </div>
     </div>
@@ -1167,10 +1148,12 @@ npm run demo         <span class="c"># this slide, in a shell</span></pre>
     var html = "";
     var titles = {
       assess: "See your EI",
+      pipeline: "Turn a spend spike into a receipt",
+      swarm: "Who's talking to whom",
+      impact: "The cascade, and the same business run differently",
+      ledger: "Every write, committed or flagged",
       inbox: "Actionable messages",
-      agent: "The clerk holds the same tools",
-      onboard: "Maturity is a ladder of writes",
-      stack: "Sponsor APIs that actually do work"
+      agent: "The clerk holds the same tools"
     };
     html += '<div class="eyebrow">Agent Natives · Internal track · one ledger</div>';
     html += "<h2 class='slide-title' style='font-size:22px'>" + esc(titles[tab] || titles.assess) + "</h2>";
@@ -1193,18 +1176,15 @@ npm run demo         <span class="c"># this slide, in a shell</span></pre>
       (data.inbox || []).slice(0, 5).forEach(function (m) {
         html += "<article class='msg'><div class='msg-meta'><span class='chip " + m.tone + "'>" + esc(m.from) + "</span><span>" + esc(m.channel) + "</span></div><h3>" + esc(m.title) + "</h3><p>" + esc(m.body) + "</p><p class='how'><b>Work on it · </b>" + esc(m.action) + "</p></article>";
       });
-    } else if (tab === "onboard") {
-      html += "<span class='kicker'>Onboarding · L0–L5</span><div class='steps' style='margin-top:8px'>";
-      (data.maturity || []).forEach(function (m) {
-        html += "<div class='step'><div class='step-n'>" + (m.done ? "✓" : ("L" + m.level)) + "</div><div class='step-t'>" + esc(m.name) + "</div><div class='step-d'>" + esc(m.how) + "</div></div>";
-      });
-      html += "</div>";
-    } else if (tab === "stack") {
+    } else if (tab === "swarm") {
       html += '<div class="grid g3" style="margin-top:8px">';
       (data.sponsors || []).forEach(function (s) {
         html += "<article class='card'><span class='kicker'>" + esc(s.role) + "</span><h3>" + esc(s.name) + "</h3><p>" + esc(s.insight) + "</p></article>";
       });
       html += "</div>";
+    } else if (tab === "pipeline" || tab === "impact" || tab === "ledger") {
+      html += "<p class='lede' style='margin-top:8px'>This snapshot doesn't carry " + esc(tab) + " data — open the live desk to see it for real.</p>";
+      html += "<div class='row' style='margin-top:8px'><a class='tag' href='" + deskHref(tab) + "' target='_blank' rel='noopener'>Open " + esc(tab) + " in the live desk →</a></div>";
     }
     $("deskSnap").innerHTML = html;
   }

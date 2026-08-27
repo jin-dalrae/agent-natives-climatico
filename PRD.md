@@ -2,7 +2,7 @@
 
 **Version:** 0.6 · **Date:** 27 August 2026, ~15:30 PDT  
 **Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF  
-**Sources:** shipped Worker (`climatico/`), live `ic_hack_me` poll, Agent Edition deck (`deck/climatico-agent-edition.html`)
+**Sources:** shipped Worker (`climatico/`), live `ic_hack_me` poll, Agent Edition deck (`climatico/public/deck.html`)
 
 This document is the product contract. The deck is the argument. The Worker is what a judge can trigger. Where they disagree, **the Worker wins for demo**, and the deck names the next honest step — not a fake one.
 
@@ -288,7 +288,7 @@ Until those are executable, the UI must keep saying **modeled** and the API must
 | Artifact | Job |
 | --- | --- |
 | This PRD | Contract |
-| `deck/climatico-agent-edition.html` | Narrative + taxonomy + client cases |
+| `climatico/public/deck.html` | Narrative + taxonomy + client cases |
 | `climatico/` | What runs |
 | `climatico/SUBMIT.md` | Event payload |
 | `hack-watch/` | Live floor (poll ~5 min) |

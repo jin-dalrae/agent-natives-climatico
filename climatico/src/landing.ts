@@ -3,10 +3,10 @@ const LANDING_HTML = `<!doctype html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Climatico — climate writes for agents</title>
-<meta name="description" content="The attribution layer for agent-native companies. AI agents file climate writes; the system commits or flags, every time, with durable evidence." />
+<title>Climatico — Calculate impact, suggest alternatives, settle &amp; refund</title>
+<meta name="description" content="Calculate environmental impact from business activity, discover greener alternatives, and handle automated offset settlement and refunds." />
 <meta property="og:title" content="Climatico" />
-<meta property="og:description" content="Climate writes for AI agents. Commit or flag — both are receipts." />
+<meta property="og:description" content="Calculate environmental impact, discover greener alternatives, settle and refund." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="/assets/climatico-logo.svg" type="image/svg+xml" />
 <style>
@@ -20,7 +20,6 @@ const LANDING_HTML = `<!doctype html>
     --accent-deep: #1f5a40;
     --clay: #b96846;
     --leaf: #7fb84f;
-    --flag: #b04848;
     --shadow: 0 2px 8px rgba(15, 28, 20, 0.04);
   }
   * { box-sizing: border-box; }
@@ -50,7 +49,7 @@ const LANDING_HTML = `<!doctype html>
   .lede {
     font-size: 18px;
     color: var(--muted);
-    max-width: 56ch;
+    max-width: 62ch;
     margin: 0 0 36px;
   }
   .lede b { color: var(--ink); font-weight: 600; }
@@ -111,7 +110,6 @@ const LANDING_HTML = `<!doctype html>
   .meta .item .v { font-family: "Newsreader", "Iowan Old Style", "Georgia", serif; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
   .meta .item .k { font-size: 12px; color: var(--muted); }
   .meta .item .k.ok { color: var(--accent); }
-  .meta .item .k.no { color: var(--flag); }
   .probe {
     background: #f4f5f1;
     border: 1px solid var(--line);
@@ -154,10 +152,9 @@ const LANDING_HTML = `<!doctype html>
   <span class="sub">desk</span>
 </header>
 
-<h1>Climate writes for AI agents.</h1>
+<h1>Calculate impact. Suggest alternatives. Settle and refund.</h1>
 <p class="lede">
-  <b>A flag is a receipt.</b> Climatico is the write surface for agent-native companies.
-  An agent files a climate action; Climatico commits it, or flags it, with durable evidence — every time, the same shape.
+  <b>Climatico</b> ingests business activity (cloud spend, freight lanes, electricity, vendors), calculates carbon impact backed by live web evidence, suggests lower-carbon alternatives, and handles automated offset settlement and refunds.
 </p>
 
 <div class="cta-row">
@@ -167,34 +164,33 @@ const LANDING_HTML = `<!doctype html>
 
 <div class="meta" id="meta">
   <div class="item"><div class="v" id="m-committed">—</div><div class="k">writes committed</div></div>
-  <div class="item"><div class="v" id="m-flagged">—</div><div class="k">flagged &amp; stored</div></div>
-  <div class="item"><div class="v" id="m-fleet">—</div><div class="k">fleet runs</div></div>
+  <div class="item"><div class="v" id="m-fleet">—</div><div class="k">fleet calculations</div></div>
   <div class="item"><div class="v" id="m-status">…</div><div class="k" id="m-status-k">checking</div></div>
 </div>
 
 <div class="pitch">
   <div class="row">
     <div class="card">
-      <span class="kicker"><span class="dot"></span>The pitch</span>
-      <h3>For compute-heavy agent fleets</h3>
-      <p>A cloud bill spikes; Climatico ingests, audits against live web evidence, and either commits an offset or stores the flag. Ingest → audit → settle, durable at every step.</p>
+      <span class="kicker"><span class="dot"></span>1. Ingest Business Signals</span>
+      <h3>Cloud, freight &amp; vendors</h3>
+      <p>Scans business activity at the moment of creation — a cloud bill spike, a shipping booking, a vendor seat count — with strict local privacy (metadata only, zero file contents).</p>
     </div>
     <div class="card">
-      <span class="kicker"><span class="dot"></span>The deal</span>
-      <h3>Cheaper than a dashboard</h3>
-      <p>Attribution is cheapest at the moment of activity — a PO, a booking, a bill spike. Rae's team already runs those through agents, not a form they'd visit twice a year.</p>
+      <span class="kicker"><span class="dot"></span>2. Calculate Carbon Impact</span>
+      <h3>Grounded in live evidence</h3>
+      <p>Calculates emissions across seven business classes. Compute is scored from live spend and web factors (Tavily); logistics and energy are backed by transport modes and grid factors.</p>
     </div>
   </div>
   <div class="row">
     <div class="card">
-      <span class="kicker"><span class="dot"></span>Four doors, one ledger</span>
-      <h3>MCP · A2A · REST · UI</h3>
-      <p>Stranger agents find <code>/.well-known/agent-card.json</code> or <code>/ai-agent.json</code>, mint a scoped bearer, file a write. The same Durable Object ledger serves every entry point.</p>
+      <span class="kicker"><span class="dot"></span>3. Discover Greener Alternatives</span>
+      <h3>Same business, run differently</h3>
+      <p>Workers AI &amp; Tavily research actionable reductions for each hotspot: shifting batch compute to clean-grid regions (e.g. FRA), moving freight to rail, or adopting solar PPAs.</p>
     </div>
     <div class="card">
-      <span class="kicker"><span class="dot"></span>Honest limits</span>
-      <h3>Modeled ≠ measured</h3>
-      <p>Seven emission classes with error bars. Compute is live; the rest is modeled until grounded. We won't print a number we can't back. Hardware / freight PO write is next, not stubbed.</p>
+      <span class="kicker"><span class="dot"></span>4. Settle &amp; Claim Refunds</span>
+      <h3>Automated payment &amp; refunds</h3>
+      <p>Settles token-capped offset receipts when over budget. When switching to a lower-carbon option, automatically claim back the delta refund on prior offsets.</p>
     </div>
   </div>
 </div>
@@ -204,9 +200,9 @@ const LANDING_HTML = `<!doctype html>
   <ol>
     <li>Discover: <code>GET /ai-agent.json</code></li>
     <li>Mint a scoped credential: <code>POST /v1/credentials</code> — scopes freeze at mint</li>
-    <li>File a grounded brief: <code>POST /v1/actions</code> with <code>intent: brief, location: "Houston, TX"</code></li>
-    <li>Run the fleet on a spike: <code>POST /v1/fleet/run</code> — <code>SJC</code>, <code>$420</code></li>
-    <li>Test the policy: <code>POST /v1/actions</code> with <code>intent: greenwash</code> — flagged, stored, never dropped</li>
+    <li>Calculate fleet spend: <code>POST /v1/fleet/run</code> — <code>SJC</code>, <code>$420</code> → <code>189 kg</code></li>
+    <li>Calculate freight shipment: <code>POST /v1/actions</code> with <code>intent: freight, weightKg: 8000, distanceKm: 11000, freightMode: sea</code></li>
+    <li>Switch to green option &amp; claim refund: <code>POST /v1/actions</code> with <code>intent: switch, newSolution: "FRA clean grid", priorAmountCents: 3580, amountCents: 500</code></li>
   </ol>
 </div>
 
@@ -232,7 +228,6 @@ const LANDING_HTML = `<!doctype html>
       if (!r.ok) throw new Error('not ok');
       const d = await r.json();
       document.getElementById('m-committed').textContent = d.committed ?? 0;
-      document.getElementById('m-flagged').textContent = d.flagged ?? 0;
       document.getElementById('m-fleet').textContent = d.fleetRuns ?? 0;
       document.getElementById('m-status').textContent = 'LIVE';
       document.getElementById('m-status-k').textContent = 'system status';

@@ -109,9 +109,9 @@ export const OREPATH: FounderStory = {
       live: true,
     },
     {
-      id: "flag-greenwash",
-      title: "Flag a green chain claim",
-      how: "Tries to claim a green supply chain and gets flagged. The flag is saved as proof.",
+      id: "switch-clean-grid",
+      title: "Switch to clean grid & claim refund",
+      how: "Switches SJC tracer compute to FRA clean grid ($35.80 → $5.00), reducing emissions and claiming a $30.80 refund on prior offset.",
       live: true,
     },
     {

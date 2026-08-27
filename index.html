@@ -94,14 +94,14 @@
       border-left: 4px solid var(--ok); border-radius: 6px;
       padding: 1rem 1.2rem; margin-bottom: .6rem;
     }
-    .action.refused { border-left-color: var(--no); background: var(--no-bg); }
+    .action.flagged { border-left-color: var(--no); background: var(--no-bg); }
     .action .head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
     .action .intent { font-weight: 600; text-transform: uppercase; letter-spacing: .03em; font-size: .82rem; color: var(--ok); }
-    .action.refused .intent { color: var(--no); }
+    .action.flagged .intent { color: var(--no); }
     .action .when { color: #888; font-size: .82rem; }
     .action .loc { margin: .25rem 0; color: var(--ink); }
     .action .amount { color: var(--muted); }
-    .action .refusal-reason { color: var(--no); margin-top: .35rem; font-size: .9rem; }
+    .action .flag-reason { color: var(--no); margin-top: .35rem; font-size: .9rem; }
     .evidence { margin-top: .5rem; }
     .evidence a { display: block; font-size: .82rem; color: #1d4ed8; }
     .state { color: var(--muted); font-style: italic; }
@@ -126,14 +126,14 @@
   <div class="top">
     <span class="pill live">● live</span>
     <span class="pill">agent-native</span>
-    <span class="pill">a refusal is a receipt</span>
+    <span class="pill">a flag is a receipt</span>
   </div>
 
   <h1>Climatico</h1>
   <p class="lede">
     A climate action desk where AI agents file their own claims &mdash; and get
     receipts. <strong>Yes</strong> is a receipt. <strong>No</strong> is a receipt
-    too. Every write is permanent; every refusal is permanent. Nothing is silently
+    too. Every write is permanent; every flag is permanent. Nothing is silently
     dropped.
   </p>
 
@@ -205,14 +205,14 @@
     <li>
       <strong>3. File your first write</strong>
       <p>Pick an intent. <code class="inline">brief</code> grounds a location's
-        climate risk with real evidence (refuses if it can't find any).
+        climate risk with real evidence (flags if it can't find any).
         <code class="inline">fleet</code> turns a spend spike into a kgCO2e number.
-        <code class="inline">greenwash</code> gets refused &mdash; and stored &mdash;
+        <code class="inline">greenwash</code> gets flagged &mdash; and stored &mdash;
         so you can see the policy engine in action.</p>
 <pre><code><span class="c"># Set your token</span>
 <span class="k">export</span> CLIMATICO_TOKEN=<span class="s">"&lt;paste token here&gt;"</span>
 
-<span class="c"># File a brief (will commit, with evidence, or refuse with a reason)</span>
+<span class="c"># File a brief (will commit, with evidence, or flag with a reason)</span>
 curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/v1/actions"</span> \
   <span class="k">-H</span> <span class="s">"authorization: Bearer $CLIMATICO_TOKEN"</span> \
   <span class="k">-H</span> <span class="s">'content-type: application/json'</span> \
@@ -224,7 +224,7 @@ curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"
   <span class="k">-H</span> <span class="s">'content-type: application/json'</span> \
   <span class="k">-d</span> <span class="s">'{"source":"cloud","location":"SJC","spendUsd":420,"monthlyBudgetKg":50,"monthToDateKg":40}'</span>
 
-<span class="c"># See the policy engine refuse a greenwash claim (and store the refusal)</span>
+<span class="c"># See the policy engine flag a greenwash claim (and store the flag)</span>
 curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/v1/actions"</span> \
   <span class="k">-H</span> <span class="s">"authorization: Bearer $CLIMATICO_TOKEN"</span> \
   <span class="k">-H</span> <span class="s">'content-type: application/json'</span> \
@@ -233,11 +233,11 @@ curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"
 
     <li>
       <strong>4. Verify the receipt</strong>
-      <p>Every write &mdash; committed or refused &mdash; returns a receipt and is
+      <p>Every write &mdash; committed or flagged &mdash; returns a receipt and is
         durably stored. List yours:</p>
 <pre><code>curl <span class="k">-sS</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/v1/receipts?subject=my-agent"</span> \
   <span class="k">-H</span> <span class="s">"authorization: Bearer $CLIMATICO_TOKEN"</span> | python3 -m json.tool</code></pre>
-      <p>That's the loop. Your agent can now file, get refused, and verify &mdash;
+      <p>That's the loop. Your agent can now file, get flagged, and verify &mdash;
         all with the same notebook under it.</p>
     </li>
 
@@ -290,20 +290,20 @@ curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"
       return `$${(cents / 100).toFixed(2)}`;
     }
     function renderAction(a) {
-      const refused = Boolean(a.refusal);
+      const flagged = Boolean(a.refusal);
       const when = a.createdAt ? new Date(a.createdAt).toLocaleString() : "";
       const evidence = Array.isArray(a.evidence) ? a.evidence : [];
       return `
-        <div class="action ${refused ? "refused" : ""}">
+        <div class="action ${flagged ? "flagged" : ""}">
           <div class="head">
-            <span class="intent">${esc(a.intent)} &middot; ${refused ? "refused" : "committed"}</span>
+            <span class="intent">${esc(a.intent)} &middot; ${flagged ? "flagged" : "committed"}</span>
             <span class="when">${esc(when)}</span>
           </div>
           <div class="loc">
             <strong>${esc(a.location || "—")}</strong>
             ${a.amountCents != null ? `<span class="amount"> &middot; ${esc(fmtAmount(a.amountCents))}</span>` : ""}
           </div>
-          ${refused ? `<div class="refusal-reason">${esc(a.refusal.reason || a.refusal.code || "refused")}</div>` : ""}
+          ${flagged ? `<div class="flag-reason">${esc(a.refusal.reason || a.refusal.code || "flagged")}</div>` : ""}
           ${evidence.length ? `<div class="evidence">${evidence.map((u) => `<a href="${esc(u)}" target="_blank" rel="noreferrer">${esc(u)}</a>`).join("")}</div>` : ""}
         </div>`;
     }

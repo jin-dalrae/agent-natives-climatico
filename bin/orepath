@@ -4,16 +4,14 @@
 # Usage:
 #   orepath mint                    # mint a token using orepath-work/config.yaml
 #   orepath whoami                  # show what the saved token can do
-#   orepath brief <location>        # file a grounded brief
-#   orepath watch <location>        # start a watch
+#   orepath fleet <loc> <$> [budget] [mtd]  # calculate compute emissions from spend
+#   orepath freight <lane> <mode> <kg> <km> # calculate logistics emissions for shipment
+#   orepath switch <loc> <newSolution> <priorReceiptId> <priorCents> <newCents> # switch to green option
+#   orepath refund <loc> <priorReceiptId> <priorCents> <newCents> # claim refund on prior offset
+#   orepath brief <location>        # ground location climate factors (Tavily)
+#   orepath watch <location>        # monitor location
 #   orepath offset <location> <¢>   # commit an offset
-#   orepath fleet <loc> <$> [budget] [mtd]
-#   orepath freight <lane> <mode> <kg> <km>  # file a real freight leg (sea|air|road|rail)
-#   orepath switch <loc> <newSolution> <priorReceiptId> <priorCents> <newCents>
-#   orepath refund <loc> <priorReceiptId> <priorCents> <newCents>
-#   orepath provider                # 3rd-party provider agent status
-#   orepath observe                 # watch Orepath agent live (10s refresh)
-#   orepath flag [location]       # test a greenwash (gets flagged + stored)
+#   orepath connect [folder] [--dry-run] # scan business folder signals (privacy-first)
 #   orepath report                  # progress report
 #   orepath receipts [n]            # recent receipts
 #   orepath handoffs [n]            # recent handoffs

@@ -321,7 +321,7 @@ The CLI prints the exact JSON payload before sending and supports `--dry-run` to
 ## More (deep dives, for when you have energy)
 
 - [`PRD.md`](PRD.md) — the full product contract (v0.6)
-- [`deck/climatico-agent-edition.html`](deck/climatico-agent-edition.html) — the pitch deck
+- [`climatico/public/deck.html`](climatico/public/deck.html) — the pitch deck
 - [`climatico/SUBMIT.md`](climatico/SUBMIT.md) — hackathon submission payload
 - [`hack-watch/`](hack-watch/) — what's happening on the event floor right now
 

@@ -1013,5 +1013,202 @@
     ]
    }
   ]
+ },
+ {
+  "at": "2026-08-27T22:48:11.162913+00:00",
+  "at_pdt": "2026-08-27 15:48:11 PDT",
+  "changes": [
+   {
+    "field": "submission",
+    "label": "Your submission",
+    "from": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "AI agents that measure a company's environmental impact \u2014 today and in the future. It breaks the impact down by business area (cloud compute, shipping, travel) and projects how it grows over time. Then it works to reduce it: running calculations, flagging hotspots, researching greener alternatives, and handling offset payments \u2014 all through agents that can act without a human in the loop. 8 agents: Ingests, Audit (Tavily), Settle, Scheduler (cron), Report builder, Orepath compute-watcher (DO alarm), 3rd-party Provider, Clerk (AI chat). CLI included. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "/ai-agent.json, /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs, /v1/report, /v1/agents/orepath, /v1/agents/provider, /v1/memory. Internal: ingest\u2192audit\u2192settle across Tavily + Workers AI + Durable Objects + own Cotal mesh + Cortex memory. CLI: climatico.sh.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": false,
+     "updated_at": "2026-08-27T20:22:44.956Z"
+    },
+    "to": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "AI agents that measure a company's environmental impact \u2014 today and in the future. It breaks the impact down by business area (cloud compute, shipping, travel) and projects how it grows over time. Then it works to reduce it: running calculations, flagging hotspots, researching greener alternatives, and handling offset payments \u2014 all through agents that can act without a human in the loop. 8 agents: Ingest, Audit (Tavily), Settle, Scheduler (cron), Report builder, Orepath compute-watcher (DO alarm), 3rd-party Provider, Clerk (AI chat). CLI included. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger. Autonomous agents (Orepath compute-watcher, scheduler) investigate and file findings on their own; writes are receipts of investigation and follow-up, not requests awaiting approval.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": false,
+     "updated_at": "2026-08-27T22:27:22.577Z"
+    }
+   },
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 27,
+    "to": 28
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 15,
+    "to": 17
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Gatekeeper V2",
+     "Global Blocks",
+     "LetEveryoneIn",
+     "Motel4",
+     "Physical Capability Cloud",
+     "SELAT",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "The Deal Room",
+     "attest",
+     "finddomain",
+     "nolim",
+     "onRun"
+    ],
+    "to": [
+     "@nikhilkulkarni1755",
+     "CerebriNode",
+     "Climatico",
+     "Gatekeeper V2",
+     "Global Blocks",
+     "HydraLamp",
+     "LetEveryoneIn",
+     "Motel4",
+     "Physical Capability Cloud",
+     "SELAT",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "The Deal Room",
+     "attest",
+     "finddomain",
+     "nolim",
+     "onRun"
+    ]
+   }
+  ]
+ },
+ {
+  "at": "2026-08-27T23:32:49.845918+00:00",
+  "at_pdt": "2026-08-27 16:32:49 PDT",
+  "changes": [
+   {
+    "field": "status_banner",
+    "label": "Status banner",
+    "from": "Building now",
+    "to": "Submissions closed"
+   },
+   {
+    "field": "phase_line",
+    "label": "Phase line",
+    "from": "Building now",
+    "to": "Submissions closed"
+   },
+   {
+    "field": "submission",
+    "label": "Your submission",
+    "from": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "AI agents that measure a company's environmental impact \u2014 today and in the future. It breaks the impact down by business area (cloud compute, shipping, travel) and projects how it grows over time. Then it works to reduce it: running calculations, flagging hotspots, researching greener alternatives, and handling offset payments \u2014 all through agents that can act without a human in the loop. 8 agents: Ingest, Audit (Tavily), Settle, Scheduler (cron), Report builder, Orepath compute-watcher (DO alarm), 3rd-party Provider, Clerk (AI chat). CLI included. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger. Autonomous agents (Orepath compute-watcher, scheduler) investigate and file findings on their own; writes are receipts of investigation and follow-up, not requests awaiting approval.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": false,
+     "updated_at": "2026-08-27T22:27:22.577Z"
+    },
+    "to": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "Climate agents that investigate a company on their own and follow up \u2014 measuring impact by business area (cloud compute, shipping, travel), flagging hotspots, researching greener alternatives, and settling offsets, without a human asking first. Every finding and follow-up is a permanent receipt, committed or refused. 8 agents: Ingest, Audit (Tavily), Settle, Scheduler (cron), Report builder, Orepath compute-watcher (DO alarm), 3rd-party Provider, Clerk (AI chat). CLI included. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "ai-agent.json, MCP /mcp (15 tools), A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger. Autonomous agents (Orepath compute-watcher, scheduler) investigate and file findings on their own; writes are receipts of investigation and follow-up, not requests awaiting approval \u2014 refusal is reserved for adversarial claims, never a real event lacking a citation.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": true,
+     "updated_at": "2026-08-27T23:10:23.530Z"
+    }
+   },
+   {
+    "field": "api_phase",
+    "label": "API phase",
+    "from": "BUILD",
+    "to": "LOCKED"
+   },
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 28,
+    "to": 31
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 17,
+    "to": 22
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "@nikhilkulkarni1755",
+     "CerebriNode",
+     "Climatico",
+     "Gatekeeper V2",
+     "Global Blocks",
+     "HydraLamp",
+     "LetEveryoneIn",
+     "Motel4",
+     "Physical Capability Cloud",
+     "SELAT",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "The Deal Room",
+     "attest",
+     "finddomain",
+     "nolim",
+     "onRun"
+    ],
+    "to": [
+     "@nikhilkulkarni1755",
+     "AI Clinic",
+     "Atlas News Intelligence",
+     "CerebriNode",
+     "Climatico",
+     "Gatekeeper V2",
+     "Ginse",
+     "Global Blocks",
+     "HydraLamp",
+     "LetEveryoneIn",
+     "Motel4",
+     "Oli",
+     "Physical Capability Cloud",
+     "SELAT",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "The Deal Room",
+     "TitleWise",
+     "attest",
+     "finddomain",
+     "nolim",
+     "onRun"
+    ]
+   }
+  ]
  }
 ]

@@ -2,7 +2,7 @@
 
 This is the 5-minute setup for an Orepath developer who wants to file
 climate writes from the terminal — `orepath brief Houston`, `orepath
-fleet SJC 420`, `orepath refuse` — without hand-rolling `curl` every time.
+fleet SJC 420`, `orepath flag` — without hand-rolling `curl` every time.
 
 The whole thing is a thin wrapper around `climatico/climatico.sh`. Two
 new pieces sit in this repo:
@@ -75,7 +75,7 @@ Ceiling: $50.0
 
 Try: orepath whoami
      orepath fleet SJC 420
-     orepath refuse
+     orepath flag
 ```
 
 The token is saved to `orepath-work/.token` (gitignored, `chmod 600`).
@@ -93,10 +93,10 @@ orepath mint orepath-buyer-auditor      # uses subject arg, but scopes still com
 
 ```bash
 orepath whoami                          # confirms your token is alive
-orepath brief "Houston, TX"             # files a grounded brief, or refuses with a reason
+orepath brief "Houston, TX"             # files a grounded brief, or flags with a reason
 orepath fleet SJC 420                   # ingest → audit → settle, one call
 orepath offset "Oakland port" 2500      # commit a $25 offset
-orepath refuse                          # test the policy engine: greenwash gets refused + stored
+orepath flag                          # test the policy engine: greenwash gets flagged + stored
 orepath receipts 5                      # show last 5 receipts (yours + others)
 orepath report                          # progress report from the scheduler
 orepath handoffs                        # the agent-to-agent handoff log
@@ -107,7 +107,7 @@ orepath orepath                         # status of the on-Worker Orepath employ
 
 Every command is a real HTTP call against
 `https://climatico.dalrae-jin-work.workers.dev`. No mocks. Every write
-returns a receipt, every refusal is stored.
+returns a receipt, every flag is stored.
 
 ## 6. Auto-assess your work folder (the privacy-respecting bit)
 
@@ -172,7 +172,7 @@ climatico/climatico.sh              ← the actual CLI (all the real logic lives
 | Symptom | Fix |
 |---|---|
 | `orepath mint` returns 429 | Too many credential mints. Wait 5 min. |
-| `orepath brief` returns `refused` with `ungrounded` | Climatico couldn't find a Tavily source for that location. Try a more specific location (`"Houston, TX"` beats `"Houston"`). |
+| `orepath brief` returns `flagged` with `ungrounded` | Climatico couldn't find a Tavily source for that location. Try a more specific location (`"Houston, TX"` beats `"Houston"`). |
 | `orepath fleet` returns `over_budget` and commits an offset | Expected — that's the product. The offset is capped at the token's `maxAmountCents` ($50 default). |
 | `orepath orepath` says `STOPPED` | The on-Worker Orepath employee agent is paused. Run `orepath agents-start`. |
 | Token looks wrong | Delete `orepath-work/.token`, run `orepath mint` again. |

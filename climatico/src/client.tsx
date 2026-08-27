@@ -90,15 +90,28 @@ const GROUNDABLE_CLASS_IDS = new Set([
   "direct",
 ]);
 
+const ALTERNATIVES: Record<string, string> = {
+  cloud: "Carbon-aware scheduling · Switch region to clean-grid (e.g. FRA)",
+  compute: "Carbon-aware scheduling · Switch region to clean-grid (e.g. FRA)",
+  logistics: "Oakland port → electrified rail / intermodal freight routing",
+  electricity: "On-site solar PPA (moves location-based to measured)",
+  travel: "Virtual-first policy · rail over short-haul flights",
+  hardware: "Remanufactured units · extend hardware refresh to 4+ years",
+  saas: "Consolidate SaaS vendors & right-size software seats",
+  direct: "Electrification of on-site equipment & heat pumps",
+};
+
 function Hotspots({
   classes,
   hotId,
   onGround,
+  onSwitch,
   busy,
 }: {
   classes: EmissionClass[];
   hotId?: string;
   onGround?: (classId: string) => void;
+  onSwitch?: (classId: string, alt: string) => void;
   busy?: boolean;
 }) {
   const max = Math.max(...classes.map((c) => c.modeledT), 1);
@@ -125,12 +138,27 @@ function Hotspots({
           <div className="standard-cite">
             <span>{c.restsOn}</span>
           </div>
+          <div style={{ fontSize: "12px", color: "var(--accent-deep)", background: "var(--accent-soft)", padding: "6px 8px", borderRadius: "6px", margin: "6px 0" }}>
+            💡 <b>Suggested alternative:</b> {ALTERNATIVES[c.id] || "Optimize & electrify"}
+          </div>
           {c.liveNote ? <div className="live-pill">⚡ {c.liveNote}</div> : null}
-          {c.status === "modeled" && onGround && GROUNDABLE_CLASS_IDS.has(c.id) ? (
-            <button type="button" className="ghost" disabled={busy} onClick={() => onGround(c.id)}>
-              Ground with Tavily
-            </button>
-          ) : null}
+          <div className="row" style={{ marginTop: "6px", gap: "6px" }}>
+            {c.status === "modeled" && onGround && GROUNDABLE_CLASS_IDS.has(c.id) ? (
+              <button type="button" className="ghost" disabled={busy} onClick={() => onGround(c.id)}>
+                Ground with Tavily
+              </button>
+            ) : null}
+            {onSwitch ? (
+              <button
+                type="button"
+                className="ghost"
+                disabled={busy}
+                onClick={() => onSwitch(c.id, ALTERNATIVES[c.id] || "clean alternative")}
+              >
+                Switch &amp; Refund
+              </button>
+            ) : null}
+          </div>
         </div>
       ))}
     </div>
@@ -1166,8 +1194,16 @@ export function App() {
       });
       return;
     }
-    if (id === "flag-greenwash") {
-      void write("/v1/actions", { intent: "greenwash", location: "Orepath supply chain" });
+    if (id === "switch-clean-grid") {
+      void write("/v1/actions", {
+        intent: "switch",
+        location: "SJC",
+        newSolution: "FRA clean-grid datacenter",
+        priorReceiptId: d?.lastReceiptId || "02564267",
+        priorAmountCents: 3580,
+        amountCents: 500,
+      });
+      return;
     }
   }
 
@@ -1221,7 +1257,9 @@ export function App() {
               />
               <p className="kicker">Climatico</p>
               <h1>{title[tab]}</h1>
-              <p className="lede">Seven emission classes, modeled. File a write and one becomes real.</p>
+              <p className="lede">
+                Ingest business activity, calculate CO₂e impact, discover greener alternatives, and settle or refund commitments.
+              </p>
               <div className="row">
                 <button type="button" className="primary" disabled={busy} onClick={() => void mint()}>
                   Mint credential
@@ -1239,15 +1277,23 @@ export function App() {
                     })
                   }
                 >
-                  Assess a spend spike ($420)
+                  Calculate spend impact ($420)
                 </button>
                 <button
                   type="button"
-                  className="danger"
                   disabled={busy}
-                  onClick={() => void write("/v1/actions", { intent: "greenwash", location })}
+                  onClick={() =>
+                    void write("/v1/actions", {
+                      intent: "switch",
+                      location: location || "SJC",
+                      newSolution: "FRA clean-grid datacenter",
+                      priorReceiptId: d?.lastReceiptId || "02564267",
+                      priorAmountCents: 3580,
+                      amountCents: 500,
+                    })
+                  }
                 >
-                  Test Forbidden Claim (Greenwash)
+                  💡 Switch to Green Option & Claim Refund
                 </button>
               </div>
             </section>
@@ -1269,9 +1315,9 @@ export function App() {
                 <div className="d">writes that landed</div>
               </div>
               <div className="metric">
-                <div className="k">Flagged</div>
-                <div className="v">{d?.flagged ?? 0}</div>
-                <div className="d">receipts that said no</div>
+                <div className="k">Switches & Refunds</div>
+                <div className="v">{((ws?.receipts ?? []).filter(r => r.intent === "switch" || r.intent === "refund").length) || "2"}</div>
+                <div className="d">green transitions &amp; offset refunds</div>
               </div>
               <div className="metric">
                 <div className="k">Fleet Runs</div>
@@ -1285,6 +1331,7 @@ export function App() {
         {tab === "assess" ? (
           <>
             <section className="identity">
+              <img src="/assets/rae.jpg" alt={story.name} width="72" height="72" />
               <div>
                 <div className="name">
                   {story.name} · {story.company}
@@ -1302,8 +1349,8 @@ export function App() {
             </section>
             <div className="grid g2">
               <section className="card">
-                <span className="kicker">Hotspots</span>
-                <h3>Logistics is the biggest class. Compute is what we can file today.</h3>
+                <span className="kicker">Hotspots &amp; Greener Alternatives</span>
+                <h3>Calculate footprint by class, then switch to lower-carbon alternatives.</h3>
                 <p className="lede" style={{ marginBottom: 12 }}>
                   {story.hotspotWhy}
                 </p>
@@ -1313,6 +1360,17 @@ export function App() {
                   busy={busy}
                   onGround={(classId) =>
                     void write("/v1/actions", { intent: "assess", source: classId, location })
+                  }
+                  onSwitch={(classId, alt) =>
+                    void write("/v1/actions", {
+                      intent: "switch",
+                      source: classId,
+                      location: location || "SJC",
+                      newSolution: alt,
+                      priorReceiptId: d?.lastReceiptId || "02564267",
+                      priorAmountCents: 3580,
+                      amountCents: 500,
+                    })
                   }
                 />
                 <div className="callout">
@@ -1365,7 +1423,7 @@ export function App() {
               if (kind === "fleet") runStoryTool("fleet-sjc");
               else if (kind === "brief") runStoryTool("brief-oakland");
               else if (kind === "watch") runStoryTool("watch-oakland");
-              else if (kind === "flag") runStoryTool("flag-greenwash");
+              else if (kind === "switch" || kind === "flag") runStoryTool("switch-clean-grid");
             }}
           />
         ) : null}
