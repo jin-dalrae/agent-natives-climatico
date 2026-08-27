@@ -85,7 +85,7 @@ export const OREPATH: FounderStory = {
   role: "Founder",
   product: "Traces battery materials (lithium, cobalt, nickel, graphite) from mine to cell, so EV makers can prove where their materials came from.",
   stage: "Seed · 14 people in SF · ~$1.8M ARR",
-  spark: "A cell buyer asked: what's your own company's impact, not the mines'? She had no number.",
+  spark: "A cell buyer asked: what's your own company's impact, not the mines'? Orepath had no number.",
   hotspotClass: "logistics",
   hotspotWhy:
     "Orepath tracks other companies' freight for a living — but its own logistics footprint (12 t/yr, ±35%) is its biggest modeled class. The moment to capture it is a PO, a booking, or a port call — and an agent is already there.",
@@ -413,7 +413,7 @@ export function buildWorkspace(input: {
     from: "clerk",
     channel: "story.logistics",
     tone: "wa",
-    title: "Logistics is Rae's biggest class — still modeled, not measured",
+    title: "Logistics is Orepath's biggest class — still modeled, not measured",
     body: "Orepath traces other companies' freight, but its own logistics (12 t/yr, ±35%) isn't a live write yet. Today: ground Oakland, watch the port, file the SJC compute that runs the tracer. The freight PO write is next.",
     action: "Use the tools on the Assess tab. Don't claim a green chain without evidence.",
     createdAt: Date.now(),

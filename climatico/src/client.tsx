@@ -7,9 +7,10 @@ import { OREPATH, OREPATH_GROWTH } from "./insights";
 import type { FleetRun, Handoff, Receipt } from "./types";
 import "./styles.css";
 
-type Tab = "assess" | "grow" | "pipeline" | "swarm" | "impact" | "ledger" | "inbox" | "agent";
+type Tab = "assess" | "demo" | "grow" | "pipeline" | "swarm" | "impact" | "ledger" | "inbox" | "agent";
 const TABS: { id: Tab; label: string }[] = [
   { id: "assess", label: "Assess" },
+  { id: "demo", label: "Demo Scenario" },
   { id: "grow", label: "Grow" },
   { id: "pipeline", label: "Fleet Pipeline" },
   { id: "swarm", label: "3-Sided Swarm" },
@@ -659,7 +660,7 @@ function ClerkPane() {
   const agent = useAgent({ agent: "Clerk", name: "desk" });
   const { messages, sendMessage, status } = useAgentChat({ agent });
   const [draft, setDraft] = useState(
-    "Rae’s Oakland freight is the modeled hotspot. What can I file today vs what’s still modeled?",
+    "Orepath’s Oakland freight is the modeled hotspot. What can I file today vs what’s still modeled?",
   );
 
   return (
@@ -1072,6 +1073,179 @@ function StackView({ sponsors }: { sponsors: SponsorLink[] }) {
   );
 }
 
+function DemoView({
+  onRunFleet,
+  onRunAction,
+  busy,
+}: {
+  onRunFleet: () => void;
+  onRunAction: (intent: string, payload: Record<string, unknown>) => void;
+  busy: boolean;
+}) {
+  return (
+    <div className="demo-view">
+      <section className="card" style={{ borderColor: "var(--accent)" }}>
+        <span className="kicker">The Demo Scenario</span>
+        <h3>Orepath · Battery Materials Supply Chain Tracking</h3>
+        <p className="lede">
+          <strong>The Customer:</strong> <strong>Orepath</strong>, an early-stage startup tracing lithium, cobalt, and graphite for EV battery makers.
+          <br />
+          <strong>The Problem:</strong> A cell buyer asked: <em>&ldquo;What is your own company&rsquo;s carbon footprint?&rdquo;</em> Orepath had no number, which blocked the deal.
+          <br />
+          <strong>The Solution:</strong> Orepath already runs infrastructure through AI agents. Climatico connects to those agents to calculate impact, suggest lower-carbon alternatives, and settle or refund offset payments.
+        </p>
+      </section>
+
+      <section className="demo-step-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <span className="kicker">Step 1 · Agent Authentication</span>
+          <span className="chip ok">Frozen Scopes</span>
+        </div>
+        <h3>Discover Climatico &amp; Mint Scoped Key</h3>
+        <p>A stranger agent discovers <code>/ai-agent.json</code>, and requests a scoped bearer token. Scopes and spending limits freeze permanently at mint time.</p>
+        <div className="cli-box">
+          <span className="prompt">$ </span><span className="cmd">./bin/orepath mint</span>
+          <div className="out">
+Minting token for &apos;orepath-supply-tracer&apos; with scopes [&quot;climatico:read&quot;, &quot;climatico:transact&quot;]...
+Token saved to orepath-work/.token (chmod 600).
+Scopes: [&apos;climatico:read&apos;, &apos;climatico:transact&apos;]
+Ceiling: $50.00
+          </div>
+        </div>
+      </section>
+
+      <section className="demo-step-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <span className="kicker">Step 2 · Cloud Spend Calculation (Hero Flow)</span>
+          <button type="button" className="primary" disabled={busy} onClick={onRunFleet}>
+            ⚡ Run in Browser ($420 spike)
+          </button>
+        </div>
+        <h3>Ingest Spend Spike → Audit via Tavily → Settle Offset</h3>
+        <p>Orepath&rsquo;s tracer compute spikes to $420 in SJC. The fleet ingests the spend, audits emissions using 5 live Tavily citations (189 kg CO₂e), detects +179 kg over budget, and settles a $35.80 offset receipt.</p>
+        <div className="cli-box">
+          <span className="prompt">$ </span><span className="cmd">./bin/orepath fleet SJC 420</span>
+          <div className="out">
+Running fleet: $420 @ SJC (budget: 50kg, MTD: 40kg)...
+Status: <span className="highlight">committed</span>
+Score: <span className="highlight">189 kg</span> · Over budget: <span className="warn-hl">+179 kg</span> · Grounded: True
+Offset: <span className="highlight">35.80 USD</span> · Receipt: d29f9900
+Handoffs: 3 (ingest → audit → settle)
+          </div>
+        </div>
+      </section>
+
+      <section className="demo-step-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <span className="kicker">Step 3 · Freight Logistics Calculation</span>
+          <button
+            type="button"
+            className="ghost"
+            disabled={busy}
+            onClick={() =>
+              onRunAction("freight", {
+                location: "Shenzhen -> Oakland",
+                freightMode: "sea",
+                weightKg: 8000,
+                distanceKm: 11000,
+              })
+            }
+          >
+            Calculate Freight Shipment
+          </button>
+        </div>
+        <h3>Calculate Logistics Footprint for Battery Cargo</h3>
+        <p>Logistics is Orepath&rsquo;s largest modeled class. A container shipment of 8,000 kg battery material over 11,000 km sea freight is calculated and stored on the ledger.</p>
+        <div className="cli-box">
+          <span className="prompt">$ </span><span className="cmd">./bin/orepath freight &quot;Shenzhen -&gt; Oakland&quot; sea 8000 11000</span>
+          <div className="out">
+Filing freight leg &apos;Shenzhen -&gt; Oakland&apos; (sea, 8000kg x 11000km)...
+Status: <span className="highlight">committed</span>
+Receipt: 8937c9aa
+Footprint: <span className="highlight">1,320 kg CO₂e</span> (sea mode: 0.015 kg/t·km)
+Note: sea freight · 8000kg over 11000km (88.0 tonne-km)
+          </div>
+        </div>
+      </section>
+
+      <section className="demo-step-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <span className="kicker">Step 4 · Discover Greener Alternatives (Abatement)</span>
+          <button
+            type="button"
+            className="ghost"
+            disabled={busy}
+            onClick={() => onRunAction("brief", { location: "Oakland port" })}
+          >
+            Ground Port Factors
+          </button>
+        </div>
+        <h3>Research Lower-Carbon Alternatives via Web Evidence</h3>
+        <p>Workers AI &amp; Tavily search for greener options: switching batch compute to clean-grid regions, moving port freight to electrified rail, or contracting solar PPAs.</p>
+        <div className="cli-box">
+          <span className="prompt">$ </span><span className="cmd">./bin/orepath brief &quot;Oakland port&quot;</span>
+          <div className="out">
+Filing climate brief for &apos;Oakland port&apos;...
+Status: <span className="highlight">committed</span>
+Sources: <span className="highlight">5 live citations</span> (Port of Oakland electrification, Clean Air Plan)
+Alternative: <span className="highlight">Shift Oakland drayage trucks to zero-emission electrified rail</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="demo-step-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <span className="kicker">Step 5 · Green Transition &amp; Offset Refund</span>
+          <button
+            type="button"
+            className="primary"
+            disabled={busy}
+            onClick={() =>
+              onRunAction("switch", {
+                location: "SJC",
+                newSolution: "FRA clean-grid datacenter",
+                priorAmountCents: 3580,
+                amountCents: 500,
+              })
+            }
+          >
+            💡 Switch to Clean Grid &amp; Claim Refund
+          </button>
+        </div>
+        <h3>Switch to Low-Carbon Solution &amp; Refund Prior Offset</h3>
+        <p>Orepath switches tracer batch compute from high-carbon SJC to clean-grid Frankfurt (FRA). The new commitment is only $5.00, and Climatico automatically claims a $30.80 refund on the prior offset!</p>
+        <div className="cli-box">
+          <span className="prompt">$ </span><span className="cmd">./bin/orepath switch SJC &quot;FRA clean-grid datacenter&quot; 0fe65272 3580 500</span>
+          <div className="out">
+Logging solution switch at &apos;SJC&apos;...
+Status: <span className="highlight">committed</span>
+Transition: SJC high-carbon → <span className="highlight">FRA clean-grid datacenter</span>
+Prior Offset: $35.80 USD (Receipt 0fe65272)
+New Commitment: $5.00 USD
+Offset Refund: <span className="highlight">+$30.80 USD claimable</span> (net emissions reduced!)
+          </div>
+        </div>
+      </section>
+
+      <section className="demo-step-card">
+        <span className="kicker">Step 6 · Privacy-Preserving Codebase Scan</span>
+        <h3>Auto-Assess Startup Folder Signals</h3>
+        <p>Scans configuration metadata locally with zero code inspection. Only derived signal counts leave the machine.</p>
+        <div className="cli-box">
+          <span className="prompt">$ </span><span className="cmd">./bin/orepath connect . --dry-run</span>
+          <div className="out">
+Scanning . (file contents never leave this machine)...
+  + cloud · Cloudflare Workers (extracted from wrangler.jsonc)
+  + logistics · README mentions shipping
+
+→ Exact payload: 1 derived signal, 170 bytes (0 file contents sent)
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export function App() {
   const [tab, setTab] = useState<Tab>(tabFromUrl);
   const [ws, setWs] = useState<WorkspaceView | null>(null);
@@ -1208,7 +1382,8 @@ export function App() {
   }
 
   const title: Record<Tab, string> = {
-    assess: "Your emissions, by class",
+    assess: "Dashboard",
+    demo: "Demo Scenario & CLI Walkthrough",
     grow: "Growth vs. footprint",
     pipeline: "Fleet: ingest, audit, settle",
     swarm: "Who's talking to whom",
@@ -1251,13 +1426,13 @@ export function App() {
         {tab === "assess" ? (
           <>
             <section className="identity">
-              <div className="avatar-circle">RJ</div>
+              <div className="avatar-circle">OP</div>
               <div>
                 <div className="name">
-                  {story.name} · {story.company}
+                  {story.company}
                 </div>
                 <div className="domain">
-                  {story.role} · {story.stage}
+                  {story.stage}
                 </div>
                 <p>{story.product}</p>
                 <p>
@@ -1275,9 +1450,6 @@ export function App() {
               />
               <p className="kicker">Climatico</p>
               <h1>{title[tab]}</h1>
-              <p className="lede">
-                Ingest business activity, calculate CO₂e impact, discover greener alternatives, and settle or refund commitments.
-              </p>
               <div className="row">
                 <button type="button" className="primary" disabled={busy} onClick={() => void mint()}>
                   Mint credential
@@ -1380,7 +1552,7 @@ export function App() {
                 </div>
                 <div className="callout clay">
                   <strong>Why an agent, not a form: </strong>
-                  The cheapest moment to capture this is a PO, a booking, a bill spike — and Rae's team
+                  The cheapest moment to capture this is a PO, a booking, a bill spike — and Orepath's team
                   already runs those through agents, not a dashboard they'd visit twice a year.
                 </div>
                 <label>Location / region</label>
@@ -1390,7 +1562,7 @@ export function App() {
                 <span className="kicker">Practical tools</span>
                 <h3>Try it now</h3>
                 <p className="lede" style={{ marginBottom: 12 }}>
-                  Run real writes against Rae's data. Click Run below — 4 tools are live, 1 is next.
+                  Run real writes against Orepath's data. Click Run below — 4 tools are live, 1 is next.
                 </p>
                 <div className="tools">
                   {story.tools.map((t) => (
@@ -1414,6 +1586,27 @@ export function App() {
               </section>
             </div>
           </>
+        ) : null}
+
+        {tab === "demo" ? (
+          <DemoView
+            onRunFleet={() =>
+              void write("/v1/fleet/run", {
+                source: "cloud",
+                location,
+                spendUsd: 420,
+                monthlyBudgetKg: 50,
+                monthToDateKg: 40,
+              })
+            }
+            onRunAction={(intent, payload) =>
+              void write("/v1/actions", {
+                intent,
+                ...payload,
+              })
+            }
+            busy={busy}
+          />
         ) : null}
 
         {tab === "grow" ? (
