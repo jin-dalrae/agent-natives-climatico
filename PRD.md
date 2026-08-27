@@ -245,7 +245,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
 | AIsa | Real balance read only | **Partial** — `GET /v1/aisa/balance` is real; the M2M payment rail itself is **not** in the write path |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
-| Mitosis | Cortex agent memory | **Yes** — `cortex.ts` wired into scheduler; fleet run summaries stored and recalled via `/v1/memory` |
+| Mitosis | Cortex agent memory | **Yes** — `cortex.ts` wired into scheduler; fleet run summaries stored and recalled via `/v1/memory`. 27 Aug session transcript also ingested into the office (`f56e7069-…`) as 5 records (Runtype fix, Tenki live integration, Mitosis setup, Runtype egress bug, session meta) — fully embedded and graphed, queryable via `mi cortex ask`. |
 | Runtype | Enrichment (audit/suggest/forecast) | **Partial** — `runtype.ts` wired into scheduler; tool-runtime egress blocks end-to-end |
 | Nebius | GPU Cloud / $75 Builder Program | **No** — grounding summaries moved to Workers AI; no external Nebius key used |
 | Hacker Bob, HUD | Credits / prizes / booths | **No** until a real call exists |

@@ -64,6 +64,22 @@ export class ProviderAgent extends Agent<Env, { services: string[]; contracts: n
       revenueCents: this.state.revenueCents,
     };
   }
+
+  @callable()
+  reverseOffset(input: { priorReceiptId: string; priorAmountCents: number; newAmountCents: number; location: string }): { ok: boolean; refundId: string; refundCents: number; note: string } {
+    const refundCents = Math.max(0, input.priorAmountCents - input.newAmountCents);
+    this.setState({
+      ...this.state,
+      contracts: this.state.contracts + 1,
+      revenueCents: Math.max(0, this.state.revenueCents - refundCents),
+    });
+    return {
+      ok: true,
+      refundId: `r-${crypto.randomUUID().slice(0, 8)}`,
+      refundCents,
+      note: `Refunded ${refundCents}¢ against prior receipt ${input.priorReceiptId.slice(0, 8)} at ${input.location}. New commitment: ${input.newAmountCents}¢.`,
+    };
+  }
 }
 
 export async function getProviderAgent(env: Env, name: string = "green-offset-co") {

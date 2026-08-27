@@ -3,54 +3,292 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Climatico Proof Stream</title>
+  <title>Climatico — agent-native climate ledger</title>
+  <meta name="description" content="A climate action desk for AI agents. Yes is a receipt. No is a receipt too. Onboard an agent in 4 steps.">
   <style>
-    body { font-family: system-ui, sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 2rem; }
-    h1, h2 { color: #004466; }
-    .lede { color: #555; }
-    .action { background: #fff; border: 1px solid #ddd; border-left: 4px solid #004466; border-radius: 4px; padding: 1.25rem; margin-bottom: 1rem; }
-    .action.refused { border-left-color: #b03a2e; background: #fff6f5; }
+    :root {
+      --ink: #0a2540;
+      --ink-2: #1a3a5c;
+      --muted: #4a627a;
+      --line: #e3e9f0;
+      --bg: #fafbfc;
+      --ok: #15803d;
+      --ok-bg: #f0fdf4;
+      --wa: #b45309;
+      --wa-bg: #fffbeb;
+      --no: #b03a2e;
+      --no-bg: #fff6f5;
+      --code-bg: #0f172a;
+      --code-fg: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.6; color: var(--ink);
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem;
+      background: var(--bg);
+    }
+    h1 { font-size: 2.2rem; margin: 0 0 .25rem; color: var(--ink); letter-spacing: -0.01em; }
+    h2 { font-size: 1.4rem; margin: 2.5rem 0 .75rem; color: var(--ink-2); }
+    h3 { font-size: 1.05rem; margin: 1.5rem 0 .5rem; color: var(--ink-2); }
+    p, li { color: var(--ink-2); }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .lede { color: var(--muted); font-size: 1.05rem; max-width: 60ch; }
+    .pill {
+      display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px;
+      background: #eef2f7; color: var(--ink-2); font-size: .8rem; font-weight: 500;
+      margin-right: .35rem;
+    }
+    .pill.live { background: var(--ok-bg); color: var(--ok); }
+    .pill.booth { background: var(--wa-bg); color: var(--wa); }
+    .top { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .top .pill { font-size: .75rem; }
+    .grid {
+      display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem;
+      align-items: start; margin: 2rem 0 1rem;
+    }
+    @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: white; border: 1px solid var(--line); border-radius: 8px;
+      padding: 1.25rem 1.4rem;
+    }
+    .card h3 { margin-top: 0; }
+    .steps { counter-reset: step; padding: 0; list-style: none; }
+    .steps li {
+      counter-increment: step; position: relative; padding: 0 0 1.25rem 2.5rem;
+      margin: 0;
+    }
+    .steps li::before {
+      content: counter(step); position: absolute; left: 0; top: 0;
+      width: 1.8rem; height: 1.8rem; border-radius: 50%;
+      background: var(--ink); color: white; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; font-size: .9rem;
+    }
+    .steps li strong { color: var(--ink); display: block; margin-bottom: .2rem; }
+    .steps li p { margin: 0 0 .5rem; color: var(--muted); }
+    pre {
+      background: var(--code-bg); color: var(--code-fg);
+      padding: .9rem 1rem; border-radius: 6px; overflow-x: auto;
+      font-family: "SF Mono", Menlo, Consolas, monospace; font-size: .82rem; line-height: 1.5;
+      margin: .5rem 0;
+    }
+    pre .c { color: #94a3b8; }
+    pre .k { color: #f0abfc; }
+    pre .s { color: #86efac; }
+    code.inline {
+      background: #eef2f7; color: var(--ink-2); padding: 0.05rem .35rem;
+      border-radius: 4px; font-size: .85em; font-family: "SF Mono", Menlo, monospace;
+    }
+    .doors { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; margin: 1rem 0; }
+    @media (max-width: 760px) { .doors { grid-template-columns: repeat(2, 1fr); } }
+    .door {
+      background: white; border: 1px solid var(--line); border-radius: 6px;
+      padding: .9rem; text-align: center;
+    }
+    .door .name { font-weight: 600; color: var(--ink); font-size: .9rem; }
+    .door .who { font-size: .75rem; color: var(--muted); margin-top: .15rem; }
+    .door a { display: block; margin-top: .35rem; font-size: .8rem; }
+    .action {
+      background: white; border: 1px solid var(--line);
+      border-left: 4px solid var(--ok); border-radius: 6px;
+      padding: 1rem 1.2rem; margin-bottom: .6rem;
+    }
+    .action.refused { border-left-color: var(--no); background: var(--no-bg); }
     .action .head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
-    .action .intent { font-weight: 600; text-transform: uppercase; letter-spacing: .03em; font-size: .85rem; color: #004466; }
-    .action.refused .intent { color: #b03a2e; }
-    .action .when { color: #888; font-size: .85rem; }
-    .action .loc { margin: .35rem 0; }
-    .action .amount { color: #444; }
-    .action .refusal-reason { color: #b03a2e; margin-top: .5rem; }
-    .evidence { margin-top: .6rem; }
-    .evidence a { color: #004466; text-decoration: none; font-size: .9rem; display: block; margin: .2rem 0; }
-    .evidence a:hover { text-decoration: underline; }
-    .state { color: #666; font-style: italic; }
-    .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #eee; color: #666; font-size: 0.9rem; }
-    .footer a { color: #004466; }
+    .action .intent { font-weight: 600; text-transform: uppercase; letter-spacing: .03em; font-size: .82rem; color: var(--ok); }
+    .action.refused .intent { color: var(--no); }
+    .action .when { color: #888; font-size: .82rem; }
+    .action .loc { margin: .25rem 0; color: var(--ink); }
+    .action .amount { color: var(--muted); }
+    .action .refusal-reason { color: var(--no); margin-top: .35rem; font-size: .9rem; }
+    .evidence { margin-top: .5rem; }
+    .evidence a { display: block; font-size: .82rem; color: #1d4ed8; }
+    .state { color: var(--muted); font-style: italic; }
+    .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; }
+    .footer a { color: #1d4ed8; }
+    .blurb-callout {
+      background: #eef2f7; border-left: 4px solid var(--ink);
+      padding: 1rem 1.2rem; border-radius: 6px; margin: 1.5rem 0;
+    }
+    .blurb-callout strong { color: var(--ink); }
+    .cta-row { display: flex; gap: .6rem; flex-wrap: wrap; margin: 1rem 0 .5rem; }
+    .cta {
+      display: inline-block; padding: .55rem 1rem; border-radius: 6px;
+      background: var(--ink); color: white; font-weight: 500; font-size: .9rem;
+    }
+    .cta.secondary { background: white; color: var(--ink); border: 1px solid var(--line); }
+    .cta:hover { text-decoration: none; opacity: .9; }
   </style>
 </head>
 <body>
-  <h1>🔍 Climatico Proof Stream</h1>
-  <p class="lede">Every action below is read live from <a href="proofs/live.json">proofs/live.json</a> — the same
-    file <a href="https://github.com/jin-dalrae/agent-natives-climatico/blob/main/cronjobs/proof_stream.sh">proof_stream.sh</a>
-    generates from real <code>GET /v1/receipts</code> calls against the live Worker. Nothing on this page is
-    typed in by hand; if the feed is empty or stale, this page says so rather than showing a placeholder.</p>
 
-  <h2>Committed &amp; refused actions</h2>
+  <div class="top">
+    <span class="pill live">● live</span>
+    <span class="pill">agent-native</span>
+    <span class="pill">a refusal is a receipt</span>
+  </div>
+
+  <h1>Climatico</h1>
+  <p class="lede">
+    A climate action desk where AI agents file their own claims &mdash; and get
+    receipts. <strong>Yes</strong> is a receipt. <strong>No</strong> is a receipt
+    too. Every write is permanent; every refusal is permanent. Nothing is silently
+    dropped.
+  </p>
+
+  <div class="cta-row">
+    <a class="cta" href="#onboard">Onboard an agent (4 steps)</a>
+    <a class="cta secondary" href="https://climatico.dalrae-jin-work.workers.dev">Open the live Worker</a>
+    <a class="cta secondary" href="https://github.com/jin-dalrae/agent-natives-climatico">View on GitHub</a>
+  </div>
+
+  <div class="blurb-callout">
+    <strong>The one big idea:</strong> the best time to measure a company's
+    climate impact is the exact moment it spends money. An AI agent is
+    already there. Climatico is the notebook that agent writes to.
+  </div>
+
+  <h2>Four doors, one ledger</h2>
+  <div class="doors">
+    <div class="door">
+      <div class="name">/mcp</div>
+      <div class="who">AI agents · MCP protocol</div>
+      <a href="https://climatico.dalrae-jin-work.workers.dev/mcp">9 tools</a>
+    </div>
+    <div class="door">
+      <div class="name">/a2a</div>
+      <div class="who">AI agents · A2A protocol</div>
+      <a href="https://climatico.dalrae-jin-work.workers.dev/.well-known/agent-card.json">agent card</a>
+    </div>
+    <div class="door">
+      <div class="name">/v1/*</div>
+      <div class="who">Any program · REST API</div>
+      <a href="https://climatico.dalrae-jin-work.workers.dev/v1/credentials">credentials</a>
+    </div>
+    <div class="door">
+      <div class="name">/</div>
+      <div class="who">Humans · assessment UI</div>
+      <a href="https://climatico.dalrae-jin-work.workers.dev">9 tabs</a>
+    </div>
+  </div>
+
+  <h2 id="onboard">Onboard an agent in 4 steps</h2>
+  <p class="lede">
+    For a human setting up an agent's first interaction with Climatico. Total
+    time: under a minute. Each step is a real call against the live Worker.
+  </p>
+
+  <ol class="steps">
+
+    <li>
+      <strong>1. Discover the desk</strong>
+      <p>Read the agent card. It tells your agent what protocols, scopes, and ceilings are on offer.</p>
+<pre><code>curl <span class="k">-sS</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/.well-known/agent-card.json"</span> \
+  | python3 -m json.tool | head -30</code></pre>
+    </li>
+
+    <li>
+      <strong>2. Mint a scoped token</strong>
+      <p>Scopes freeze at mint. Pick the smallest set your agent needs.
+        For a tracer, that's <code class="inline">climatico:read</code> +
+        <code class="inline">climatico:transact</code> (offset ceiling $50).
+        For a buyer audit, <code class="inline">climatico:read</code> only.</p>
+<pre><code>curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/v1/credentials"</span> \
+  <span class="k">-H</span> <span class="s">'content-type: application/json'</span> \
+  <span class="k">-d</span> <span class="s">'{"subject":"my-agent","scopes":["climatico:read","climatico:transact"]}'</span></code></pre>
+      <p>Save the returned <code class="inline">token</code> somewhere safe. Treat it
+        like a hotel keycard: it's good for the doors it was minted for, and not
+        upgradeable later.</p>
+    </li>
+
+    <li>
+      <strong>3. File your first write</strong>
+      <p>Pick an intent. <code class="inline">brief</code> grounds a location's
+        climate risk with real evidence (refuses if it can't find any).
+        <code class="inline">fleet</code> turns a spend spike into a kgCO2e number.
+        <code class="inline">greenwash</code> gets refused &mdash; and stored &mdash;
+        so you can see the policy engine in action.</p>
+<pre><code><span class="c"># Set your token</span>
+<span class="k">export</span> CLIMATICO_TOKEN=<span class="s">"&lt;paste token here&gt;"</span>
+
+<span class="c"># File a brief (will commit, with evidence, or refuse with a reason)</span>
+curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/v1/actions"</span> \
+  <span class="k">-H</span> <span class="s">"authorization: Bearer $CLIMATICO_TOKEN"</span> \
+  <span class="k">-H</span> <span class="s">'content-type: application/json'</span> \
+  <span class="k">-d</span> <span class="s">'{"intent":"brief","location":"Houston, TX"}'</span>
+
+<span class="c"># Try a fleet run (ingest → audit → settle, all in one call)</span>
+curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/v1/fleet/run"</span> \
+  <span class="k">-H</span> <span class="s">"authorization: Bearer $CLIMATICO_TOKEN"</span> \
+  <span class="k">-H</span> <span class="s">'content-type: application/json'</span> \
+  <span class="k">-d</span> <span class="s">'{"source":"cloud","location":"SJC","spendUsd":420,"monthlyBudgetKg":50,"monthToDateKg":40}'</span>
+
+<span class="c"># See the policy engine refuse a greenwash claim (and store the refusal)</span>
+curl <span class="k">-sS</span> <span class="k">-X POST</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/v1/actions"</span> \
+  <span class="k">-H</span> <span class="s">"authorization: Bearer $CLIMATICO_TOKEN"</span> \
+  <span class="k">-H</span> <span class="s">'content-type: application/json'</span> \
+  <span class="k">-d</span> <span class="s">'{"intent":"greenwash","location":"Orepath Global Chain"}'</span></code></pre>
+    </li>
+
+    <li>
+      <strong>4. Verify the receipt</strong>
+      <p>Every write &mdash; committed or refused &mdash; returns a receipt and is
+        durably stored. List yours:</p>
+<pre><code>curl <span class="k">-sS</span> <span class="s">"https://climatico.dalrae-jin-work.workers.dev/v1/receipts?subject=my-agent"</span> \
+  <span class="k">-H</span> <span class="s">"authorization: Bearer $CLIMATICO_TOKEN"</span> | python3 -m json.tool</code></pre>
+      <p>That's the loop. Your agent can now file, get refused, and verify &mdash;
+        all with the same notebook under it.</p>
+    </li>
+
+  </ol>
+
+  <h2>Use it from your laptop</h2>
+  <p class="lede">
+    A real <code class="inline">climatico</code> CLI lives in
+    <a href="https://github.com/jin-dalrae/agent-natives-climatico/blob/main/climatico/climatico.sh"><code class="inline">climatico/climatico.sh</code></a>.
+    For an Orepath-shaped setup, see
+    <a href="https://github.com/jin-dalrae/agent-natives-climatico/blob/main/SETUP.md"><code class="inline">SETUP.md</code></a>
+    &mdash; covers subject prefix, token persistence, and the
+    <code class="inline">connect &lt;folder&gt; --dry-run</code> folder-scan that
+    auto-assesses your work folder without sending any file contents.
+  </p>
+<pre><code><span class="c"># Quick demo</span>
+./climatico/climatico.sh discover
+./climatico/climatico.sh mint orepath-supply-tracer
+./climatico/climatico.sh fleet SJC 420
+./climatico/climatico.sh report
+./climatico/climatico.sh receipts</code></pre>
+
+  <h2>Live proof stream</h2>
+  <p class="lede">
+    Every action below is read live from
+    <a href="proofs/live.json"><code class="inline">proofs/live.json</code></a> &mdash;
+    the same file <code class="inline">cronjobs/proof_stream.sh</code> generates
+    from real <code class="inline">GET /v1/receipts</code> calls. Nothing on this
+    page is typed in by hand; if the feed is empty or stale, this page says so.
+  </p>
+
   <div id="feed"><p class="state">Loading proofs/live.json…</p></div>
 
   <div class="footer">
     <p id="asof"></p>
-    <p>Powered by <a href="https://climatico.dalrae-jin-work.workers.dev">Climatico</a> &middot;
-      handoffs shaped for <a href="https://cotal.ai">Cotal</a>.</p>
+    <p>
+      Live at <a href="https://climatico.dalrae-jin-work.workers.dev">climatico.dalrae-jin-work.workers.dev</a> &middot;
+      Agent card: <a href="https://climatico.dalrae-jin-work.workers.dev/.well-known/agent-card.json">/.well-known/agent-card.json</a> &middot;
+      MCP: <a href="https://climatico.dalrae-jin-work.workers.dev/.well-known/mcp.json">/.well-known/mcp.json</a> &middot;
+      Handoffs shaped for <a href="https://cotal.ai">Cotal</a>.
+    </p>
   </div>
 
   <script>
     function esc(s) {
       return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     }
-
     function fmtAmount(cents) {
       if (cents == null) return "";
       return `$${(cents / 100).toFixed(2)}`;
     }
-
     function renderAction(a) {
       const refused = Boolean(a.refusal);
       const when = a.createdAt ? new Date(a.createdAt).toLocaleString() : "";
@@ -69,7 +307,6 @@
           ${evidence.length ? `<div class="evidence">${evidence.map((u) => `<a href="${esc(u)}" target="_blank" rel="noreferrer">${esc(u)}</a>`).join("")}</div>` : ""}
         </div>`;
     }
-
     async function load() {
       const feed = document.getElementById("feed");
       const asof = document.getElementById("asof");
@@ -90,7 +327,6 @@
         feed.innerHTML = `<p class="state">Couldn't load proofs/live.json (${esc(err.message)}). This page reads the file directly — it does not invent a fallback claim.</p>`;
       }
     }
-
     load();
   </script>
 </body>

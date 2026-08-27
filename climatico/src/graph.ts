@@ -96,6 +96,38 @@ export async function runActionGraph(
       },
     ];
     if (!base.note) base.note = alt;
+  } else if (intent === "switch") {
+    const newSol = input.newSolution || "";
+    const priorId = input.priorReceiptId || "";
+    const priorAmount = input.priorAmountCents ?? 0;
+    const newAmount = input.amountCents ?? 0;
+    const delta = Math.max(0, priorAmount - newAmount);
+    const oldSolution = input.note?.split("|")[0]?.trim() || "prior solution";
+    const switchNote = `switch: ${oldSolution} → ${newSol}. Prior offset ${priorId.slice(0, 8)} at ${priorAmount}¢; new at ${newAmount}¢; delta ${delta}¢ claimable via /v1/actions intent=refund.`;
+    if (!base.note) base.note = switchNote;
+    evidence = [
+      {
+        title: `Solution switch · ${newSol}`,
+        url: "ledger://switch/logged",
+        snippet: `Transitioning from "${oldSolution}" to "${newSol}" at ${location}. Prior offset: ${priorAmount}¢ (receipt ${priorId.slice(0, 8)}). New commitment: ${newAmount}¢. Savings: ${delta}¢ claimable.`,
+      },
+    ];
+  } else if (intent === "refund") {
+    const priorId = input.priorReceiptId || "";
+    const priorAmount = input.priorAmountCents ?? 0;
+    const newAmount = input.amountCents ?? 0;
+    const refundCents = Math.max(0, priorAmount - newAmount);
+    base.amountCents = refundCents;
+    if (!base.note) {
+      base.note = `refund of ${refundCents}¢ against prior offset ${priorId.slice(0, 8)} (${priorAmount}¢). New commitment: ${newAmount}¢. Net: ${priorAmount}→${newAmount}¢.`;
+    }
+    evidence = [
+      {
+        title: `Offset refund · ${refundCents}¢`,
+        url: "ledger://refund/claimed",
+        snippet: `Claiming back ${refundCents}¢ against prior receipt ${priorId.slice(0, 8)} (${priorAmount}¢) at ${location}. New commitment: ${newAmount}¢. Net reduction: ${refundCents}¢.`,
+      },
+    ];
   }
 
   return {

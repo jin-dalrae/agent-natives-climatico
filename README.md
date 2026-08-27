@@ -243,7 +243,7 @@ We ship what runs and we say what we haven't.
 | AIsa | Sponsor. Machine payment rail | Partial — real balance read only; payment rail not wired |
 | Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
 | Cotal | Organiser. Agent mesh | Partial — own `climatico` mesh live (8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook unset |
-| Mitosis | Sponsor. Cortex agent memory | YES — `cortex.ts` wired into scheduler; fleet run summaries stored/recalled |
+| Mitosis | Sponsor. Cortex agent memory | YES — `cortex.ts` wired into scheduler; fleet run summaries stored/recalled. 27 Aug session transcript (5 records, Runtype fix + Tenki + Mitosis setup) ingested into office `f56e7069-…` and queryable via `mi cortex ask`. |
 | Runtype | Sponsor. Enrichment (audit/suggest/forecast) | Partial — `runtype.ts` wired into scheduler; tool-runtime egress blocks end-to-end |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
 | Nebius | Sponsor. GPU Cloud / $75 Builder Program | No — grounding summaries moved to Workers AI, no external key used |

@@ -135,6 +135,45 @@ print('Why:', r.get('refusalReason','?'))
 print('Receipt ID:', r.get('id','?')[:8], '(refusal stored permanently)')
 "
     ;;
+  switch)
+    loc="${1:-SJC}"
+    new_sol="${2:-move compute to FRA region}"
+    prior_id="${3:-placeholder-receipt-id}"
+    prior_cents="${4:-3580}"
+    new_cents="${5:-500}"
+    note_arg=""
+    [ -n "${6:-}" ] && note_arg=",\"note\":\"$6\""
+    [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
+    echo "Switching solution at '$loc'..."
+    echo "  Prior: $prior_cents¢ (receipt $prior_id)"
+    echo "  New:   $new_cents¢ ($new_sol)"
+    body="{\"intent\":\"switch\",\"location\":\"$loc\",\"newSolution\":\"$new_sol\",\"priorReceiptId\":\"$prior_id\",\"priorAmountCents\":$prior_cents,\"amountCents\":$new_cents${note_arg}}"
+    api POST /v1/actions "$body" | python3 -c "
+import json,sys
+r=json.load(sys.stdin).get('receipt',{})
+print('Status:', r.get('status','?'))
+print('Receipt:', r.get('id','?')[:8])
+delta = $prior_cents - $new_cents
+print(f'Net reduction: {delta}¢ ({(delta/100):.2f} USD) — claimable via ./climatico.sh refund')
+"
+    ;;
+  refund)
+    loc="${1:-SJC}"
+    prior_id="${2:-placeholder-receipt-id}"
+    prior_cents="${3:-3580}"
+    new_cents="${4:-500}"
+    [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
+    echo "Claiming refund at '$loc'..."
+    body="{\"intent\":\"refund\",\"location\":\"$loc\",\"priorReceiptId\":\"$prior_id\",\"priorAmountCents\":$prior_cents,\"amountCents\":$new_cents}"
+    api POST /v1/actions "$body" | python3 -c "
+import json,sys
+r=json.load(sys.stdin).get('receipt',{})
+print('Status:', r.get('status','?'))
+refund = ($prior_cents) - ($new_cents)
+print(f'Refund: {refund}¢ ({(refund/100):.2f} USD)')
+print('Receipt:', r.get('id','?')[:8])
+"
+    ;;
   report)
     echo "=== Progress Report ==="
     api GET /v1/report | python3 -c "

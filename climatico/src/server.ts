@@ -213,6 +213,9 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       source?: string;
       note?: string;
       idempotencyKey?: string;
+      newSolution?: string;
+      priorReceiptId?: string;
+      priorAmountCents?: number;
     }>(request)) ?? {};
     const ledger = await getLedger(env);
     const receipt = await ledger.runAction(
@@ -223,6 +226,9 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
         source: body.source,
         note: body.note,
         idempotencyKey: body.idempotencyKey,
+        newSolution: body.newSolution,
+        priorReceiptId: body.priorReceiptId,
+        priorAmountCents: body.priorAmountCents,
       },
       principal,
     );
@@ -307,8 +313,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     });
 
     // Enrich with Cortex memory and Runtype analysis if available
-    const ctx = { env, request, report };
-    ctx.waitUntil(enrichReport(ctx));
+    ctx.waitUntil(enrichReport(env));
 
     return json(request, report);
   }
@@ -413,13 +418,13 @@ async function principalOr401(request: Request, env: Env) {
   return principal;
 }
 
-async function enrichReport(ctx: { env: Env; request: Request; report: unknown }) {
+async function enrichReport(env: Env) {
   try {
-    const memory = await cortexRecall(ctx.env, "fleet-runs", 5);
+    const memory = await cortexRecall(env, "fleet-runs", 5);
     if (memory.length > 0) {
       console.log(JSON.stringify({ message: "cortex memory enriched", count: memory.length }));
     }
-    const analysis = await runtypeAnalysis(ctx.env, "forecast", {
+    const analysis = await runtypeAnalysis(env, "forecast", {
       location: "SJC",
       kg: 189,
       spend: 420,

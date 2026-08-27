@@ -16,6 +16,7 @@
 .vscode/
 .omo/
 .hermes/
+orepath-work/.token
 
 # Scratch fetches and generated reports from cronjobs/ — regenerated each run.
 /receipts.json

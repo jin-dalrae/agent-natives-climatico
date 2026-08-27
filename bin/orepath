@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+# orepath — wrap `climatico.sh` with the Orepath work-folder config.
+#
+# Usage:
+#   orepath mint                    # mint a token using orepath-work/config.yaml
+#   orepath whoami                  # show what the saved token can do
+#   orepath brief <location>        # file a grounded brief
+#   orepath watch <location>        # start a watch
+#   orepath offset <location> <¢>   # commit an offset
+#   orepath fleet <loc> <$> [budget] [mtd]
+#   orepath refuse [location]       # test a greenwash (gets refused + stored)
+#   orepath report                  # progress report
+#   orepath receipts [n]            # recent receipts
+#   orepath handoffs [n]            # recent handoffs
+#   orepath dashboard               # dashboard summary
+#   orepath connect [folder] [--dry-run]
+#                                  # scan a folder, ingest signals, auto-assess
+#   orepath discover                # show agent discovery files
+#   orepath orepath                 # show the on-Worker Orepath employee agent
+#   orepath memory [namespace]      # read Cortex memory
+#   orepath where                   # print the resolved config + token status
+#
+# All commands forward to climatico/climatico.sh with $CLIMATICO_TOKEN
+# already set from orepath-work/.token (if present) and $CLIMATICO_URL
+# pulled from orepath-work/config.yaml.
+#
+# Privacy: this wrapper never sends file contents. `connect` only sends
+# derived signals (provider names, dep names, README keywords). See
+# `orepath connect --dry-run` for the exact payload before any POST.
+
+set -euo pipefail
+
+# Resolve the repo root from this script's location (bin/orepath → repo root)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+WORK_DIR="${OREPATH_WORK_DIR:-$REPO_ROOT/orepath-work}"
+CONFIG="$WORK_DIR/config.yaml"
+TOKEN_FILE="$WORK_DIR/.token"
+CLIMATICO_BIN="$REPO_ROOT/climatico/climatico.sh"
+
+# Sanity: work dir + climatico binary
+if [ ! -d "$WORK_DIR" ]; then
+  echo "orepath-work not found at: $WORK_DIR" >&2
+  echo "Run \`bin/orepath setup\` to create it, or set OREPATH_WORK_DIR." >&2
+  exit 1
+fi
+if [ ! -f "$CLIMATICO_BIN" ]; then
+  echo "climatico/climatico.sh not found at: $CLIMATICO_BIN" >&2
+  exit 1
+fi
+
+# Tiny YAML reader (good enough for our flat config — no nested blocks).
+# Handles:
+#   key: value                 → value (string)
+#   key:                       → ""
+#   key:                        (followed by indented list)
+#     - item1
+#     - item2
+#                              → "item1\nitem2" (newline-separated, trimmed)
+# Doesn't handle nested maps, multiline scalars, or quoted strings with escapes.
+# Our config uses none of those, so this is fine.
+cfg() {
+  local key="$1"
+  awk -v want="$key" '
+    # skip comments and blanks
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*$/ { next }
+    # list item — collect if we are in a list block for the wanted key
+    /^[[:space:]]+-[[:space:]]/ {
+      if (in_list) {
+        sub(/^[[:space:]]+-[[:space:]]*/, "", $0)
+        items = items (items ? "\n" : "") $0
+      }
+      next
+    }
+    # map entry: capture key
+    /^[[:space:]]*[A-Za-z_][A-Za-z0-9_]*[[:space:]]*:/ {
+      # flush prior list if any
+      if (in_list) { print items; in_list = 0; items = "" }
+      k = $0
+      sub(/[[:space:]]*:.*/, "", k)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", k)
+      # extract inline value (after first colon, stripped)
+      v = $0
+      sub(/^[^:]*:[[:space:]]*/, "", v)
+      gsub(/[[:space:]]+$/, "", v)
+      if (k == want) {
+        if (v == "") {
+          # could be a list that follows
+          in_list = 1; items = ""
+        } else {
+          print v; found = 1; exit
+        }
+      } else {
+        in_list = 0
+      }
+      next
+    }
+    END { if (in_list) print items }
+  ' "$CONFIG"
+}
+
+# Load token from file (exported for child processes)
+if [ -f "$TOKEN_FILE" ]; then
+  # Token is on the first non-comment, non-empty line
+  TOKEN_VALUE=$(grep -vE '^\s*#|^\s*$' "$TOKEN_FILE" | head -1)
+  export CLIMATICO_TOKEN="$TOKEN_VALUE"
+fi
+
+# Load base_url from config (CLI override still wins)
+if [ -z "${CLIMATICO_URL:-}" ]; then
+  BASE_URL=$(cfg base_url)
+  [ -n "$BASE_URL" ] && export CLIMATICO_URL="$BASE_URL"
+fi
+
+cmd="${1:-help}"
+shift 2>/dev/null || true
+
+case "$cmd" in
+  setup)
+    echo "orepath-work already exists at $WORK_DIR" >&2
+    echo "If you need to start over: rm -rf $WORK_DIR and run again." >&2
+    exit 1
+    ;;
+  mint)
+    subject_prefix=$(cfg subject_prefix)
+    # cfg() returns scopes as a newline-separated list. Convert to JSON array.
+    scopes_raw=$(cfg scopes)
+    if [ -z "$scopes_raw" ]; then
+      scopes_json='["climatico:read"]'
+    else
+      # Build JSON: ["item1","item2",...]
+      scopes_json=$(printf '%s\n' "$scopes_raw" \
+        | python3 -c '
+import json, sys
+items = [l.strip() for l in sys.stdin if l.strip()]
+print(json.dumps(items))
+')
+    fi
+    subject="${1:-${subject_prefix:-orepath-supply-tracer}}"
+    echo "Minting token for '$subject' with scopes $scopes_json..."
+    res=$(curl -sS -X POST "${CLIMATICO_URL:-https://climatico.dalrae-jin-work.workers.dev}/v1/credentials" \
+      -H 'content-type: application/json' \
+      -d "{\"subject\":\"$subject\",\"scopes\":$scopes_json}")
+    token=$(echo "$res" | python3 -c "import json,sys; print(json.load(sys.stdin)['token'])")
+    if [ -z "$token" ]; then
+      echo "Mint failed:" >&2
+      echo "$res" >&2
+      exit 1
+    fi
+    # Persist
+    echo "$token" > "$TOKEN_FILE"
+    chmod 600 "$TOKEN_FILE"
+    echo "Token saved to $TOKEN_FILE (chmod 600)."
+    echo "Scopes: $(echo "$res" | python3 -c "import json,sys; print(json.load(sys.stdin)['scopes'])")"
+    echo "Ceiling: \$$(echo "$res" | python3 -c "import json,sys; print(json.load(sys.stdin)['maxAmountCents']/100)")"
+    echo ""
+    echo "Try: orepath whoami"
+    echo "     orepath fleet SJC 420"
+    echo "     orepath refuse"
+    ;;
+  where)
+    echo "Repo root:    $REPO_ROOT"
+    echo "Work dir:     $WORK_DIR"
+    echo "Config:       $CONFIG"
+    echo "Token file:   $TOKEN_FILE $([ -f "$TOKEN_FILE" ] && echo "(present, $(wc -c < "$TOKEN_FILE") bytes)" || echo "(missing — run: orepath mint)")"
+    echo "Base URL:     ${CLIMATICO_URL:-<unset>}"
+    echo "Climatico:    $CLIMATICO_BIN"
+    echo "Subject:      $(cfg subject_prefix)"
+    echo "Scopes:       $(cfg scopes)"
+    echo "Connect dir:  $(cfg connect_target)"
+    ;;
+  # Pass-through: every other subcommand goes to climatico.sh.
+  # Token is already exported; URL is exported; everything just works.
+  discover|whoami|fleet|offset|brief|watch|refuse|report|receipts|\
+  handoffs|dashboard|memory|orepath|status|agents-start|agents-stop|\
+  connect|help)
+    # Special-case `connect`: the path arg defaults to the config's
+    # connect_target. Pull out --dry-run explicitly so it isn't mistaken
+    # for a folder path.
+    if [ "$cmd" = "connect" ]; then
+      dry_run=""
+      path=""
+      for arg in "$@"; do
+        case "$arg" in
+          --dry-run) dry_run="--dry-run" ;;
+          *) [ -z "$path" ] && path="$arg" ;;
+        esac
+      done
+      [ -z "$path" ] && path=$(cfg connect_target)
+      set -- "$path" $dry_run
+    fi
+    exec "$CLIMATICO_BIN" "$cmd" "$@"
+    ;;
+  *)
+    echo "Unknown command: $cmd" >&2
+    echo "Run \`orepath help\` for usage." >&2
+    exit 1
+    ;;
+esac

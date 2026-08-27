@@ -109,6 +109,89 @@ export function mcpHandler(env: Env, principal: Principal) {
       );
 
       server.registerTool(
+        "switch_solution",
+        {
+          description:
+            "Log a transition to a greener solution. Records the prior offset receipt ID, the prior amount, the new amount, and the new solution. Use this when a fleet run suggested an alternative and the company actually moved. After switching, file a separate 'refund' to claim back the difference from the prior provider.",
+          inputSchema: {
+            location: z.string().describe("City, site name, or lat,lon — the same place as the prior offset."),
+            newSolution: z.string().describe("What you're switching to. e.g. 'move compute to FRA region', 'switch to electric freight'."),
+            priorReceiptId: z.string().describe("Receipt ID of the prior offset you're replacing."),
+            priorAmountCents: z.number().int().describe("How much the prior offset cost, in cents."),
+            amountCents: z.number().int().describe("How much the new (smaller) commitment is, in cents."),
+            note: z.string().optional().describe("Free-text context."),
+            idempotencyKey: z.string().optional().describe("Replay-safe key."),
+          },
+        },
+        async (args) => {
+          if (!hasScope(principal, "climatico:transact")) {
+            return text({ ok: false, refused: true, code: "missing_scope" }, true);
+          }
+          const ledger = await getLedger(env);
+          const receipt = await ledger.runAction(
+            {
+              intent: "switch",
+              location: args.location,
+              newSolution: args.newSolution,
+              priorReceiptId: args.priorReceiptId,
+              priorAmountCents: args.priorAmountCents,
+              amountCents: args.amountCents,
+              note: args.note,
+              idempotencyKey: args.idempotencyKey,
+            },
+            principal,
+          );
+          return text({ ok: receipt.status === "committed", refused: receipt.status === "refused", receipt });
+        },
+      );
+
+      server.registerTool(
+        "claim_refund",
+        {
+          description:
+            "Claim a refund on a prior offset. Use after a 'switch_solution' that reduced the carbon commitment. The refund is the difference between the prior and new amounts. The provider agent processes the refund and records a reversal receipt.",
+          inputSchema: {
+            location: z.string().describe("The same place as the prior offset."),
+            priorReceiptId: z.string().describe("Receipt ID of the prior offset being refunded."),
+            priorAmountCents: z.number().int().describe("The prior offset amount, in cents."),
+            amountCents: z.number().int().describe("The new (smaller) commitment, in cents. Refund = prior - new."),
+            note: z.string().optional().describe("Free-text context."),
+            idempotencyKey: z.string().optional().describe("Replay-safe key."),
+          },
+        },
+        async (args) => {
+          if (!hasScope(principal, "climatico:transact")) {
+            return text({ ok: false, refused: true, code: "missing_scope" }, true);
+          }
+          const ledger = await getLedger(env);
+          const receipt = await ledger.runAction(
+            {
+              intent: "refund",
+              location: args.location,
+              priorReceiptId: args.priorReceiptId,
+              priorAmountCents: args.priorAmountCents,
+              amountCents: args.amountCents,
+              note: args.note,
+              idempotencyKey: args.idempotencyKey,
+            },
+            principal,
+          );
+          const refundCents = Math.max(0, args.priorAmountCents - args.amountCents);
+          try {
+            const provider = await (await import("./provider")).getProviderAgent(env, "green-offset-co");
+            await provider.reverseOffset({
+              priorReceiptId: args.priorReceiptId,
+              priorAmountCents: args.priorAmountCents,
+              newAmountCents: args.amountCents,
+              location: args.location,
+            });
+          } catch (_) {
+          }
+          return text({ ok: receipt.status === "committed", refused: receipt.status === "refused", receipt, refundCents });
+        },
+      );
+
+      server.registerTool(
         "plan_abatement",
         {
           description:

@@ -1,7 +1,7 @@
 export const SCOPES = ["climatico:read", "climatico:transact", "climatico:admin"] as const;
 export type Scope = (typeof SCOPES)[number];
 
-export const INTENTS = ["brief", "watch", "offset", "assess", "abate"] as const;
+export const INTENTS = ["brief", "watch", "offset", "assess", "abate", "switch", "refund"] as const;
 export type Intent = (typeof INTENTS)[number];
 
 export const FORBIDDEN_INTENTS = [
@@ -30,6 +30,9 @@ export type ActionInput = {
   source?: string;
   note?: string;
   idempotencyKey?: string;
+  priorReceiptId?: string;
+  priorAmountCents?: number;
+  newSolution?: string;
 };
 
 export type EvidenceItem = {

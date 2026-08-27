@@ -20,7 +20,7 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     return {
       allow: false,
       code: "intent_required",
-      reason: "Climatico only commits named climate actions: brief, watch, offset, assess, or abate.",
+      reason: "Climatico only commits named climate actions: brief, watch, offset, assess, abate, switch, refund.",
     };
   }
 
@@ -36,7 +36,7 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     return {
       allow: false,
       code: "unknown_intent",
-      reason: `Unknown intent '${intent}'. Allowed writes: brief, watch, offset, assess, abate.`,
+      reason: `Unknown intent '${intent}'. Allowed writes: brief, watch, offset, assess, abate, switch, refund.`,
     };
   }
 
@@ -70,6 +70,33 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
         allow: false,
         code: "amount_exceeds_scope",
         reason: `This token may commit at most ${principal.maxAmountCents} cents. Request climatico:admin or a smaller offset.`,
+      };
+    }
+  }
+
+  if (intent === "switch") {
+    if (!input.newSolution) {
+      return {
+        allow: false,
+        code: "new_solution_required",
+        reason: "switch requires newSolution: what you're switching to. Climatico logs the transition so the old offset can be reversed later.",
+      };
+    }
+  }
+
+  if (intent === "refund") {
+    if (!input.priorReceiptId) {
+      return {
+        allow: false,
+        code: "prior_receipt_required",
+        reason: "refund requires priorReceiptId: which offset receipt you're claiming back. Climatico won't refund without a record of the prior commit.",
+      };
+    }
+    if ((input.priorAmountCents ?? 0) <= 0) {
+      return {
+        allow: false,
+        code: "prior_amount_required",
+        reason: "refund requires priorAmountCents > 0. How much was the prior offset? Pass it so we can compute the delta.",
       };
     }
   }

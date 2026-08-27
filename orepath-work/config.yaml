@@ -1,0 +1,38 @@
+# orepath-work/ — local config for using Climatico as the Orepath agent
+#
+# This folder is the "shape" of an Orepath developer's local setup:
+#   - config.yaml: who you are, what subject prefix to use, what scopes
+#   - .token:      your minted bearer (gitignored, never commit)
+#   - The wrapper script `../bin/orepath` reads these.
+#
+# Nothing here is sent to Climatico automatically. Each `orepath` command
+# makes a real HTTP call you can see in the wrapper output.
+
+# Who you are. Used as the `subject` field on every /v1/credentials mint.
+# Convention from cotal.yaml: Orepath uses `orepath-supply-tracer` for
+# the compute-tracer agent, and named subjects for the other agents.
+subject_prefix: orepath-supply-tracer
+
+# The scopes this token should have. Two reasonable presets:
+#   - ["climatico:read"]                                 → buyer audit (read-only)
+#   - ["climatico:read", "climatico:transact"]           → tracer / operator (read + offset, $50 ceiling)
+#   - ["climatico:read", "climatico:transact", "climatico:admin"]  → human operator only
+# Scopes freeze at mint — pick the smallest set that fits.
+scopes:
+  - climatico:read
+  - climatico:transact
+
+# Where to mint against. The default is the live Worker.
+# Override with: CLIMATICO_URL=... orepath brief Houston
+base_url: https://climatico.dalrae-jin-work.workers.dev
+
+# The folder to scan when you run `orepath connect` (auto-assessment).
+# Default is the repo root. Override per-invocation: `orepath connect ~/code/whatever`
+# Privacy: only derived signals (provider names, dep names, README keywords)
+# leave this machine. File contents never do. Use `orepath connect --dry-run`
+# to see the exact payload first.
+connect_target: .
+
+# Whether to print the exact payload and confirmation prompt before every
+# POST that has a body. `true` is the safe default.
+confirm_before_post: true
