@@ -6,6 +6,7 @@
 !**/.env.example
 !**/.dev.vars.example
 **/.ic_token
+**/.cotal/
 **/node_modules/
 **/.wrangler/
 **/dist/
@@ -13,3 +14,4 @@
 *.log
 .idea/
 .vscode/
+.omo/

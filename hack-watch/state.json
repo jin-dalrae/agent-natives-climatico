@@ -1,9 +1,9 @@
 {
- "checked_at": "2026-08-26T21:05:02.269475+00:00",
- "checked_at_pdt": "2026-08-26 14:05:02 PDT",
+ "checked_at": "2026-08-27T00:11:20.099181+00:00",
+ "checked_at_pdt": "2026-08-26 17:11:20 PDT",
  "http_status": 200,
  "reachable": true,
- "page_bytes": 323028,
+ "page_bytes": 344504,
  "status_banner": "Building now",
  "phase_line": "Building now",
  "kicker": "August 26-27, 2026 \u00b7 Cloudflare SF, 101 Townsend St \u00b7 50 builder seats",
@@ -167,19 +167,33 @@
   "created_at": "2026-08-26T21:04:53.122Z",
   "updated_at": "2026-08-26T21:04:53.122Z"
  },
- "submission": null,
+ "submission": {
+  "eid": "anb-hack-01",
+  "team_id": "t_5a903ee708c64f1e",
+  "title": "Climatico",
+  "blurb": "Agent-native climate action desk. A stranger agent discovers /ai-agent.json, mints a scoped bearer, and completes a write. Internal fleet ingest\u2192audit\u2192settle leaves durable Cotal-shaped handoffs. Refusals persist. Tavily grounds audits. Live at climatico.dalrae-jin-work.workers.dev.",
+  "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+  "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+  "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger.",
+  "submitted_at": "2026-08-26T22:50:21.347Z",
+  "locked": false,
+  "updated_at": "2026-08-26T22:50:21.347Z"
+ },
  "api_phase": "BUILD",
  "applied": false,
- "api_seats_used": 4,
- "api_seats_remaining": 46,
+ "api_seats_used": 15,
+ "api_seats_remaining": 35,
  "bounty_count": 1,
- "team_count": 3,
+ "team_count": 6,
  "teams": [
+  "@nikhilkulkarni1755",
   "Climatico",
+  "Motel4",
   "Physical Capability Cloud",
-  "Showtonic"
+  "Showtonic",
+  "Surf, Skate, or Bike"
  ],
- "body_hash": "e5ed4a09916e7bd5",
- "checks_run": 12,
- "change_events": 9
+ "body_hash": "30ff9ea961999b78",
+ "checks_run": 42,
+ "change_events": 39
 }

@@ -3,6 +3,7 @@ import { mintToken, verifyToken, type CredentialGrant } from "./auth";
 import { runActionGraph } from "./graph";
 import { announceHandoff } from "./cotal";
 import { runFleet as executeFleet } from "./fleet";
+import { buildWorkspace, type WorkspaceView } from "./insights";
 import type { ActionInput, Dashboard, FleetRun, Handoff, Principal, Receipt, UsageEvent } from "./types";
 
 type LedgerState = Dashboard & {
@@ -220,6 +221,18 @@ export class Ledger extends Agent<Env, LedgerState> {
     }));
   }
 
+  workspace(): WorkspaceView {
+    return buildWorkspace({
+      dashboard: this.dashboard(),
+      receipts: this.listReceipts(30),
+      handoffs: this.listHandoffs(40),
+      runs: this.listFleetRuns(8),
+      tavilyKey: Boolean((this.env as Env & { TAVILY_API_KEY?: string }).TAVILY_API_KEY),
+      cotalWebhook: Boolean((this.env as Env & { COTAL_WEBHOOK_URL?: string }).COTAL_WEBHOOK_URL),
+      nebiusKey: Boolean((this.env as Env & { NEBIUS_API_KEY?: string }).NEBIUS_API_KEY),
+    });
+  }
+
   listFleetRuns(limit = 10): FleetRun[] {
     const rows = [
       ...this.sql<{ run_json: string }>`
@@ -378,6 +391,7 @@ export type LedgerApi = {
   runFleet: Ledger["runFleet"];
   listHandoffs: Ledger["listHandoffs"];
   listFleetRuns: Ledger["listFleetRuns"];
+  workspace: Ledger["workspace"];
 };
 
 export function getLedger(env: Env): Promise<LedgerApi> {

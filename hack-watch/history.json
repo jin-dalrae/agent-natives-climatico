@@ -328,5 +328,439 @@
     ]
    }
   ]
+ },
+ {
+  "at": "2026-08-26T21:24:25.975399+00:00",
+  "at_pdt": "2026-08-26 14:24:25 PDT",
+  "changes": [
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 4,
+    "to": 5
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 3,
+    "to": 4
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "Climatico",
+     "Physical Capability Cloud",
+     "Showtonic"
+    ],
+    "to": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Physical Capability Cloud",
+     "Showtonic"
+    ]
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:30:59.108867+00:00",
+  "at_pdt": "2026-08-26 14:30:59 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "18fb30a8aa58991a",
+    "to": "9bbd9696b5bbd7a2"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:35:59.537887+00:00",
+  "at_pdt": "2026-08-26 14:35:59 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "9bbd9696b5bbd7a2",
+    "to": "01d70586d93d5e94"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:40:57.396655+00:00",
+  "at_pdt": "2026-08-26 14:40:57 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "01d70586d93d5e94",
+    "to": "7ff378a5b2789ba0"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:46:01.608243+00:00",
+  "at_pdt": "2026-08-26 14:46:01 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "7ff378a5b2789ba0",
+    "to": "e961b5984ca845a2"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:51:00.561633+00:00",
+  "at_pdt": "2026-08-26 14:51:00 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "e961b5984ca845a2",
+    "to": "6be5a1e3c9eed141"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T21:56:01.505775+00:00",
+  "at_pdt": "2026-08-26 14:56:01 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "6be5a1e3c9eed141",
+    "to": "a10ddbc222a1c70b"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:01:01.379273+00:00",
+  "at_pdt": "2026-08-26 15:01:01 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "a10ddbc222a1c70b",
+    "to": "ae19b169da97b777"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:05:56.717233+00:00",
+  "at_pdt": "2026-08-26 15:05:56 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "ae19b169da97b777",
+    "to": "c17e1049e1a4cadd"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:10:59.500553+00:00",
+  "at_pdt": "2026-08-26 15:10:59 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "c17e1049e1a4cadd",
+    "to": "84abfb73e0950d5b"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:15:59.777448+00:00",
+  "at_pdt": "2026-08-26 15:15:59 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "84abfb73e0950d5b",
+    "to": "af98034f57a5b424"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:22:02.196588+00:00",
+  "at_pdt": "2026-08-26 15:22:02 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "af98034f57a5b424",
+    "to": "a43ffd8ac4f6d655"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:27:02.269647+00:00",
+  "at_pdt": "2026-08-26 15:27:02 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "a43ffd8ac4f6d655",
+    "to": "90268aa35fa84e9f"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:32:00.158542+00:00",
+  "at_pdt": "2026-08-26 15:32:00 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "90268aa35fa84e9f",
+    "to": "e2a1958cc9bb3088"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:37:09.542619+00:00",
+  "at_pdt": "2026-08-26 15:37:09 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "e2a1958cc9bb3088",
+    "to": "17a6ecb9fc1eec39"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:42:00.158190+00:00",
+  "at_pdt": "2026-08-26 15:42:00 PDT",
+  "changes": [
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 5,
+    "to": 6
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:47:02.558991+00:00",
+  "at_pdt": "2026-08-26 15:47:02 PDT",
+  "changes": [
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 6,
+    "to": 16
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:52:02.087229+00:00",
+  "at_pdt": "2026-08-26 15:52:02 PDT",
+  "changes": [
+   {
+    "field": "submission",
+    "label": "Your submission",
+    "from": null,
+    "to": {
+     "eid": "anb-hack-01",
+     "team_id": "t_5a903ee708c64f1e",
+     "title": "Climatico",
+     "blurb": "Agent-native climate action desk. A stranger agent discovers /ai-agent.json, mints a scoped bearer, and completes a write. Internal fleet ingest\u2192audit\u2192settle leaves durable Cotal-shaped handoffs. Refusals persist. Tavily grounds audits. Live at climatico.dalrae-jin-work.workers.dev.",
+     "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
+     "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
+     "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest\u2192audit\u2192settle across Tavily evidence + Durable Object ledger.",
+     "submitted_at": "2026-08-26T22:50:21.347Z",
+     "locked": false,
+     "updated_at": "2026-08-26T22:50:21.347Z"
+    }
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T22:57:12.458090+00:00",
+  "at_pdt": "2026-08-26 15:57:12 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "547aebaaa0d4c775",
+    "to": "ebe10d7cf06dca63"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T23:02:00.626803+00:00",
+  "at_pdt": "2026-08-26 16:02:00 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "ebe10d7cf06dca63",
+    "to": "e30fd180e2265203"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T23:07:05.164848+00:00",
+  "at_pdt": "2026-08-26 16:07:05 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "e30fd180e2265203",
+    "to": "62e958053488ee2d"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T23:12:03.643609+00:00",
+  "at_pdt": "2026-08-26 16:12:03 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "62e958053488ee2d",
+    "to": "10e9c28ec6b3d3d0"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T23:17:02.505349+00:00",
+  "at_pdt": "2026-08-26 16:17:02 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "10e9c28ec6b3d3d0",
+    "to": "99a7fd69893de8d4"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T23:22:01.941013+00:00",
+  "at_pdt": "2026-08-26 16:22:01 PDT",
+  "changes": [
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 4,
+    "to": 5
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Physical Capability Cloud",
+     "Showtonic"
+    ],
+    "to": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Physical Capability Cloud",
+     "Showtonic",
+     "Surf, Skate, or Bike"
+    ]
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T23:27:01.961292+00:00",
+  "at_pdt": "2026-08-26 16:27:01 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "b8763350b731f6da",
+    "to": "ebe36ba7806e375a"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T23:32:01.814369+00:00",
+  "at_pdt": "2026-08-26 16:32:01 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "ebe36ba7806e375a",
+    "to": "472b8b96bba7367d"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-26T23:56:19.342225+00:00",
+  "at_pdt": "2026-08-26 16:56:19 PDT",
+  "changes": [
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 16,
+    "to": 15
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 5,
+    "to": 6
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Physical Capability Cloud",
+     "Showtonic",
+     "Surf, Skate, or Bike"
+    ],
+    "to": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Motel4",
+     "Physical Capability Cloud",
+     "Showtonic",
+     "Surf, Skate, or Bike"
+    ]
+   }
+  ]
+ },
+ {
+  "at": "2026-08-27T00:01:19.311958+00:00",
+  "at_pdt": "2026-08-26 17:01:19 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "472b8b96bba7367d",
+    "to": "52c7d932c47c471b"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-27T00:06:19.687135+00:00",
+  "at_pdt": "2026-08-26 17:06:19 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "52c7d932c47c471b",
+    "to": "a721ff610520d6f9"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-27T00:11:20.099181+00:00",
+  "at_pdt": "2026-08-26 17:11:20 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "a721ff610520d6f9",
+    "to": "30ff9ea961999b78"
+   }
+  ]
  }
 ]

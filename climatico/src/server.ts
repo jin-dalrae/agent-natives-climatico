@@ -113,6 +113,11 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     return json(request, await ledger.dashboard());
   }
 
+  if (path === "/v1/workspace") {
+    const ledger = await getLedger(env);
+    return json(request, await ledger.workspace());
+  }
+
   if (path === "/v1/receipts" && request.method === "GET") {
     const principal = await principalOr401(request, env);
     if (principal instanceof Response) return principal;

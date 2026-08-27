@@ -98,6 +98,7 @@ export function aiAgentJson(origin: string) {
       "discover_climatico",
       "complete_action",
       "run_fleet",
+      "get_insights",
       "get_receipt",
       "list_receipts",
       "list_handoffs",

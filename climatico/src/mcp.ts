@@ -146,6 +146,19 @@ export function mcpHandler(env: Env, principal: Principal) {
       );
 
       server.registerTool(
+        "get_insights",
+        {
+          description:
+            "Assessment dashboard: emission classes, L0–L5 onboarding, inbox of actionable messages, sponsor next steps.",
+          inputSchema: {},
+        },
+        async () => {
+          const ledger = await getLedger(env);
+          return text(await ledger.workspace());
+        },
+      );
+
+      server.registerTool(
         "list_handoffs",
         {
           description: "Coordination log: ingest → audit → settle messages, newest first.",

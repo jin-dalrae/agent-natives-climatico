@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent Natives Watch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,7 +66,13 @@ a{color:var(--accent)}
 h1{font-size:clamp(30px,5.2vw,50px);line-height:1.03;letter-spacing:-.022em;font-weight:800;margin:10px 0 0}
 .sub{color:var(--ink-2);max-width:60ch;margin:12px 0 0}
 .nowgrid{display:grid;grid-template-columns:1.35fr 1fr;gap:20px;margin-top:26px}
-@media(max-width:760px){.nowgrid{grid-template-columns:1fr}}
+@media(max-width:760px){
+  .nowgrid{grid-template-columns:1fr}
+  .log-row{grid-template-columns:1fr;gap:4px}
+  #daytag,.bar .spacer{display:none}
+  .bar .wrap{gap:10px}
+  #lastcheck{flex:1 0 100%}
+}
 .panel{background:var(--card);border:1px solid var(--rule);border-radius:6px;box-shadow:var(--shadow)}
 .panel-h{display:flex;align-items:baseline;gap:10px;padding:13px 18px;border-bottom:1px solid var(--rule)}
 .panel-h h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink-2)}
@@ -167,7 +178,8 @@ footer{padding:26px 0 44px;color:var(--ink-3);font-size:12.5px}
 footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:baseline}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
 </style>
-
+</head>
+<body>
 <div class="bar"><div class="wrap">
   <div class="brand">Agent Natives <span>/ watch</span></div>
   <span class="dot" id="livedot" aria-hidden="true"></span>
@@ -282,7 +294,7 @@ footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:baseline}
 </main>
 
 <footer><div class="wrap">
-  <span id="built"></span><span>Polls <code>immersivecommons.com/events/hackathon</code> every 20 min.</span>
+  <span id="built"></span><span>Polls <code>immersivecommons.com/events/hackathon</code> every 5 min.</span>
   <span id="checks"></span>
 </div></footer>
 
@@ -330,7 +342,7 @@ document.getElementById('facts').innerHTML = [
   ['When','August 26–27, 2026<small>Doors 10:00am PDT both days</small>'],
   ['Where', esc(ev.location||'Cloudflare SF') + '<small>101 Townsend St, San Francisco</small>'],
   ['Seats', (S.seats_left!=null ? esc(S.seats_left)+' of '+esc(S.seats_total)+' left' : '50 builder seats')
-     + '<small>Per the live page — see the flag above</small>'],
+     + '<small>' + (S.api_seats_used!=null ? (S.api_seats_used+' seated via API') : 'Per the live page') + '</small>'],
   ['Cost','Free<small>Meals both days, covered</small>'],
   ['Hosted by','Cloudflare<small>Room, badges and venue NDA — not a sponsor</small>'],
   ['Organisers', esc((ev.organizers||[]).join(', '))],
@@ -373,9 +385,14 @@ if (S.registered !== undefined){
   tiles.push(['Roster', S.registered ? 'Registered' : 'Not on it',
     S.registered ? 'good' : 'bad',
     S.registered ? 'ic_hack_me says you are seated.' : 'ic_hack_submit will refuse until this flips.']);
-  tiles.push(['Your team', S.team ? String(S.team) : 'None',
-    S.team ? 'good' : (S.registered ? 'wait' : 'bad'),
-    S.registered ? 'ic_hack_team_create or _join.' : 'Blocked until you are on the roster.']);
+  const team = S.team;
+  const teamName = team && (team.name || team.team_id) ? (team.name || team.team_id) : null;
+  const teamNote = team
+    ? ((team.recruiting ? 'recruiting · ' : '') + ((team.members||[]).length) + ' member' + ((team.members||[]).length===1?'':'s') + ' · team_lead')
+    : (S.registered ? 'ic_hack_team_create or _join.' : 'Blocked until you are on the roster.');
+  tiles.push(['Your team', teamName || 'None',
+    teamName ? 'good' : (S.registered ? 'wait' : 'bad'),
+    teamNote]);
   tiles.push(['Submission', S.submission ? 'Filed' : 'None',
     S.submission ? 'good' : 'wait',
     'Locks 3:00pm Thursday. Submit a stub early, overwrite it.']);
@@ -476,3 +493,5 @@ function tick(){
 }
 tick(); setInterval(tick,1000);
 </script>
+</body>
+</html>

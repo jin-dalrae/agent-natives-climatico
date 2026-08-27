@@ -1,0 +1,245 @@
+# Climatico PRD
+
+**Version:** 0.2 · **Date:** 26 August 2026, ~15:00 PDT  
+**Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF  
+**Sources:** shipped Worker (`climatico/`), Agent Edition deck (`deck/climatico-agent-edition.html`), live watch (`http://127.0.0.1:8791/hackathon-watch.html` / Immersive Commons page poll 14:46 PDT)
+
+This document is the product contract. The deck is the argument. The Worker is what a judge can trigger. Where they disagree, **the Worker wins for demo**, and the deck names the next honest step — not a fake one.
+
+---
+
+## 1. Status on the table (from the watch)
+
+| Fact | Value |
+| --- | --- |
+| Phase | **BUILD** · banner “Building now” |
+| Roster | **Registered.** Roles: `participant`, `team_lead`. NDA signed. Check-in flag still false on `ic_hack_me`. |
+| Team | **Climatico** (`t_5a903ee708c64f1e`), one member, `recruiting: true` |
+| Submission | **`null`** — `ic_hack_submit` has not been called. Submit now; overwrite until lock. |
+| Seats | 5 used / 45 remaining (50 builder seats) |
+| Other named teams | Physical Capability Cloud, Showtonic, @nikhilkulkarni1755 |
+| Lock | **Thursday 15:00 PDT** — further `ic_hack_submit` returns locked |
+| Demos | Thursday 15:30, two tracks in parallel |
+| Overnight | **None.** Floor clear 20:00 both nights. Whatever cannot restart cannot be the product. |
+| Building | Clears 20:30 venue / 20:00 event |
+
+**Rubric (100 pts, same weights both tracks; “it runs” is a gate):**
+
+| Wt | External | Internal |
+| --- | --- | --- |
+| 30 | Cold-start success | Real work across a real boundary |
+| 25 | It runs | It runs |
+| 20 | Surface quality | Coordination design |
+| 15 | Lands in the product | Lands in the product |
+| 10 | Demo | Demo |
+
+A judge who cannot trigger the submission live cannot place it.
+
+**Track to declare:** **Internal.** The 30-point band is the fleet (ingest → audit → settle across Tavily + durable handoffs). Discovery files still exist so a domain probe finds MCP/A2A (External-shaped, not the declared track).
+
+**`agent_surface` (what the 30-point field actually scores — not the climate pitch):**  
+`ai-agent.json`, MCP `/mcp`, A2A `/.well-known/agent-card.json`, machine auth `POST /v1/credentials` (scopes freeze at mint), fleet handoffs `/v1/handoffs`.
+
+Event MCP: `https://www.immersivecommons.com/api/mcp`. Token first, all scopes at mint:
+
+```
+npx -y @immersivecommons/cli auth --scopes hack:read,hack:register,hack:team,hack:submit,keys:request
+```
+
+`ic_hack_me` = where we stand. `ic_hack_submit` = idempotent per team. HTTP 200 with `ok:false` is a business failure.
+
+---
+
+## 2. Problem (from the deck)
+
+For companies growing fastest, **“which emissions are yours, and how much?”** has no product.
+
+| Option | Why it fails this customer |
+| --- | --- |
+| Enterprise ESG suite | Wrong customer. Priced for a sustainability lead at Series C. |
+| Cloud vendor dashboard | One vendor, one methodology. No hardware, vendors, travel, logistics. |
+| Consultant PDF | Stale, unqueryable, reconstructed from invoices. |
+
+The teams in this gap already run through **agents**. A layer only a human can visit is a layer they will visit twice a year. Attribution is cheapest **at the moment of activity** (bill spike, PO, freight booking) — when the systems present are agents, not forms.
+
+---
+
+## 3. Product
+
+**One-liner:** Climatico is the attribution layer for agent-native companies: a **write surface** that files which emissions are whose, with evidence, or **refuses and stores why**.
+
+It is **not** “a carbon dashboard with a chatbot.” The screen (Assess / Inbox / Agent / Onboard / Stack) is how humans read the same ledger agents write.
+
+### 3.1 The one rule
+
+A refusal is a receipt. Committed and refused rows share id, subject, token, timestamp, permanence. Policy runs **before** the write.
+
+### 3.2 Two client types (deck)
+
+| | Compute-heavy (fleet, shipped) | Hardware (workflow, specified) |
+| --- | --- | --- |
+| Hotspot | Inference / cloud spend | Factory they do not own + freight mode |
+| Trigger | Billing spike | PO, shipment, meter, buyer data request |
+| Peer range | ~1.5–4 tCO₂e/FTE/yr | ~15–45 (order of magnitude off if treated as SaaS) |
+| Secret | Token scopes | Bill of materials — supplier write-only / buyer read-only tokens |
+
+**One user (from the GTR desk):** Rae Jin, founder of Orepath. The product traces *customers’* battery freight. A buyer asked for Orepath’s *own* impact. Logistics (12 t, modeled) is the story class; the agentic interface is the PO / booking / port her team already runs through agents. Practical tools this weekend: ground Oakland, watch the port, file SJC compute, refuse a green-chain claim. The freight write itself is named, not stubbed.
+
+Shipped demo is **compute**. Hardware / PO-freight workflow is NEXT, not a stubbed LCA.
+
+### 3.3 Seven emission classes (assessment)
+
+Defaults are **modeled**, tagged as such, with per-class uncertainty. Live evidence promotes a class; it never silently relabels modeled as measured.
+
+| Class | Scope | Modeled default | ± | Live today |
+| --- | --- | --- | --- | --- |
+| Cloud & AI compute | S3 Cat 1 | 8.5 t/yr | 30% | **Yes** — fleet kg + Tavily sources |
+| Hardware & electronics | S3 Cat 2 | 3.2 | 40% | No |
+| Travel & commuting | S3 Cat 6–7 | 4.8 | 25% | No |
+| Vendors & SaaS | S3 Cat 1 | 2.1 | 50% | No (coarse, labelled) |
+| Logistics | S3 Cat 4 & 9 | 12.0 | 35% | No |
+| Purchased electricity | S2 location | 5.6 | 15% | No |
+| Direct | S1 | 1.5 | 20% | No (near zero cloud-only) |
+| Avoided / handprint | Separate baseline | **0 until proven** | — | Refused as ungrounded / greenwash |
+
+Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), waste kg, land/biodiversity flag.
+
+### 3.4 Attribution rules (non-negotiable)
+
+1. Scale to **this** business (headcount, region, energy), not a sector average.  
+2. Every figure carries its **error bar**.  
+3. **Modeled is never printed as measured.** Maturity L0–L5 is the path.  
+4. Avoided emissions **start at zero**; additionality required.  
+5. Netting footprint vs handprint is **descriptive, never sold as an offset**.  
+6. Efficiency claims carry a **rebound** flag (Jevons / UKERC).  
+7. Invented climate copy is refused. We would rather return nothing than a plausible paragraph.
+
+### 3.5 Onboarding ladder (binding writes, not checkboxes)
+
+| Level | Name | Done when |
+| --- | --- | --- |
+| L0 | Estimated | Seven modeled classes shown |
+| L1 | Credential | `climatico:transact` minted; scopes frozen |
+| L2 | Grounded write | Brief/assess with Tavily sources |
+| L3 | Fleet | `run_fleet` handoffs stored |
+| L4 | Settlement | Offset receipt committed |
+| L5 | Continuous | Watch on a place survives restart |
+
+---
+
+## 4. Shipped vs deck (honest delta)
+
+| Deck claims | Shipped | Gap |
+| --- | --- | --- |
+| Discovery card + mint + four protocols | `/ai-agent.json`, `/.well-known/agent-card.json`, `/.well-known/mcp.json`, `/mcp`, `/a2a`, `/v1/*`, Clerk chat | Deploy to `*.workers.dev` for a public domain probe |
+| Policy before write; refusal stored | HMAC bearer, 401/422, SQLite receipts | — |
+| Tavily grounding | Live on brief/assess/audit; empty → `ungrounded` | Coupon `26HACK` still optional (keyless works) |
+| Fleet ingest → audit → settle | `POST /v1/fleet/run`, MCP `run_fleet`, handoff channels | Compute class only; heuristic 0.45 kg/$ , 20¢/kg over budget — **labelled heuristic**, not GHG Protocol ICT |
+| Assessment UI | Assess table, inbox, L0–L5, stack, clerk | Hardware PO/freight writes not implemented |
+| Cotal-shaped handoffs | On-ledger; `cotal.yaml`; optional `COTAL_WEBHOOK_URL` | Not joined to [hack.cotal.ai](https://hack.cotal.ai) until you do it on the floor |
+| Seven classes with error bars | Table in UI + `GET /v1/workspace` | Six classes remain modeled |
+| L3 product LCA | Named in deck | **Out of scope this weekend** |
+
+**Do not ship:** fake Runtype deploy, fake AIsa payment, fake Mitosis memory, fake Hacker Bob scan, fake GHG Protocol engine.
+
+---
+
+## 5. Surfaces and APIs
+
+```
+Any agent
+  → GET /ai-agent.json | /.well-known/agent-card.json | /.well-known/mcp.json
+  → POST /v1/credentials     (scopes freeze; ceiling 5 000¢ / 100 000¢ admin)
+  → Bearer on /mcp | /a2a | /v1/*
+  → policy + Tavily
+  → Ledger DO SQLite (receipts, watches, handoffs, fleet_runs)
+```
+
+**Writes:** `brief` · `watch` · `offset` · `assess` · `run_fleet`  
+**Refused outright (stored):** payout, wire_transfer, delete_account, greenwash, admin_override, exfiltrate, unknown intent, no location, ungrounded brief/audit, offset over token ceiling.
+
+**Reads:** `discover_climatico`, `get_policy`, `whoami`, `get_receipt`, `list_receipts`, `list_handoffs`, `get_insights`  
+**Human UI:** `/` — Assess, Inbox, Agent, Onboard, Stack. Inbox text = `GET /v1/workspace` = clerk `get_insights`.
+
+**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, next actions.
+
+---
+
+## 6. What’s on the table (watch · awards)
+
+Six winners, three per track. Most credits are **show-up**, not place. Cash prizes are **best use of that product**, not overall first (changelog 26 Aug 13:00 PDT).
+
+| Item | Kind | How Climatico treats it |
+| --- | --- | --- |
+| Runtype **$500** | Best use of Runtype | **Do not claim.** Winning = deploy a flow on Runtype. $50 credits: ask Nathan/Nate. |
+| Cotal **$300** | Best use of Cotal | Honest path: [hack.cotal.ai](https://hack.cotal.ai) + `cotal.yaml` / webhook. **No credits.** David + Sven on site. |
+| Sandbox VR | Experience, 1/track | Irrelevant to product |
+| HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
+| Hacker Bob | Scan every builder | Point at `/mcp` + `/v1/credentials`. Michalis judges. |
+| Tenki **$100** | Every builder | Event signup URL so it auto-applies. **Not weather** — sandboxes/CI. |
+| AIsa **$100** | Every builder | List: give organiser email. Offsets stay on **our ledger** until then. |
+| Nebius **$75** | Builder Program | Clerk uses Workers AI; Nebius if the model is too small. |
+| Tavily **9,000** (8k + 1k free) | Self-serve `26HACK` | **On the write path.** Two days only. |
+| Runtype **$50** | Show-up | Ask. Separate from $500 bounty. |
+
+**Sponsor challenge (only one posted):** Best use of Runtype — agents, flows, evals, auth/multi-tenancy already on their platform. Mentioning Runtype in a README does not win.
+
+---
+
+## 7. Sponsor / host map (integrity)
+
+| Name | Role in the room | In the write path? |
+| --- | --- | --- |
+| Cloudflare | **Host, not sponsor.** Workers, DO, Agents SDK, MCP | **Yes** — the runtime |
+| Tavily | Sponsor | **Yes** — evidence |
+| Cotal | Organiser | Ledger handoffs **yes**; live mesh **optional** |
+| Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
+| Tenki, AIsa, Mitosis, Hacker Bob, HUD, Nebius, Runtype | Credits / prizes / booths | **No** until a real call exists |
+
+Stack tab and inbox must keep this distinction. Decorative integrations fail the deck’s own guardrail: “Nothing is stubbed to look busy.”
+
+---
+
+## 8. Non-goals (this weekend)
+
+- Full Scope 1–3 accounting or ISO 14040 LCA  
+- Handprint / net-zero marketing claims  
+- Multi-tenant SaaS, document upload of BOMs  
+- Overnight jobs (venue forbids overnight; DO hibernation is the stand-in)  
+- Building **on** Runtype unless we actually do  
+- AIsa M2M settlement without credits on the account  
+
+---
+
+## 9. Day-two sequence
+
+1. **Submit now** (`climatico/SUBMIT.md`) with `repo_url` `https://github.com/jin-dalrae/agent-natives-climatico`. Overwrite when `*.workers.dev` exists.  
+2. `npm run deploy` so a stranger agent has a domain.  
+3. Claim Tavily `26HACK` if not already in `.dev.vars`.  
+4. If chasing Cotal $300: join hack.cotal.ai with David/Sven **before** 15:00 Thursday.  
+5. Demo script a judge can run without us:  
+   domain → `ai-agent.json` → mint → **Assess a spend spike** → inbox shows kg over budget + offset receipt → refresh still shows it.  
+6. Optional: Hacker Bob scan of `/mcp`.
+
+---
+
+## 10. Open product questions (do not invent answers in the demo)
+
+- When do the other six emission classes become **writes** rather than modeled rows?  
+- How does a buyer `climatico:read` token get issued without widening to transact? (Mechanism exists; UX does not.)  
+- Rebound and additionality tests: policy hooks, not copy.  
+
+Until those are executable, the UI must keep saying **modeled** and the API must keep **refusing** greenwash.
+
+---
+
+## 11. Document map
+
+| Artifact | Job |
+| --- | --- |
+| This PRD | Contract |
+| `deck/climatico-agent-edition.html` | Narrative + taxonomy + client cases |
+| `climatico/` | What runs |
+| `climatico/SUBMIT.md` | Event payload |
+| `hack-watch/` | Live floor (poll ~5 min) |
+| GitHub | https://github.com/jin-dalrae/agent-natives-climatico |

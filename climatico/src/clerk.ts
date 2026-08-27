@@ -55,6 +55,30 @@ export class Clerk extends Think<Env> {
           return await ledger.policyDoc();
         },
       }),
+      run_fleet: tool({
+        description: "Ingest a usage spike, audit kgCO2e, settle an offset if over budget.",
+        inputSchema: z.object({
+          location: z.string(),
+          spendUsd: z.number(),
+          source: z.string().optional(),
+        }),
+        execute: async ({ location, spendUsd, source }) => {
+          const ledger = await getLedger(this.env);
+          const minted = await ledger.mintCredential({
+            subject: `clerk:${this.name}`,
+            scopes: ["climatico:read", "climatico:transact"],
+          });
+          return await ledger.runFleet({ location, spendUsd, source }, minted.principal);
+        },
+      }),
+      get_insights: tool({
+        description: "Assessment: composition, maturity, inbox, sponsor next steps.",
+        inputSchema: z.object({}),
+        execute: async () => {
+          const ledger = await getLedger(this.env);
+          return await ledger.workspace();
+        },
+      }),
     };
   }
 }
