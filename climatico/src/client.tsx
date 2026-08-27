@@ -7,11 +7,12 @@ import { OREPATH, OREPATH_GROWTH } from "./insights";
 import type { FleetRun, Handoff, Receipt } from "./types";
 import "./styles.css";
 
-type Tab = "assess" | "grow" | "pipeline" | "ledger" | "inbox" | "agent" | "onboard" | "stack";
+type Tab = "assess" | "grow" | "pipeline" | "swarm" | "ledger" | "inbox" | "agent" | "onboard" | "stack";
 const TABS: { id: Tab; label: string }[] = [
   { id: "assess", label: "Assess" },
   { id: "grow", label: "Grow" },
   { id: "pipeline", label: "Fleet Pipeline" },
+  { id: "swarm", label: "3-Sided Swarm" },
   { id: "ledger", label: "Ledger & Receipts" },
   { id: "inbox", label: "Inbox" },
   { id: "agent", label: "Agent Clerk" },
@@ -664,12 +665,330 @@ function ClerkPane() {
   );
 }
 
+function SwarmView({
+  runs,
+  receipts,
+  handoffs,
+  onRunFleet,
+  onRunAction,
+  onVerifyBuyer,
+  buyerAudit,
+  busy,
+}: {
+  runs: FleetRun[];
+  receipts: Receipt[];
+  handoffs: Handoff[];
+  onRunFleet: (source: string, location: string, spend: number) => void;
+  onRunAction: (intent: string, location: string) => void;
+  onVerifyBuyer: () => void;
+  buyerAudit: { count: number; at: number } | null;
+  busy: boolean;
+}) {
+  const [clientType, setClientType] = useState<"orepath" | "hardware">("orepath");
+
+  return (
+    <div className="swarm-container">
+      <div className="swarm-header card">
+        <div>
+          <span className="kicker">Three-Sided Multi-Agent Ecosystem · Live Simulation</span>
+          <h3>Client Swarm (Enterprise) ⇄ Climatico → Buyer Ecosystem (EV OEM)</h3>
+          <p className="lede">
+            Enterprise agents run business operations (cloud spikes, freight bookings, supplier tokens).
+            Climatico agents enforce policy, ground citations via Tavily/Nebius, and settle immutable receipts.
+            Downstream buyers verify attribution with read-only credentials before trusting supplier claims.
+          </p>
+        </div>
+        <div className="client-toggle">
+          <span>Client Persona: </span>
+          <button
+            type="button"
+            className={clientType === "orepath" ? "primary" : "ghost"}
+            onClick={() => setClientType("orepath")}
+          >
+            Orepath (Cloud & Battery Compute)
+          </button>
+          <button
+            type="button"
+            className={clientType === "hardware" ? "primary" : "ghost"}
+            onClick={() => setClientType("hardware")}
+          >
+            Hardware Co (Factory & Port Freight)
+          </button>
+        </div>
+      </div>
+
+      <div className="swarm-grid">
+        {/* LEFT COLUMN: CLIENT AGENTS */}
+        <div className="swarm-col card">
+          <div className="swarm-col-head">
+            <span className="chip wa">CLIENT ARMY</span>
+            <h4>{clientType === "orepath" ? "Orepath Autonomous Agents" : "Hardware Co Autonomous Agents"}</h4>
+            <p className="sub">{clientType === "orepath" ? "Software & Graph Tracer" : "OEM Device & Supply Chain"}</p>
+          </div>
+
+          <div className="agent-cards">
+            {clientType === "orepath" ? (
+              <>
+                <div className="agent-box">
+                  <div className="agent-title">
+                    <strong>1. TracerFleetAgent</strong>
+                    <span className="role-tag">Workload Telemetry</span>
+                  </div>
+                  <p>Executes battery tracing batch jobs on AWS/GCP (SJC data center).</p>
+                  <button
+                    type="button"
+                    className="primary"
+                    disabled={busy}
+                    onClick={() => onRunFleet("cloud", "SJC", 420)}
+                  >
+                    Trigger $420 Cloud Spike (SJC)
+                  </button>
+                </div>
+
+                <div className="agent-box">
+                  <div className="agent-title">
+                    <strong>2. PortLogisticsAgent</strong>
+                    <span className="role-tag">Freight & Cargo</span>
+                  </div>
+                  <p>Schedules maritime container freight at Oakland Port.</p>
+                  <button
+                    type="button"
+                    className="ghost"
+                    disabled={busy}
+                    onClick={() => onRunAction("brief", "Oakland port")}
+                  >
+                    Ground Oakland Port Brief
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="agent-box">
+                  <div className="agent-title">
+                    <strong>1. FactoryProcurementAgent</strong>
+                    <span className="role-tag">Supplier Tokens</span>
+                  </div>
+                  <p>Files factory assembly POs with supplier write-only tokens.</p>
+                  <button
+                    type="button"
+                    className="primary"
+                    disabled={busy}
+                    onClick={() => onRunAction("assess", "Shenzhen assembly facility")}
+                  >
+                    Assess Shenzhen Factory Risk
+                  </button>
+                </div>
+
+                <div className="agent-box">
+                  <div className="agent-title">
+                    <strong>2. OceanFreightAgent</strong>
+                    <span className="role-tag">Port Logistics</span>
+                  </div>
+                  <p>Coordinates multi-modal shipping from factory to Oakland Port.</p>
+                  <button
+                    type="button"
+                    className="ghost"
+                    disabled={busy}
+                    onClick={() => onRunAction("watch", "Oakland port")}
+                  >
+                    Set Continuous Watch @ Port
+                  </button>
+                </div>
+              </>
+            )}
+
+            <div className="agent-box rogue">
+              <div className="agent-title">
+                <strong className="text-refuse">3. Unaligned / Drift Agent</strong>
+                <span className="role-tag refuse">Marketing Claim</span>
+              </div>
+              <p>Attempts to file an ungrounded zero-carbon marketing badge.</p>
+              <button
+                type="button"
+                className="danger"
+                disabled={busy}
+                onClick={() => onRunAction("greenwash", clientType === "orepath" ? "Orepath battery" : "Zero carbon device")}
+              >
+                Attempt Forbidden Greenwash Write
+              </button>
+            </div>
+
+            <div className="agent-box">
+              <div className="agent-title">
+                <strong>4. Compliance / Buyer Agent</strong>
+                <span className="role-tag">Read-Only EV Auditor</span>
+              </div>
+              <p>Queries ledger with read-only token to verify supply chain claims.</p>
+              <div className="buyer-stat">
+                Verified Receipts: <b>{receipts.length}</b> (Committed & Refused)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CENTER COLUMN: PROTOCOL & BOUNDARY */}
+        <div className="swarm-col boundary-col card">
+          <div className="swarm-col-head">
+            <span className="chip info">BOUNDARY & MESH</span>
+            <h4>Machine Gateway</h4>
+            <p className="sub">Machine discovery & cryptographic auth</p>
+          </div>
+
+          <div className="boundary-steps">
+            <div className="b-step">
+              <span className="b-icon">🔍</span>
+              <div>
+                <strong>A2A Discovery</strong>
+                <code>/.well-known/agent-card.json</code>
+              </div>
+            </div>
+
+            <div className="b-step">
+              <span className="b-icon">🔑</span>
+              <div>
+                <strong>Scoped Bearer Exchange</strong>
+                <p>Permissions freeze at mint · 5,000¢ ceiling</p>
+              </div>
+            </div>
+
+            <div className="b-step">
+              <span className="b-icon">🌐</span>
+              <div>
+                <strong>Cotal Multi-Agent Mesh</strong>
+                <code>#team.climatico · wss://hack.cotal.ai</code>
+              </div>
+            </div>
+
+            <div className="b-step">
+              <span className="b-icon">🛡️</span>
+              <div>
+                <strong>Policy Engine Gate</strong>
+                <p>Refusals persist as durable receipts</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="live-handoff-feed">
+            <span className="feed-head">Live Handoff Stream ({handoffs.length}):</span>
+            <div className="mini-feed">
+              {handoffs.slice(0, 5).map((h) => (
+                <div key={h.id} className="mini-h-row">
+                  <span className="h-time">{new Date(h.createdAt).toLocaleTimeString()}</span>
+                  <code>{h.from}➔{h.to}</code>
+                  <span>{h.kind}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: CLIMATICO SERVICE AGENTS */}
+        <div className="swarm-col card">
+          <div className="swarm-col-head">
+            <span className="chip ok">SERVICE ARMY</span>
+            <h4>Climatico Attribution Agents</h4>
+            <p className="sub">Cloudflare DO + Nebius + Tavily</p>
+          </div>
+
+          <div className="agent-cards">
+            <div className="agent-box">
+              <div className="agent-title">
+                <strong>1. IngestAgent</strong>
+                <span className="role-tag ok">fleet.ingest</span>
+              </div>
+              <p>Listens for telemetry spikes, reconciles MTD budget vs. spend event.</p>
+              <div className="agent-stat">Runs processed: <b>{runs.length}</b></div>
+            </div>
+
+            <div className="agent-box">
+              <div className="agent-title">
+                <strong>2. AuditAgent (Nebius + Tavily)</strong>
+                <span className="role-tag ok">fleet.audit</span>
+              </div>
+              <p>Fact-checks grid factors and physical risks with real-time web citations.</p>
+              <div className="agent-stat">
+                Evidence: <b>{runs[0]?.audit?.evidence.length ?? 5} citations / spike</b>
+              </div>
+            </div>
+
+            <div className="agent-box">
+              <div className="agent-title">
+                <strong>3. SettleAgent (SQLite Ledger)</strong>
+                <span className="role-tag ok">fleet.settle</span>
+              </div>
+              <p>Commits immutable offset receipts to Cloudflare Durable Objects.</p>
+              <div className="agent-stat">
+                Committed Offsets: <b>{receipts.filter((r) => r.status === "committed").length}</b>
+              </div>
+            </div>
+
+            <div className="agent-box">
+              <div className="agent-title">
+                <strong>4. Policy Enforcement</strong>
+                <span className="role-tag ok">ledger</span>
+              </div>
+              <p>Refuses forbidden intents and logs cryptographic UUID receipts.</p>
+              <div className="agent-stat">
+                Stored Refusals: <b className="text-refuse">{receipts.filter((r) => r.status === "refused").length}</b>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHTMOST COLUMN: BUYER ECOSYSTEM */}
+        <div className="swarm-col card">
+          <div className="swarm-col-head">
+            <span className="chip info">BUYER ARMY</span>
+            <h4>EV OEM & Downstream Buyer</h4>
+            <p className="sub">Read-only attribution verification</p>
+          </div>
+
+          <div className="agent-cards">
+            <div className="agent-box">
+              <div className="agent-title">
+                <strong>1. EV OEM Compliance Auditor</strong>
+                <span className="role-tag">climatico:read</span>
+              </div>
+              <p>Mints a read-only credential and audits the ledger before accepting any supply-chain claim.</p>
+              <button type="button" className="primary" disabled={busy} onClick={onVerifyBuyer}>
+                Verify Attribution (Read-Only)
+              </button>
+              <div className="agent-stat">
+                {buyerAudit ? (
+                  <>
+                    Last audit: <b>{buyerAudit.count}</b> receipts at {new Date(buyerAudit.at).toLocaleTimeString()}
+                  </>
+                ) : (
+                  "No read-only audit yet"
+                )}
+              </div>
+            </div>
+
+            <div className="agent-box">
+              <div className="agent-title">
+                <strong>2. Regulator / Analyst</strong>
+                <span className="role-tag">evidence</span>
+              </div>
+              <p>Consumes citation-grounded offsets and refusal receipts for Scope-3 disclosure.</p>
+              <div className="agent-stat">
+                Committed: <b>{receipts.filter((r) => r.status === "committed").length}</b> · Refused:{" "}
+                <b className="text-refuse">{receipts.filter((r) => r.status === "refused").length}</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function App() {
   const [tab, setTab] = useState<Tab>(tabFromUrl);
   const [ws, setWs] = useState<WorkspaceView | null>(null);
   const [token, setToken] = useState("");
   const [location, setLocation] = useState("SJC");
   const [busy, setBusy] = useState(false);
+  const [buyerAudit, setBuyerAudit] = useState<{ count: number; at: number } | null>(null);
   const decked = fromDeck();
   const embedded = window.self !== window.top;
 
@@ -729,6 +1048,26 @@ export function App() {
     }
   }
 
+  async function verifyBuyer() {
+    setBusy(true);
+    try {
+      const cred = (await fetch("/v1/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject: "ev-buyer-auditor", scopes: ["climatico:read"] }),
+      }).then((r) => r.json())) as { token?: string };
+      if (!cred.token) throw new Error("buyer read-only mint failed");
+      const data = (await fetch("/v1/receipts", {
+        headers: { Authorization: `Bearer ${cred.token}` },
+      }).then((r) => r.json())) as { receipts?: unknown[] };
+      setBuyerAudit({ count: data.receipts?.length ?? 0, at: Date.now() });
+    } catch (err) {
+      console.error("Buyer audit failed", err);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   function goTab(id: Tab) {
     setTab(id);
     const url = new URL(window.location.href);
@@ -774,6 +1113,7 @@ export function App() {
     assess: "Which emissions are yours — and how much?",
     grow: "Grow the company without scaling last year’s dirt",
     pipeline: "Autonomous Fleet Orchestration (Ingest → Audit → Settle)",
+    swarm: "Two-Sided Multi-Agent Swarm (Client ⇄ Climatico)",
     ledger: "Immutable Receipts & Policy Refusal Ledger",
     inbox: "Actionable Multi-Agent Stream",
     agent: "Workers AI Clerk & Execution Environment",
@@ -921,8 +1261,11 @@ export function App() {
                 <input value={location} onChange={(e) => setLocation(e.target.value)} />
               </section>
               <section className="card">
-                <span className="kicker">Practical tools · this week</span>
-                <h3>Four live writes. One named next.</h3>
+                <span className="kicker">Practical tools</span>
+                <h3>Try it now</h3>
+                <p className="lede" style={{ marginBottom: 12 }}>
+                  Run real writes against Rae's data. Click Run below — 4 tools are live, 1 is next.
+                </p>
                 <div className="tools">
                   {story.tools.map((t) => (
                     <article className={`act-item ${t.live ? "" : "later"}`} key={t.id}>
@@ -975,6 +1318,32 @@ export function App() {
             }
             busy={busy}
             location={location}
+          />
+        ) : null}
+
+        {tab === "swarm" ? (
+          <SwarmView
+            runs={ws?.runs ?? []}
+            receipts={ws?.receipts ?? []}
+            handoffs={ws?.handoffs ?? []}
+            onRunFleet={(source, loc, spend) =>
+              void write("/v1/fleet/run", {
+                source,
+                location: loc,
+                spendUsd: spend,
+                monthlyBudgetKg: 50,
+                monthToDateKg: 40,
+              })
+            }
+            onRunAction={(intent, loc) =>
+              void write("/v1/actions", {
+                intent,
+                location: loc,
+              })
+            }
+            onVerifyBuyer={() => void verifyBuyer()}
+            buyerAudit={buyerAudit}
+            busy={busy}
           />
         ) : null}
 
