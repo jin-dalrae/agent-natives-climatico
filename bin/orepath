@@ -177,7 +177,7 @@ print(json.dumps(items))
     ;;
   # Pass-through: every other subcommand goes to climatico.sh.
   # Token is already exported; URL is exported; everything just works.
-  discover|whoami|fleet|offset|brief|watch|freight|switch|refund|flag|\
+  discover|whoami|fleet|offset|brief|watch|freight|switch|refund|refuse|flag|\
   report|receipts|handoffs|dashboard|memory|orepath|provider|observe|\
   status|agents-start|agents-stop|connect|help)
     # Special-case `connect`: the path arg defaults to the config's

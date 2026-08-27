@@ -28,8 +28,8 @@ type ReceiptRow = {
   amount_cents: number | null;
   note: string | null;
   status: "committed" | "flagged";
-  flag_code: string | null;
-  flag_reason: string | null;
+  refusal_code: string | null;
+  refusal_reason: string | null;
   evidence_json: string;
   subject: string;
   token_id: string;
@@ -70,8 +70,8 @@ export class Ledger extends Agent<Env, LedgerState> {
         amount_cents INTEGER,
         note TEXT,
         status TEXT NOT NULL,
-        flag_code TEXT,
-        flag_reason TEXT,
+        refusal_code TEXT,
+        refusal_reason TEXT,
         evidence_json TEXT NOT NULL,
         subject TEXT NOT NULL,
         token_id TEXT NOT NULL,
@@ -187,7 +187,7 @@ export class Ledger extends Agent<Env, LedgerState> {
       `;
     }
     const committed = receipt.status === "committed" ? this.state.committed + 1 : this.state.committed;
-    const flagged = receipt.status === "flagged" ? this.state.flagged + 1 : this.state.flagged;
+    const flagged = receipt.status === "flagged" ? this.flaggedCount() + 1 : this.flaggedCount();
     const watches =
       receipt.status === "committed" && receipt.intent === "watch"
         ? this.state.watches + 1
@@ -416,11 +416,17 @@ export class Ledger extends Agent<Env, LedgerState> {
     return rows.map((row) => this.toReceipt(row));
   }
 
+  /** Legacy DO state blobs persisted before the refused→flagged rename used the key "refused". */
+  private flaggedCount(): number {
+    const state = this.state as LedgerState & { refused?: number };
+    return state.flagged ?? state.refused ?? 0;
+  }
+
   @callable()
   dashboard(): Dashboard {
     return {
       committed: this.state.committed,
-      flagged: this.state.flagged,
+      flagged: this.flaggedCount(),
       watches: this.state.watches,
       lastReceiptId: this.state.lastReceiptId,
       fleetRuns: this.state.fleetRuns ?? 0,
@@ -509,21 +515,21 @@ export class Ledger extends Agent<Env, LedgerState> {
   private persistReceipt(receipt: Receipt) {
     this.sql`
       INSERT INTO receipts (
-        id, intent, location, amount_cents, note, status, flag_code, flag_reason,
+        id, intent, location, amount_cents, note, status, refusal_code, refusal_reason,
         evidence_json, subject, token_id, idempotency_key, created_at
       ) VALUES (
         ${receipt.id},
         ${receipt.intent},
-        ${receipt.location},
-        ${receipt.amountCents},
-        ${receipt.note},
+        ${receipt.location ?? null},
+        ${receipt.amountCents ?? null},
+        ${receipt.note ?? null},
         ${receipt.status},
-        ${receipt.flagCode},
-        ${receipt.flagReason},
-        ${JSON.stringify(receipt.evidence)},
+        ${receipt.flagCode ?? null},
+        ${receipt.flagReason ?? null},
+        ${JSON.stringify(receipt.evidence ?? [])},
         ${receipt.subject},
         ${receipt.tokenId},
-        ${receipt.idempotencyKey},
+        ${receipt.idempotencyKey ?? null},
         ${receipt.createdAt}
       )
     `;
@@ -537,8 +543,8 @@ export class Ledger extends Agent<Env, LedgerState> {
       amountCents: row.amount_cents,
       note: row.note,
       status: row.status,
-      flagCode: row.flag_code,
-      flagReason: row.flag_reason,
+      flagCode: row.refusal_code,
+      flagReason: row.refusal_reason,
       evidence: JSON.parse(row.evidence_json) as Receipt["evidence"],
       subject: row.subject,
       tokenId: row.token_id,

@@ -201,10 +201,8 @@ ul.ticks li b { color: var(--ink); font-weight: 600; }
   margin: 0; max-width: none;
   padding: 8px 12px; background: var(--panel); color: var(--muted);
 }
-.who { display: grid; grid-template-columns: 168px 1fr; gap: 18px; align-items: start; margin-top: 8px; }
-.who img { width: 168px; height: 168px; object-fit: cover; border: 1px solid var(--line); display: block; background: var(--panel); }
+.who { display: grid; grid-template-columns: 1fr; gap: 18px; align-items: start; margin-top: 8px; }
 .who .who-meta { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-@media (max-width: 800px) { .who { grid-template-columns: 1fr; } .who img { width: 120px; height: 120px; } }
 
 .cover-mark { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
 .cover h1 { font-size: clamp(32px, 4.6vw, 58px); line-height: 1.02; letter-spacing: -0.03em; }

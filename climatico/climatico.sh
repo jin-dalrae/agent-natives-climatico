@@ -126,7 +126,7 @@ print('Receipt:', r.get('id','?')[:8])
 print('Evidence sources:', len(r.get('evidence',[])))
 "
     ;;
-  flag)
+  refuse|flag)
     loc="${1:-Orepath Global Chain}"
     echo "Testing forbidden claim (greenwash) at '$loc'..."
     api POST /v1/actions "{\"intent\":\"greenwash\",\"location\":\"$loc\"}" | python3 -c "
