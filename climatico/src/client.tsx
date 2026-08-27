@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAgent } from "agents/react";
 import { useAgentChat } from "@cloudflare/ai-chat/react";
-import type { EmissionClass, FounderStory, InboxMessage, WorkspaceView } from "./insights";
+import type { EmissionClass, FounderStory, InboxMessage, SponsorLink, WorkspaceView } from "./insights";
 import { OREPATH, OREPATH_GROWTH } from "./insights";
 import type { FleetRun, Handoff, Receipt } from "./types";
 import "./styles.css";
@@ -85,7 +85,7 @@ function InboxList({ items }: { items: InboxMessage[] }) {
           <h3>{m.title}</h3>
           <p>{m.body}</p>
           <p className="how">
-            <b>Work on it · </b>
+            <b>Next: </b>
             {m.action}
           </p>
         </article>
@@ -147,11 +147,11 @@ function PipelineView({
     <div className="pipeline-container">
       <div className="pipeline-header card">
         <div className="pipeline-intro">
-          <span className="kicker">Multi-Agent Fleet Coordination · Ingest → Audit → Settle</span>
-          <h3>Real work across boundaries with durable SQLite handoffs</h3>
+          <span className="kicker">Fleet</span>
+          <h3>Turn a spend spike into a receipt</h3>
           <p className="lede">
-            When spend spikes, Ingest captures the region event, Audit invokes Tavily for live factor citations,
-            and Settle writes an immutable offset receipt to Cloudflare Durable Objects.
+            One click runs three steps: ingest reads the spend and location, audit scores it and cites real
+            sources, settle writes an offset receipt if the month is over budget. Every step is saved.
           </p>
         </div>
         <div className="pipeline-controls">
@@ -192,7 +192,7 @@ function PipelineView({
                   <strong>Ingest Agent</strong>
                   <span className="channel-pill">fleet.ingest</span>
                 </div>
-                <p className="stage-desc">Parsed usage spike from telemetry</p>
+                <p className="stage-desc">Reads the spend and location</p>
                 <div className="stage-data">
                   <div>Source: <code>{activeRun.ingest.source}</code></div>
                   <div>Spend: <code>${activeRun.ingest.spendUsd} USD</code></div>
@@ -212,7 +212,7 @@ function PipelineView({
                   <strong>Audit Agent</strong>
                   <span className="channel-pill">fleet.audit</span>
                 </div>
-                <p className="stage-desc">Grounded factors via Tavily search</p>
+                <p className="stage-desc">Scores it and cites real sources</p>
                 {activeRun.audit ? (
                   <div className="stage-data">
                     <div>Scored: <strong className="highlight">{activeRun.audit.kgCO2e} kgCO₂e</strong></div>
@@ -253,7 +253,7 @@ function PipelineView({
                   <strong>Settle Agent</strong>
                   <span className="channel-pill">fleet.settle</span>
                 </div>
-                <p className="stage-desc">Committed settlement to SQLite Ledger</p>
+                <p className="stage-desc">Writes the offset receipt</p>
                 {activeRun.offsetReceipt ? (
                   <div className="stage-data">
                     <div>Receipt: <code>{activeRun.offsetReceipt.id.slice(0, 8)}</code></div>
@@ -274,14 +274,14 @@ function PipelineView({
         </div>
       ) : (
         <div className="card">
-          <p>No fleet runs yet. Click above to trigger your first multi-agent pipeline run.</p>
+          <p>No fleet runs yet. Click a button above to trigger one.</p>
         </div>
       )}
 
       {/* DURABLE HANDOFF LOG */}
       <div className="card">
-        <span className="kicker">Durable Coordination Log · Cloudflare Durable Objects</span>
-        <h3>Recent Inter-Agent Handoffs ({handoffs.length})</h3>
+        <span className="kicker">Handoff log</span>
+        <h3>Recent handoffs ({handoffs.length})</h3>
         <div className="table-wrap">
           <table className="dataTable">
             <thead>
@@ -375,12 +375,12 @@ function GrowView({
   return (
     <div className="grow">
       <section className="card">
-        <span className="kicker">Orepath · Seed operating loop · modeled projector</span>
-        <h3>Build, sell, pay — then grow without copying last year’s dirt.</h3>
+        <span className="kicker">Orepath's growth</span>
+        <h3>Does the footprint have to grow with the company?</h3>
         <p className="lede">
-          Rae’s company already has a working pipeline. Climatico sits on the moments that scale:
-          region, deal-room question, invoice. Intensity (tCO₂e per $1M ARR) is the scoreboard — not a
-          net-zero slide. This path is <b>modeled</b> until a write lands.
+          As Orepath builds, sells, and gets paid, Climatico can attach to those same moments — a
+          region choice, a buyer question, an invoice. This chart compares two paths: the default, and
+          one where Climatico writes actually happen. It's <b>modeled</b> until a write lands.
         </p>
         <div className="metrics" style={{ marginTop: 14 }}>
           <div className="metric">
@@ -403,7 +403,7 @@ function GrowView({
           <div className="metric">
             <div className="k">Burn</div>
             <div className="v">${burnK}k</div>
-            <div className="d">/ month · pay is the climate event</div>
+            <div className="d">/ month · spending is what's cheapest to capture</div>
           </div>
         </div>
       </section>
@@ -425,16 +425,14 @@ function GrowView({
 
       <div className="grid g2">
         <section className="card">
-          <span className="kicker">
-            {stage.verb} · what the company does
-          </span>
+          <span className="kicker">{stage.verb}</span>
           <h3>{stage.company}</h3>
           <div className="callout">
-            <strong>Agentic moment</strong>
+            <strong>Where an agent already is</strong>
             {stage.moment}
           </div>
           <div className={`callout ${stage.live ? "" : "clay"}`}>
-            <strong>Climatico</strong>
+            <strong>What Climatico does</strong>
             {stage.climatico}
           </div>
           {lastKg != null && (stage.id === "build" || stage.id === "pay") ? (
@@ -467,11 +465,11 @@ function GrowView({
         </section>
 
         <section className="card">
-          <span className="kicker">Sustainable growth · t per $M, not total tonnes</span>
-          <h3>Same ARR climb. Different backyard.</h3>
+          <span className="kicker">Tonnes per $1M ARR, not total tonnes</span>
+          <h3>Same growth, different footprint</h3>
           <div className="chart-legend">
             <span>
-              <i className="swatch clay" /> Default (dirt scales with sales)
+              <i className="swatch clay" /> Default (footprint scales with revenue)
             </span>
             <span>
               <i className="swatch leaf" /> With Climatico writes
@@ -505,9 +503,9 @@ function GrowView({
             </tbody>
           </table>
           <div className="callout clay">
-            <strong>At +24m</strong>
-            Default intensity stays ~{defInt} t/$M ({last.defaultT} t on ${last.arrM}M). Climatico path{" "}
-            {climaInt} t/$M ({last.climaT} t) — if the writes actually happen. Not a handprint. Not measured.
+            <strong>At +24 months</strong>
+            Default path: ~{defInt} t/$M ({last.defaultT} t on ${last.arrM}M). Climatico path: {climaInt}{" "}
+            t/$M ({last.climaT} t) — only if the writes actually happen. Modeled, not measured.
           </div>
         </section>
       </div>
@@ -522,11 +520,11 @@ function LedgerView({ receipts }: { receipts: Receipt[] }) {
     <div className="ledger-container">
       <div className="grid g2">
         <div className="card">
-          <span className="kicker">Tamper-Proof Attribution · Durable Object SQLite</span>
-          <h3>Receipts & Refusals ({receipts.length})</h3>
+          <span className="kicker">Receipts</span>
+          <h3>Every write, committed or refused ({receipts.length})</h3>
           <p className="lede">
-            A refusal is a receipt. Committed and refused rows share UUID permanence, subject identity,
-            and cryptographic token tracing.
+            A refusal is saved the same way a commit is — same id, same subject, same token, same
+            timestamp. Click a row to see why it was accepted or refused.
           </p>
           <div className="receipt-list">
             {receipts.map((r) => (
@@ -570,25 +568,25 @@ function LedgerView({ receipts }: { receipts: Receipt[] }) {
               </div>
 
               <div className="field-group">
-                <label>Intent & Scope</label>
+                <label>What & where</label>
                 <p>Intent: <code>{selectedReceipt.intent}</code> · Location: <code>{selectedReceipt.location ?? "—"}</code></p>
               </div>
 
               <div className="field-group">
-                <label>Authentication & Subject</label>
+                <label>Who asked</label>
                 <p>Subject: <code>{selectedReceipt.subject}</code> · Token: <code>{selectedReceipt.tokenId}</code></p>
               </div>
 
               {selectedReceipt.refusalCode ? (
                 <div className="field-group refuse-box">
-                  <label className="text-refuse">Policy Refusal Code: {selectedReceipt.refusalCode}</label>
+                  <label className="text-refuse">Why it was refused: {selectedReceipt.refusalCode}</label>
                   <p>{selectedReceipt.refusalReason}</p>
                 </div>
               ) : null}
 
               {selectedReceipt.evidence && selectedReceipt.evidence.length > 0 ? (
                 <div className="field-group">
-                  <label>Tavily Grounding Evidence ({selectedReceipt.evidence.length} sources)</label>
+                  <label>Sources ({selectedReceipt.evidence.length})</label>
                   <ul className="evidence-list">
                     {selectedReceipt.evidence.map((ev, idx) => (
                       <li key={idx}>
@@ -604,13 +602,13 @@ function LedgerView({ receipts }: { receipts: Receipt[] }) {
 
               {selectedReceipt.idempotencyKey ? (
                 <div className="field-group">
-                  <label>Idempotency Key</label>
+                  <label>Retry key</label>
                   <p><code>{selectedReceipt.idempotencyKey}</code></p>
                 </div>
               ) : null}
             </div>
           ) : (
-            <p>Select a receipt to inspect its cryptographic metadata and audit evidence.</p>
+            <p>Select a receipt on the left to see its details.</p>
           )}
         </div>
       </div>
@@ -627,10 +625,11 @@ function ClerkPane() {
 
   return (
     <div className="card">
-      <span className="kicker">Clerk · Workers AI (Llama 3.3)</span>
-      <h3>Talk to the Climatico Desk</h3>
+      <span className="kicker">Clerk</span>
+      <h3>Ask the clerk</h3>
       <p style={{ color: "var(--muted)", fontSize: 13 }}>
-        Same tools as MCP: complete_action, run_fleet, get_insights. Status: <b>{status}</b>.
+        Ask about your footprint, or ask it to file a write. It uses the same tools an agent would.
+        Status: <b>{status}</b>.
       </p>
       <div className="feed">
         {messages.length === 0 ? (
@@ -690,12 +689,12 @@ function SwarmView({
     <div className="swarm-container">
       <div className="swarm-header card">
         <div>
-          <span className="kicker">Three-Sided Multi-Agent Ecosystem · Live Simulation</span>
-          <h3>Client Swarm (Enterprise) ⇄ Climatico → Buyer Ecosystem (EV OEM)</h3>
+          <span className="kicker">Simulation</span>
+          <h3>A company's agents, Climatico, and the buyer checking the claim</h3>
           <p className="lede">
-            Enterprise agents run business operations (cloud spikes, freight bookings, supplier tokens).
-            Climatico agents enforce policy, ground citations via Tavily/Nebius, and settle immutable receipts.
-            Downstream buyers verify attribution with read-only credentials before trusting supplier claims.
+            A company's agents trigger real events — a cloud spike, a booking, a PO. Climatico checks each
+            one against policy and real sources, then writes a receipt. A buyer can read those receipts
+            with a read-only token before trusting a supply-chain claim.
           </p>
         </div>
         <div className="client-toggle">
@@ -721,9 +720,9 @@ function SwarmView({
         {/* LEFT COLUMN: CLIENT AGENTS */}
         <div className="swarm-col card">
           <div className="swarm-col-head">
-            <span className="chip wa">CLIENT ARMY</span>
-            <h4>{clientType === "orepath" ? "Orepath Autonomous Agents" : "Hardware Co Autonomous Agents"}</h4>
-            <p className="sub">{clientType === "orepath" ? "Software & Graph Tracer" : "OEM Device & Supply Chain"}</p>
+            <span className="chip wa">Company</span>
+            <h4>{clientType === "orepath" ? "Orepath's agents" : "Hardware Co's agents"}</h4>
+            <p className="sub">{clientType === "orepath" ? "Tracer software" : "Factory & supply chain"}</p>
           </div>
 
           <div className="agent-cards">
@@ -731,33 +730,33 @@ function SwarmView({
               <>
                 <div className="agent-box">
                   <div className="agent-title">
-                    <strong>1. TracerFleetAgent</strong>
-                    <span className="role-tag">Workload Telemetry</span>
+                    <strong>1. Tracer's compute</strong>
+                    <span className="role-tag">Cloud spend</span>
                   </div>
-                  <p>Executes battery tracing batch jobs on AWS/GCP (SJC data center).</p>
+                  <p>Runs the batch jobs that trace battery materials, in SJC.</p>
                   <button
                     type="button"
                     className="primary"
                     disabled={busy}
                     onClick={() => onRunFleet("cloud", "SJC", 420)}
                   >
-                    Trigger $420 Cloud Spike (SJC)
+                    Trigger $420 cloud spike (SJC)
                   </button>
                 </div>
 
                 <div className="agent-box">
                   <div className="agent-title">
-                    <strong>2. PortLogisticsAgent</strong>
-                    <span className="role-tag">Freight & Cargo</span>
+                    <strong>2. Port booking</strong>
+                    <span className="role-tag">Freight</span>
                   </div>
-                  <p>Schedules maritime container freight at Oakland Port.</p>
+                  <p>Books container freight through Oakland port.</p>
                   <button
                     type="button"
                     className="ghost"
                     disabled={busy}
                     onClick={() => onRunAction("brief", "Oakland port")}
                   >
-                    Ground Oakland Port Brief
+                    Ground an Oakland port brief
                   </button>
                 </div>
               </>
@@ -765,33 +764,33 @@ function SwarmView({
               <>
                 <div className="agent-box">
                   <div className="agent-title">
-                    <strong>1. FactoryProcurementAgent</strong>
-                    <span className="role-tag">Supplier Tokens</span>
+                    <strong>1. Factory PO</strong>
+                    <span className="role-tag">Supplier token</span>
                   </div>
-                  <p>Files factory assembly POs with supplier write-only tokens.</p>
+                  <p>Files a purchase order with the factory, using a supplier-only token.</p>
                   <button
                     type="button"
                     className="primary"
                     disabled={busy}
                     onClick={() => onRunAction("assess", "Shenzhen assembly facility")}
                   >
-                    Assess Shenzhen Factory Risk
+                    Assess the Shenzhen factory
                   </button>
                 </div>
 
                 <div className="agent-box">
                   <div className="agent-title">
-                    <strong>2. OceanFreightAgent</strong>
-                    <span className="role-tag">Port Logistics</span>
+                    <strong>2. Ocean freight</strong>
+                    <span className="role-tag">Port booking</span>
                   </div>
-                  <p>Coordinates multi-modal shipping from factory to Oakland Port.</p>
+                  <p>Books shipping from the factory to Oakland port.</p>
                   <button
                     type="button"
                     className="ghost"
                     disabled={busy}
                     onClick={() => onRunAction("watch", "Oakland port")}
                   >
-                    Set Continuous Watch @ Port
+                    Watch the port continuously
                   </button>
                 </div>
               </>
@@ -799,28 +798,28 @@ function SwarmView({
 
             <div className="agent-box rogue">
               <div className="agent-title">
-                <strong className="text-refuse">3. Unaligned / Drift Agent</strong>
-                <span className="role-tag refuse">Marketing Claim</span>
+                <strong className="text-refuse">3. A bad-faith claim</strong>
+                <span className="role-tag refuse">Marketing</span>
               </div>
-              <p>Attempts to file an ungrounded zero-carbon marketing badge.</p>
+              <p>Tries to file a "zero-carbon" claim with no evidence behind it.</p>
               <button
                 type="button"
                 className="danger"
                 disabled={busy}
                 onClick={() => onRunAction("greenwash", clientType === "orepath" ? "Orepath battery" : "Zero carbon device")}
               >
-                Attempt Forbidden Greenwash Write
+                Try the greenwash claim (it gets refused)
               </button>
             </div>
 
             <div className="agent-box">
               <div className="agent-title">
-                <strong>4. Compliance / Buyer Agent</strong>
-                <span className="role-tag">Read-Only EV Auditor</span>
+                <strong>4. Buyer's auditor</strong>
+                <span className="role-tag">Read-only</span>
               </div>
-              <p>Queries ledger with read-only token to verify supply chain claims.</p>
+              <p>Checks the ledger with a read-only token before trusting a claim.</p>
               <div className="buyer-stat">
-                Verified Receipts: <b>{receipts.length}</b> (Committed & Refused)
+                Receipts checked: <b>{receipts.length}</b> (committed &amp; refused)
               </div>
             </div>
           </div>
@@ -829,16 +828,16 @@ function SwarmView({
         {/* CENTER COLUMN: PROTOCOL & BOUNDARY */}
         <div className="swarm-col boundary-col card">
           <div className="swarm-col-head">
-            <span className="chip info">BOUNDARY & MESH</span>
-            <h4>Machine Gateway</h4>
-            <p className="sub">Machine discovery & cryptographic auth</p>
+            <span className="chip info">In between</span>
+            <h4>How an agent connects</h4>
+            <p className="sub">Discovery, then a scoped login</p>
           </div>
 
           <div className="boundary-steps">
             <div className="b-step">
               <span className="b-icon">🔍</span>
               <div>
-                <strong>A2A Discovery</strong>
+                <strong>Find the desk</strong>
                 <code>/.well-known/agent-card.json</code>
               </div>
             </div>
@@ -846,15 +845,15 @@ function SwarmView({
             <div className="b-step">
               <span className="b-icon">🔑</span>
               <div>
-                <strong>Scoped Bearer Exchange</strong>
-                <p>Permissions freeze at mint · 5,000¢ ceiling</p>
+                <strong>Mint a scoped token</strong>
+                <p>Permissions lock in at mint · capped at $50</p>
               </div>
             </div>
 
             <div className="b-step">
               <span className="b-icon">🌐</span>
               <div>
-                <strong>Cotal Multi-Agent Mesh</strong>
+                <strong>Cotal mesh</strong>
                 <code>#team.climatico · wss://hack.cotal.ai</code>
               </div>
             </div>
@@ -862,14 +861,14 @@ function SwarmView({
             <div className="b-step">
               <span className="b-icon">🛡️</span>
               <div>
-                <strong>Policy Engine Gate</strong>
-                <p>Refusals persist as durable receipts</p>
+                <strong>Policy check</strong>
+                <p>A refusal is saved the same way a commit is</p>
               </div>
             </div>
           </div>
 
           <div className="live-handoff-feed">
-            <span className="feed-head">Live Handoff Stream ({handoffs.length}):</span>
+            <span className="feed-head">Recent handoffs ({handoffs.length}):</span>
             <div className="mini-feed">
               {handoffs.slice(0, 5).map((h) => (
                 <div key={h.id} className="mini-h-row">
@@ -885,51 +884,51 @@ function SwarmView({
         {/* RIGHT COLUMN: CLIMATICO SERVICE AGENTS */}
         <div className="swarm-col card">
           <div className="swarm-col-head">
-            <span className="chip ok">SERVICE ARMY</span>
-            <h4>Climatico Attribution Agents</h4>
-            <p className="sub">Cloudflare DO + Nebius + Tavily</p>
+            <span className="chip ok">Climatico</span>
+            <h4>Climatico's agents</h4>
+            <p className="sub">Cloudflare + Nebius + Tavily</p>
           </div>
 
           <div className="agent-cards">
             <div className="agent-box">
               <div className="agent-title">
-                <strong>1. IngestAgent</strong>
+                <strong>1. Ingest</strong>
                 <span className="role-tag ok">fleet.ingest</span>
               </div>
-              <p>Listens for telemetry spikes, reconciles MTD budget vs. spend event.</p>
+              <p>Reads the spend spike and checks it against this month's budget.</p>
               <div className="agent-stat">Runs processed: <b>{runs.length}</b></div>
             </div>
 
             <div className="agent-box">
               <div className="agent-title">
-                <strong>2. AuditAgent (Nebius + Tavily)</strong>
+                <strong>2. Audit</strong>
                 <span className="role-tag ok">fleet.audit</span>
               </div>
-              <p>Fact-checks grid factors and physical risks with real-time web citations.</p>
+              <p>Scores the spend and cites real sources.</p>
               <div className="agent-stat">
-                Evidence: <b>{runs[0]?.audit?.evidence.length ?? 5} citations / spike</b>
+                Sources: <b>{runs[0]?.audit?.evidence.length ?? 5} per spike</b>
               </div>
             </div>
 
             <div className="agent-box">
               <div className="agent-title">
-                <strong>3. SettleAgent (SQLite Ledger)</strong>
+                <strong>3. Settle</strong>
                 <span className="role-tag ok">fleet.settle</span>
               </div>
-              <p>Commits immutable offset receipts to Cloudflare Durable Objects.</p>
+              <p>Writes the offset receipt to the ledger.</p>
               <div className="agent-stat">
-                Committed Offsets: <b>{receipts.filter((r) => r.status === "committed").length}</b>
+                Offsets committed: <b>{receipts.filter((r) => r.status === "committed").length}</b>
               </div>
             </div>
 
             <div className="agent-box">
               <div className="agent-title">
-                <strong>4. Policy Enforcement</strong>
+                <strong>4. Policy</strong>
                 <span className="role-tag ok">ledger</span>
               </div>
-              <p>Refuses forbidden intents and logs cryptographic UUID receipts.</p>
+              <p>Refuses anything outside the rules, and logs why.</p>
               <div className="agent-stat">
-                Stored Refusals: <b className="text-refuse">{receipts.filter((r) => r.status === "refused").length}</b>
+                Refusals stored: <b className="text-refuse">{receipts.filter((r) => r.status === "refused").length}</b>
               </div>
             </div>
           </div>
@@ -938,38 +937,38 @@ function SwarmView({
         {/* RIGHTMOST COLUMN: BUYER ECOSYSTEM */}
         <div className="swarm-col card">
           <div className="swarm-col-head">
-            <span className="chip info">BUYER ARMY</span>
-            <h4>EV OEM & Downstream Buyer</h4>
-            <p className="sub">Read-only attribution verification</p>
+            <span className="chip info">Buyer</span>
+            <h4>The buyer checking the claim</h4>
+            <p className="sub">Can read receipts, can't write</p>
           </div>
 
           <div className="agent-cards">
             <div className="agent-box">
               <div className="agent-title">
-                <strong>1. EV OEM Compliance Auditor</strong>
+                <strong>1. Buyer's compliance check</strong>
                 <span className="role-tag">climatico:read</span>
               </div>
-              <p>Mints a read-only credential and audits the ledger before accepting any supply-chain claim.</p>
+              <p>Mints a read-only credential, then checks the ledger before accepting a claim.</p>
               <button type="button" className="primary" disabled={busy} onClick={onVerifyBuyer}>
-                Verify Attribution (Read-Only)
+                Check the ledger (read-only)
               </button>
               <div className="agent-stat">
                 {buyerAudit ? (
                   <>
-                    Last audit: <b>{buyerAudit.count}</b> receipts at {new Date(buyerAudit.at).toLocaleTimeString()}
+                    Last check: <b>{buyerAudit.count}</b> receipts at {new Date(buyerAudit.at).toLocaleTimeString()}
                   </>
                 ) : (
-                  "No read-only audit yet"
+                  "No check run yet"
                 )}
               </div>
             </div>
 
             <div className="agent-box">
               <div className="agent-title">
-                <strong>2. Regulator / Analyst</strong>
+                <strong>2. Regulator / analyst</strong>
                 <span className="role-tag">evidence</span>
               </div>
-              <p>Consumes citation-grounded offsets and refusal receipts for Scope-3 disclosure.</p>
+              <p>Uses the grounded offsets and refusals for Scope 3 disclosure.</p>
               <div className="agent-stat">
                 Committed: <b>{receipts.filter((r) => r.status === "committed").length}</b> · Refused:{" "}
                 <b className="text-refuse">{receipts.filter((r) => r.status === "refused").length}</b>
@@ -978,6 +977,58 @@ function SwarmView({
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function SponsorCard({ s }: { s: SponsorLink }) {
+  return (
+    <article className="card">
+      <span className="kicker">{s.role}</span>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}>
+        <h3>{s.name}</h3>
+        <span
+          className={`chip ${s.status === "live" || s.status === "host" ? "ok" : s.status === "prize" ? "wa" : "info"}`}
+        >
+          {s.status.toUpperCase()}
+        </span>
+      </div>
+      <p style={{ color: "var(--muted)", fontSize: 13, minHeight: 40 }}>{s.insight}</p>
+      <p className="how">
+        <b>Try: </b>
+        {s.how}{" "}
+        <a href={s.href} target="_blank" rel="noreferrer">
+          open ↗
+        </a>
+      </p>
+    </article>
+  );
+}
+
+function StackView({ sponsors }: { sponsors: SponsorLink[] }) {
+  const inPath = sponsors.filter((s) => s.status === "live" || s.status === "host");
+  const notYet = sponsors.filter((s) => s.status === "booth" || s.status === "prize");
+
+  return (
+    <div className="stack-view">
+      <section>
+        <span className="kicker">In the write path</span>
+        <h3>These actually run inside Climatico's code today</h3>
+        <div className="grid g3">
+          {inPath.map((s) => (
+            <SponsorCard s={s} key={s.id} />
+          ))}
+        </div>
+      </section>
+      <section style={{ marginTop: 20 }}>
+        <span className="kicker">Not yet — credits, booths, or prizes only</span>
+        <h3>Named honestly, not wired in. No fake calls to make it look busy.</h3>
+        <div className="grid g3">
+          {notYet.map((s) => (
+            <SponsorCard s={s} key={s.id} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
@@ -1110,15 +1161,15 @@ export function App() {
   }
 
   const title: Record<Tab, string> = {
-    assess: "Which emissions are yours — and how much?",
-    grow: "Grow the company without scaling last year’s dirt",
-    pipeline: "Autonomous Fleet Orchestration (Ingest → Audit → Settle)",
-    swarm: "Two-Sided Multi-Agent Swarm (Client ⇄ Climatico)",
-    ledger: "Immutable Receipts & Policy Refusal Ledger",
-    inbox: "Actionable Multi-Agent Stream",
-    agent: "Workers AI Clerk & Execution Environment",
-    onboard: "Maturity is a ladder of writes",
-    stack: "Sponsor APIs that actually do work",
+    assess: "Your emissions, by class",
+    grow: "Growth vs. footprint",
+    pipeline: "Fleet: ingest, audit, settle",
+    swarm: "Who's talking to whom",
+    ledger: "Receipts & refusals",
+    inbox: "Inbox",
+    agent: "Ask the clerk",
+    onboard: "Getting started",
+    stack: "Who's actually in the write path",
   };
 
   return (
@@ -1157,11 +1208,12 @@ export function App() {
             cotalWebhook={ws?.cotalWebhook}
             nebiusKey={ws?.nebiusKey}
           />
-          <p className="kicker">Climatico assessment · Modeled until evidenced · Refusals are receipts</p>
+          <p className="kicker">Climatico</p>
           <h1>{title[tab]}</h1>
           <p className="lede">
-            Not a total. A composition, an attribution, and a write. Seven classes — compute is the live row
-            backed by real Tavily citations. Every refusal persists forever on SQLite.
+            A footprint estimate across seven emission classes. Compute is live today, backed by real
+            sources. The rest is modeled until it becomes a write. Try it: mint a credential, then run one
+            of the buttons below.
           </p>
           <div className="row">
             <button type="button" className="primary" disabled={busy} onClick={() => void mint()}>
@@ -1242,20 +1294,20 @@ export function App() {
             </section>
             <div className="grid g2">
               <section className="card">
-                <span className="kicker">Hotspots · Rae’s own EI, not the customer’s mines</span>
-                <h3>Logistics is the story class. Compute is the write we can file today.</h3>
+                <span className="kicker">Hotspots</span>
+                <h3>Logistics is the biggest class. Compute is what we can file today.</h3>
                 <p className="lede" style={{ marginBottom: 12 }}>
                   {story.hotspotWhy}
                 </p>
                 <Hotspots classes={classes} hotId={story.hotspotClass} />
                 <div className="callout">
-                  <strong>First action: </strong>
+                  <strong>Try this first: </strong>
                   {firstAction}
                 </div>
                 <div className="callout clay">
-                  <strong>Why the interface is an agent: </strong>
-                  Attribution is cheapest at the PO, the booking, the bill spike. Rae’s team already
-                  runs those through agents. A layer only a human visits twice a year.
+                  <strong>Why an agent, not a form: </strong>
+                  The cheapest moment to capture this is a PO, a booking, a bill spike — and Rae's team
+                  already runs those through agents, not a dashboard they'd visit twice a year.
                 </div>
                 <label>Location / region</label>
                 <input value={location} onChange={(e) => setLocation(e.target.value)} />
@@ -1279,7 +1331,7 @@ export function App() {
                           Run
                         </button>
                       ) : (
-                        <p className="lede">Not stubbed. Hardware PO tokens are the honest next write.</p>
+                        <p className="lede">Not built yet — we won't fake it. It needs supplier/buyer tokens first.</p>
                       )}
                     </article>
                   ))}
@@ -1352,7 +1404,7 @@ export function App() {
         {tab === "inbox" ? (
           <section className="card">
             <span className="kicker">Inbox</span>
-            <h3>Clerk, ingest, audit, settle, ops — one stream</h3>
+            <h3>Everything happening, in one list</h3>
             <InboxList items={ws?.inbox ?? []} />
           </section>
         ) : null}
@@ -1362,7 +1414,7 @@ export function App() {
             <ClerkPane />
             <section className="card">
               <span className="kicker">What the clerk sees</span>
-              <h3>Same insights, different dialect</h3>
+              <h3>The same inbox, if you'd rather click than type</h3>
               <InboxList items={(ws?.inbox ?? []).slice(0, 5)} />
               <div className="row">
                 <button
@@ -1395,8 +1447,8 @@ export function App() {
 
         {tab === "onboard" ? (
           <section className="card">
-            <span className="kicker">Onboarding · L0–L5</span>
-            <h3>Each level is a binding write, not a settings checkbox</h3>
+            <span className="kicker">Getting started</span>
+            <h3>Each level unlocks with a real write, not a checkbox</h3>
             <div className="steps">
               {(ws?.maturity ?? []).map((m) => (
                 <div className={`goal-row ${m.done ? "done" : ""}`} key={m.level}>
@@ -1444,29 +1496,7 @@ export function App() {
         ) : null}
 
         {tab === "stack" ? (
-          <div className="grid g3">
-            {(ws?.sponsors ?? []).map((s) => (
-              <article className="card" key={s.id}>
-                <span className="kicker">{s.role}</span>
-                <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}>
-                  <h3>{s.name}</h3>
-                  <span
-                    className={`chip ${s.status === "live" || s.status === "host" ? "ok" : s.status === "prize" ? "wa" : "info"}`}
-                  >
-                    {s.status.toUpperCase()}
-                  </span>
-                </div>
-                <p style={{ color: "var(--muted)", fontSize: 13, minHeight: 40 }}>{s.insight}</p>
-                <p className="how">
-                  <b>Work on it · </b>
-                  {s.how}{" "}
-                  <a href={s.href} target="_blank" rel="noreferrer">
-                    open ↗
-                  </a>
-                </p>
-              </article>
-            ))}
-          </div>
+          <StackView sponsors={ws?.sponsors ?? []} />
         ) : null}
       </main>
     </div>

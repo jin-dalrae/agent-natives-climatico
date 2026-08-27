@@ -437,6 +437,7 @@ Runtype — $50 in credits. Ask Nathan or Nate directly. No written redemption p
 Hacker Bob — one security scan. Ask Michalis. No written redemption path yet.
 Cotal — no credits, and none to wait for. Their hosted product has not launched, so there is nothing to redeem and no code to enter. What they built for this event instead is hack.cotal.ai , a live mesh where you team up and connect your coding agents with the stock cotal CLI, on one shared graph of who is working on what. Docs at docs.cotal.ai , and David and Sven are both here today. The $300 is a prize for the best use of Cotal, judged at the end, not a credit you claim now.
 Mitosis Labs, no credits, and none to wait for. They are not offering builder credits, so there is no code, no page and nothing to claim. What they brought instead is Cortex, the memory layer on the published stack, and their own screen on the floor. Prakshal and Alex are here today and will walk you through it. Docs and product at mitosislabs.ai .
+Tell us how you got on. ic_hack_credits_list returns this same list plus your own mark against each one, and ic_hack_credits_mark records whether you got it, are blocked on it, or skipped it. Neither call redeems anything. Marking blocked is a request for help: it puts you on the organisers’ queue with your note and somebody comes and sorts it out. It goes to us, not to the sponsor. Both work on the scopes you already minted, and marking needs a seat on the roster.
 Your model key is the one thing that does come from us: ic_request_workshop_key , then poll ic_get_my_workshop_key . Both need the keys:request scope, which is in the mint command below, and both work at the tier a fresh signup gives you.
 Hand your agent the whole event
 One block. It covers connecting, minting a token with the right scopes, applying, forming a team, submitting, and getting unstuck. Paste it and your agent has the rest of this page.
@@ -509,6 +510,16 @@ AIsa no self-serve page — give an organiser your email
 Runtype ask Nathan or Nate
 HackerBob ask Michalis
 Full detail: immersivecommons.com/events/hackathon#credits
+TRACK IT. ic_hack_credits_list returns that same table plus your own mark
+against each offer, and ic_hack_credits_mark records one:
+got you have it
+blocked you tried and it did not work -> this is a REQUEST FOR HELP and
+puts your builder on the organisers' queue with your note
+skipped not interested, which keeps you off that queue
+Marking again overwrites, so flip blocked back to got once it is fixed.
+Neither call redeems anything; they record what happened so a builder who
+did not get their credits is found instead of lost. Both ride scopes you
+already minted (hack:read, hack:register). You must hold a seat to mark.
 GET HELP
 ic_feedback_submit reaches the operator, works at public tier
 ic_feedback_get_status follow it up
@@ -614,6 +625,7 @@ Can I still get in?
 Applications are closed. The form and the API both refuse a late entry now rather than filing it into a queue nobody is reading, and the list Cloudflare prints badges from froze on Monday, August 24. If you are at the building, ask an organizer. That late it is a decision a person makes on the day rather than an automatic seat.
 What has changed
 This page is edited while the event runs. Newest first, all times PDT.
+2026-08-26 5:00pm PDT Claiming your credits gained a way to tell us how it went. ic_hack_credits_list returns the same list with your own mark against each offer, ic_hack_credits_mark records got / blocked / skipped, and blocked puts you on the organisers' queue with your note. Neither call redeems anything, and a blocked mark reaches us rather than the sponsor.
 2026-08-26 1:00pm PDT The Cotal and Runtype cash prizes now say what wins them: the best use of that sponsor's product, not first place overall. Cotal has no credits to redeem, so its line in Claiming your credits points at hack.cotal.ai instead. Tavily now says 8,000 on top of the 1,000 a free account starts with, so 9,000 in total, which is the same grant this page was stating two ways.
 2026-08-26 12:44pm PDT The event moved to BUILD. Submissions are open and applications are closed, so the form and the API now refuse a late entry instead of filing it into a queue nobody is reading.
 2026-08-26 12:31pm PDT Every sponsor credit is now named with the path to claim it. Tavily is the only self-serve one, with the code 26HACK, and it stops working after these two days.
@@ -634,13 +646,13 @@ AI
 NVIDIA NVLink Fusion Expands With NVHBM Custom High-Bandwidth Memory
 ◆
 AI
-Cheating behaviour in frontier model evaluations
+Anthropic continues compute-gobbling streak in $45B deal with Nscale
+◆
+AI
+Amazon just tripled its order of Nvidia chips over ‘surging demand’
 ◆
 AI
 The Future of SaaS Is Apps That Agents Can Use
-◆
-AI
-Anthropic continues compute-gobbling streak in $45 billion deal with Nscale
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
@@ -664,13 +676,13 @@ AI
 NVIDIA NVLink Fusion Expands With NVHBM Custom High-Bandwidth Memory
 ◆
 AI
-Cheating behaviour in frontier model evaluations
+Anthropic continues compute-gobbling streak in $45B deal with Nscale
+◆
+AI
+Amazon just tripled its order of Nvidia chips over ‘surging demand’
 ◆
 AI
 The Future of SaaS Is Apps That Agents Can Use
-◆
-AI
-Anthropic continues compute-gobbling streak in $45 billion deal with Nscale
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026

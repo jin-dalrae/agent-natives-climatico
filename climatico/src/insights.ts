@@ -79,41 +79,41 @@ export const OREPATH: FounderStory = {
   name: "Rae Jin",
   company: "Orepath",
   role: "Founder",
-  product: "Maps battery materials (Li, Co, Ni, graphite) mine → cell so EV buyers can trace someone else’s chain.",
+  product: "Traces battery materials (lithium, cobalt, nickel, graphite) from mine to cell, so EV makers can prove where their materials came from.",
   stage: "Seed · 14 people in SF · ~$1.8M ARR",
-  spark: "A cell buyer asked: what’s your company’s impact — not the mines? She had no number.",
+  spark: "A cell buyer asked: what's your own company's impact, not the mines'? She had no number.",
   hotspotClass: "logistics",
   hotspotWhy:
-    "Orepath’s product is other people’s freight. Her own Scope 3 Cat 4 & 9 is the largest modeled class (12 t ±35%). The moment of activity is a PO, a booking, a port — and the system standing there is already an agent.",
+    "Orepath tracks other companies' freight for a living — but its own logistics footprint (12 t/yr, ±35%) is its biggest modeled class. The moment to capture it is a PO, a booking, or a port call — and an agent is already there.",
   tools: [
     {
       id: "brief-oakland",
       title: "Ground Oakland port",
-      how: "brief · Tavily. Evidence on the place, not a slogan.",
+      how: "Looks up real sources for Oakland port and files a grounded note.",
       live: true,
     },
     {
       id: "watch-oakland",
       title: "Watch the port",
-      how: "L5 write. Survives restart. Still modeled tonnes — a place, not a fake LCA.",
+      how: "Keeps watching Oakland port over time. Survives a restart. Still a modeled number.",
       live: true,
     },
     {
       id: "fleet-sjc",
       title: "File the tracer’s compute",
-      how: "run_fleet on SJC. The jobs that trace those chains are the live class.",
+      how: "Scores the compute spend that runs the tracer, in SJC — the one class that's live today.",
       live: true,
     },
     {
       id: "refuse-greenwash",
       title: "Refuse a green chain claim",
-      how: "greenwash → stored refusal. Own EI, not the customer’s mines.",
+      how: "Tries to claim a green supply chain and gets refused. The refusal is saved as proof.",
       live: true,
     },
     {
       id: "po-freight",
       title: "PO / freight write",
-      how: "NEXT. Supplier write-only / buyer read-only tokens. Not stubbed this weekend.",
+      how: "Next: filing the actual freight PO. Needs supplier and buyer tokens we haven't built yet.",
       live: false,
     },
   ],
@@ -148,36 +148,36 @@ export const OREPATH_GROWTH = {
     {
       id: "build" as const,
       verb: "Build",
-      company: "Ship the tracer. Default cloud in SJC. Vendors renew on silence.",
-      moment: "A region choice and a batch job — agents already provision infra.",
-      climatico: "Mint a token. File the compute spike. Watch the region.",
+      company: "Ships the tracer. Cloud spend defaults to SJC. Vendor contracts renew unchecked.",
+      moment: "Picking a region and running a batch job — agents already do this.",
+      climatico: "Mint a token, file the compute spike, watch the region.",
       live: true,
       write: "fleet" as const,
     },
     {
       id: "sell" as const,
       verb: "Sell",
-      company: "11 paying + 4 pilots. A cell buyer asks for Orepath’s own EI, not the mines.",
-      moment: "The data-room question lands in an agent inbox, not a PDF cycle.",
-      climatico: "Ground a brief for the place. Refuse a green-chain slogan.",
+      company: "11 paying customers, 4 pilots. A cell buyer asks for Orepath's own footprint, not the mines'.",
+      moment: "That question lands in an agent's inbox, not a slow PDF back-and-forth.",
+      climatico: "Ground a brief with real sources. Refuse any green-chain slogan.",
       live: true,
       write: "brief" as const,
     },
     {
       id: "pay" as const,
       verb: "Pay",
-      company: "Cloud invoice, freight PO, $195k/mo burn. Spend is the climate event.",
-      moment: "Bill spike and booking — the write is cheapest here.",
-      climatico: "run_fleet settle / offset on compute. PO/freight write is next, not stubbed.",
+      company: "Cloud invoice, freight PO, $195k/month burn. Spending is the moment that matters.",
+      moment: "A bill spike or a booking — the cheapest moment to capture it.",
+      climatico: "Run the fleet to settle or offset compute. The PO/freight write is next — not faked here.",
       live: true,
       write: "fleet" as const,
     },
     {
       id: "grow" as const,
       verb: "Grow",
-      company: "Same Seed story: ARR up, hiring, next data room. Defaults scale unless intensity falls.",
-      moment: "Investors will ask t per $M next to revenue, not a net-zero slide.",
-      climatico: "Modeled projector only. Climatico path = file writes as you grow. Not a forecast sold as measured.",
+      company: "Same Seed story: revenue up, hiring, another data room. Footprint scales with it unless intensity falls.",
+      moment: "Investors will ask for tonnes per revenue dollar, not a net-zero slide.",
+      climatico: "A modeled projection only. The Climatico path means filing real writes as you grow — not a forecast dressed up as measured.",
       live: false,
     },
   ],
@@ -285,37 +285,37 @@ export function buildWorkspace(input: {
       level: 0,
       name: "L0 · estimated",
       done: true,
-      how: "Seven modeled classes with error bars. Nothing claimed as measured.",
+      how: "Seven classes, each with a modeled number and an error bar. None claimed as measured yet.",
     },
     {
       level: 1,
       name: "L1 · credential",
       done: hasTokenActivity,
-      how: "Mint climatico:transact. Scopes freeze. Ceiling 5 000¢.",
+      how: "Mint a climatico:transact token. Its scopes lock in immediately, capped at $50.",
     },
     {
       level: 2,
       name: "L2 · grounded write",
       done: hasGrounded,
-      how: "File a brief or assess. Tavily must return sources or we refuse.",
+      how: "File a brief or assessment. If we can't find real sources, we refuse instead of guessing.",
     },
     {
       level: 3,
       name: "L3 · fleet",
       done: hasFleet,
-      how: "run_fleet on a usage spike. Ingest → audit → settle, handoffs stored.",
+      how: "Run the fleet on a spend spike: ingest, then audit, then settle. Each step is saved.",
     },
     {
       level: 4,
       name: "L4 · settlement",
       done: hasOffset,
-      how: "Over-budget spike commits an offset receipt, capped at the token.",
+      how: "When a spike goes over budget, it commits an offset receipt, capped by the token.",
     },
     {
       level: 5,
       name: "L5 · continuous",
       done: hasWatch,
-      how: "Open a watch on a place. It is still here after the laptop sleeps.",
+      how: "Start watching a place. It keeps running even after you close the laptop.",
     },
   ];
 
@@ -373,7 +373,7 @@ export function buildWorkspace(input: {
       tone: "no",
       title: `Refused ${r.intent}${r.location ? ` @ ${r.location}` : ""}`,
       body: r.refusalReason ?? r.refusalCode ?? "policy",
-      action: "A refusal is a receipt. Next attempt should change the claim, not the wording.",
+      action: "This is saved as proof. To succeed, change the claim itself — not the wording.",
       createdAt: r.createdAt,
     });
   }
@@ -398,9 +398,9 @@ export function buildWorkspace(input: {
     from: "clerk",
     channel: "story.logistics",
     tone: "wa",
-    title: "Rae’s logistics class is the hotspot — still modeled",
-    body: "Orepath traces other people’s freight. Her own Cat 4 & 9 is 12 t ±35%. Practical today: ground Oakland, watch the port, file the SJC compute that runs the tracer. A PO/freight write is next, not a fake LCA.",
-    action: "Use the four live tools on Assess. Do not claim a green chain.",
+    title: "Logistics is Rae's biggest class — still modeled, not measured",
+    body: "Orepath traces other companies' freight, but its own logistics (12 t/yr, ±35%) isn't a live write yet. Today: ground Oakland, watch the port, file the SJC compute that runs the tracer. The freight PO write is next.",
+    action: "Use the tools on the Assess tab. Don't claim a green chain without evidence.",
     createdAt: Date.now(),
   });
 
@@ -538,9 +538,9 @@ export function buildWorkspace(input: {
     next.push(`Hotspot ${lastRun.ingest.location}: ${lastRun.audit.overBudgetKg} kg over. Cut spend or keep the offset receipt.`);
   }
   next.unshift(
-    "Rae / Orepath: logistics is the story class (modeled). File Oakland + SJC compute today; do not invent a freight write.",
+    "Logistics is Orepath's biggest class, still modeled. File Oakland and SJC compute today — don't invent a freight write.",
   );
-  next.push("Submission is in (overwrite until Thursday 15:00). Redeploy so workers.dev matches this desk.");
+  next.push("Submitted — can still be overwritten until Thursday 15:00. Redeploy so workers.dev matches this desk.");
 
   return {
     dashboard,

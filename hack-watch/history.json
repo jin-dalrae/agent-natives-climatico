@@ -762,5 +762,17 @@
     "to": "30ff9ea961999b78"
    }
   ]
+ },
+ {
+  "at": "2026-08-27T01:01:45.483543+00:00",
+  "at_pdt": "2026-08-26 18:01:45 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "30ff9ea961999b78",
+    "to": "27da0ba469a861a0"
+   }
+  ]
  }
 ]
