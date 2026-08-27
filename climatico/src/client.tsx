@@ -1504,7 +1504,6 @@ export function App() {
         {tab === "inbox" ? (
           <section className="card">
             <span className="kicker">Inbox</span>
-            <h3>Everything happening, in one list</h3>
             <InboxList items={ws?.inbox ?? []} />
           </section>
         ) : null}
