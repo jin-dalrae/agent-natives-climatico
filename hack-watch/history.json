@@ -836,5 +836,44 @@
     }
    }
   ]
+ },
+ {
+  "at": "2026-08-27T16:06:38.899135+00:00",
+  "at_pdt": "2026-08-27 09:06:38 PDT",
+  "changes": [
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 15,
+    "to": 16
+   },
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 6,
+    "to": 7
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Motel4",
+     "Physical Capability Cloud",
+     "Showtonic",
+     "Surf, Skate, or Bike"
+    ],
+    "to": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Motel4",
+     "Physical Capability Cloud",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "finddomain"
+    ]
+   }
+  ]
  }
 ]

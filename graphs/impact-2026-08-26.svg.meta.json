@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-08-26T23:38:18.740721",
+  "data": [
+    {
+      "type": "Air",
+      "kgCO2e": 31000,
+      "cost_usd": 12000
+    },
+    {
+      "type": "Truck",
+      "kgCO2e": 14000,
+      "cost_usd": 8500
+    },
+    {
+      "type": "Rail",
+      "kgCO2e": 8000,
+      "cost_usd": 9200
+    }
+  ],
+  "comparison": {
+    "best": "Rail",
+    "avoided": "23,000 kgCO2e",
+    "saving_ratio": "74.2%"
+  }
+}

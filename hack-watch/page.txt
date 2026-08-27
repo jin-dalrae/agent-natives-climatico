@@ -652,16 +652,16 @@ Building now
 Applications are closed
 WIRE
 AI
-DELE-w0.5: Inferring Action from Future Latent State for Robotic Manipulation
+Google’s AI Mode can now track flight prices, help book hotels, and more
 ◆
 AI
-Autonomous Cyber Defense: Real-Time Attack Detection and Mitigation in Software-Defined Ne
+Lower-Resource, Higher Scores: Language Bias in LLM Evaluators
 ◆
 AI
-Viral AI startup Instinct has raised 350 million at a 2.5 billion valuation
+Enterprise AI's real risk isn't autonomous agents. It's the complexity between them.
 ◆
 AI
-Artists Built a Site to Escape AI. Scrapers Are Coming for It Anyway
+Automating Parent Selection Configuration in Genetic Programming with Agentic AI
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
@@ -682,16 +682,16 @@ BUILD
 CC-PRO engine + Dimensional Chaos are open-source · MIT
 ◆
 AI
-DELE-w0.5: Inferring Action from Future Latent State for Robotic Manipulation
+Google’s AI Mode can now track flight prices, help book hotels, and more
 ◆
 AI
-Autonomous Cyber Defense: Real-Time Attack Detection and Mitigation in Software-Defined Ne
+Lower-Resource, Higher Scores: Language Bias in LLM Evaluators
 ◆
 AI
-Viral AI startup Instinct has raised 350 million at a 2.5 billion valuation
+Enterprise AI's real risk isn't autonomous agents. It's the complexity between them.
 ◆
 AI
-Artists Built a Site to Escape AI. Scrapers Are Coming for It Anyway
+Automating Parent Selection Configuration in Genetic Programming with Agentic AI
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
