@@ -134,7 +134,7 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Tavily web search on the write path (grounds briefs/audits; refuses if no evidence)
 - Clerk AI chat agent
 - Hackathon submission filed (can still be overwritten until Thursday 15:00)
-- **AIsa** API key configured (machine-to-machine payment rail — offsets can settle through it)
+- **AIsa** wallet balance read is real (`GET /v1/aisa/balance`) — the payment rail itself is not wired
 - **Tenki** used for sandboxes / testing agent workflows
 - **Runtype** A2A agent surface for consumption
 - Cotal-shaped handoffs (webhook ready if we want it)
@@ -166,7 +166,7 @@ GHG Protocol engine, no invented climate numbers.
 | --- | --- | --- |
 | Cloudflare | **Host.** Runtime: Workers, Durable Objects, Workers AI, Agents SDK | YES — everything runs on it |
 | Tavily | Sponsor. Web search = evidence | YES — the write path |
-| AIsa | Sponsor. Machine payment rail | YES — key configured |
+| AIsa | Sponsor. Machine payment rail | Partial — real balance read only; payment rail not wired |
 | Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
 | Cotal | Organiser. Agent mesh | Almost — handoffs shaped like Cotal, mesh join optional |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
@@ -203,7 +203,7 @@ npx wrangler types
 npm run dev                      # http://127.0.0.1:8787
 ```
 
-`TAVILY_API_KEY` and `COTAL_WEBHOOK_URL` are optional. `AISA_API_KEY` is configured.
+`TAVILY_API_KEY` and `COTAL_WEBHOOK_URL` are optional. `AISA_API_KEY` is configured for a free wallet-balance read only — it does not enable payments.
 
 ---
 
