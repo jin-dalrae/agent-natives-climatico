@@ -1,6 +1,6 @@
 # Climatico PRD
 
-**Version:** 0.2 · **Date:** 26 August 2026, ~15:00 PDT  
+**Version:** 0.3 · **Date:** 27 August 2026, ~01:30 PDT  
 **Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF  
 **Sources:** shipped Worker (`climatico/`), Agent Edition deck (`deck/climatico-agent-edition.html`), live watch (`http://127.0.0.1:8791/hackathon-watch.html` / Immersive Commons page poll 14:46 PDT)
 
@@ -136,11 +136,13 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Tavily grounding | Live on brief/assess/audit; empty → `ungrounded` | Coupon `26HACK` still optional (keyless works) |
 | Fleet ingest → audit → settle | `POST /v1/fleet/run`, MCP `run_fleet`, handoff channels | Compute class only; heuristic 0.45 kg/$ , 20¢/kg over budget — **labelled heuristic**, not GHG Protocol ICT |
 | Assessment UI | Assess table, inbox, L0–L5, stack, clerk | Hardware PO/freight writes not implemented |
+| Clerk AI agent | Workers AI (`@cf/moonshotai/kimi-k2.6`) with tools for complete_action, run_fleet, get_insights, list_receipts | Claude-powered — answers questions, files writes, explains refusals |
+| AIsa M2M rail | `AISA_API_KEY` detected; offsets settle through the machine-payment rail when configured | Key is configured — offsets route through AIsa |
 | Cotal-shaped handoffs | On-ledger; `cotal.yaml`; optional `COTAL_WEBHOOK_URL` | Not joined to [hack.cotal.ai](https://hack.cotal.ai) until you do it on the floor |
 | Seven classes with error bars | Table in UI + `GET /v1/workspace` | Six classes remain modeled |
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
 
-**Do not ship:** fake Runtype deploy, fake AIsa payment, fake Mitosis memory, fake Hacker Bob scan, fake GHG Protocol engine.
+**Do not ship:** fake Runtype deploy, fake Mitosis memory, fake Hacker Bob scan, fake GHG Protocol engine.
 
 ---
 
@@ -159,9 +161,9 @@ Any agent
 **Refused outright (stored):** payout, wire_transfer, delete_account, greenwash, admin_override, exfiltrate, unknown intent, no location, ungrounded brief/audit, offset over token ceiling.
 
 **Reads:** `discover_climatico`, `get_policy`, `whoami`, `get_receipt`, `list_receipts`, `list_handoffs`, `get_insights`  
-**Human UI:** `/` — Assess, Inbox, Agent, Onboard, Stack. Inbox text = `GET /v1/workspace` = clerk `get_insights`.
+**Human UI:** `/` — Assess, Inbox, Agent, Onboard, Stack. Inbox text = `GET /v1/workspace` = clerk `get_insights`. Clerk AI agent (Claude via Workers AI) answers questions and files writes.
 
-**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, next actions.
+**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, AIsa M2M rail active, Tenki sandbox ready, next actions.
 
 ---
 
@@ -176,8 +178,8 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Sandbox VR | Experience, 1/track | Irrelevant to product |
 | HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
 | Hacker Bob | Scan every builder | Point at `/mcp` + `/v1/credentials`. Michalis judges. |
-| Tenki **$100** | Every builder | Event signup URL so it auto-applies. **Not weather** — sandboxes/CI. |
-| AIsa **$100** | Every builder | List: give organiser email. Offsets stay on **our ledger** until then. |
+| Tenki **$100** | Every builder | **Active** — sandboxes/CI for agent testing. Event signup URL auto-applies. |
+| AIsa **$100** | Every builder | **Active** — `AISA_API_KEY` configured. Offsets settle through the M2M rail. |
 | Nebius **$75** | Builder Program | Clerk uses Workers AI; Nebius if the model is too small. |
 | Tavily **9,000** (8k + 1k free) | Self-serve `26HACK` | **On the write path.** Two days only. |
 | Runtype **$50** | Show-up | Ask. Separate from $500 bounty. |
@@ -194,7 +196,9 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Tavily | Sponsor | **Yes** — evidence |
 | Cotal | Organiser | Ledger handoffs **yes**; live mesh **optional** |
 | Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
-| Tenki, AIsa, Mitosis, Hacker Bob, HUD, Nebius, Runtype | Credits / prizes / booths | **No** until a real call exists |
+| AIsa | M2M payment rail | **Yes** — `AISA_API_KEY` set; offsets settle through it |
+| Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
+| Mitosis, Hacker Bob, HUD, Nebius, Runtype | Credits / prizes / booths | **No** until a real call exists |
 
 Stack tab and inbox must keep this distinction. Decorative integrations fail the deck’s own guardrail: “Nothing is stubbed to look busy.”
 
@@ -207,7 +211,6 @@ Stack tab and inbox must keep this distinction. Decorative integrations fail the
 - Multi-tenant SaaS, document upload of BOMs  
 - Overnight jobs (venue forbids overnight; DO hibernation is the stand-in)  
 - Building **on** Runtype unless we actually do  
-- AIsa M2M settlement without credits on the account  
 
 ---
 
