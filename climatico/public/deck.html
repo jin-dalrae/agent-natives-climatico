@@ -720,6 +720,104 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   </div>
 </section>
 
+
+<section class="slide" id="slide-swarm" data-name="Agent army">
+  <div class="inner wide">
+    <div class="eyebrow">Agent Edition &middot; an agent army on both sides of one ledger</div>
+    <h2 class="slide-title">Client swarm &harr; Climatico service &rarr; buyer ecosystem.</h2>
+    <p class="lede">The same write surface grew a real cast of agents around it this weekend. Enterprise clients file operations, Climatico enforces policy and settles receipts, and downstream buyers verify with read-only credentials. One ledger underneath all three.</p>
+    <div class="grid g3">
+      <div class="card" style="border-color: var(--warn);">
+        <span class="chip wa" style="margin-bottom:8px;">Client army</span>
+        <h3>Orepath + Hardware Co</h3>
+        <p><b>TracerFleetAgent</b> spikes $420 of graph compute in SJC; <b>PortLogisticsAgent</b> grounds the Oakland port. Hardware Co&rsquo;s <b>FactoryProcurementAgent</b> files factory POs; <b>OceanFreightAgent</b> watches the port. A rogue <b>MarketingBot</b> tries to mint a green claim on purpose.</p>
+      </div>
+      <div class="card" style="border-color: var(--ok);">
+        <span class="chip ok" style="margin-bottom:8px;">Service army</span>
+        <h3>Climatico ingest &rarr; audit &rarr; settle</h3>
+        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e against live Tavily sources. <b>Settle</b> commits a token-capped offset. <b>Policy</b> refuses forbidden intents &mdash; refusals are receipts. Every handoff is a row.</p>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip info" style="margin-bottom:8px;">Buyer ecosystem</span>
+        <h3>EV OEM read-only auditor</h3>
+        <p>The buyer mints a <span class="inline">climatico:read</span>-only credential and audits the ledger before accepting any supplier claim. Transact rights: none. Proof of attribution that cannot write.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <span class="kicker">The boundary &middot; what every agent must cross</span>
+      <p><span class="inline">/.well-known/agent-card.json</span> A2A discovery &middot; <span class="inline">/v1/credentials</span> scopes freeze at mint (5&nbsp;000&cent; ceiling) &middot; <span class="inline">/mcp &middot; /a2a &middot; /v1/*</span> one policy underneath &middot; <span class="inline">SQLite Ledger</span> the settlement of record. In the UI this is the <b>3-Sided Swarm</b> tab, deployed and live.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-live" data-name="Verified live">
+  <div class="inner wide">
+    <div class="eyebrow">No stubs &middot; two_sided_swarm.py against the live Worker</div>
+    <h2 class="slide-title">Real numbers across the boundary, end to end.</h2>
+    <p class="lede">A CLI swarm (<span class="inline">climatico/scripts/two_sided_swarm.py</span>) minted a scoped bearer, drove a genuine fleet spike, forced a forbidden claim, and let a read-only buyer inspect the ledger &mdash; all against <span class="inline">climatico.dalrae-jin-work.workers.dev</span>.</p>
+    <div class="grid g4">
+      <div class="stat"><b>189</b><span>kgCO2e &middot; SJC $420</span></div>
+      <div class="stat"><b>+179</b><span>kg over 50 kg budget</span></div>
+      <div class="stat"><b>$35.80</b><span>offset receipt 02564267</span></div>
+      <div class="stat"><b>6</b><span>receipts a buyer verified</span></div>
+    </div>
+    <div class="grid g2" style="margin-top:14px;">
+      <div class="card">
+        <span class="kicker">Committed &middot; grounded</span>
+        <ul class="ticks">
+          <li><b>5 live Tavily citations</b> scored the factor &mdash; not invented as GHG Protocol</li>
+          <li>Offset <span class="inline">02564267</span> committed to SQLite, token-capped</li>
+          <li>Role separation is a factor, not a chatbot paragraph</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--refuse);">
+        <span class="kicker">Refused &middot; stored</span>
+        <ul class="ticks">
+          <li>Greenwash claimed at &ldquo;Orepath Global Chain&rdquo; <b>intercepted before the write</b></li>
+          <li>Refusal <span class="inline">eac21a5b</span> persisted &mdash; same table as commits</li>
+          <li>Read-only buyer minted <span class="inline">climatico:read</span> and audited <b>6</b> receipts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-cotal" data-name="Mesh resident">
+  <div class="inner">
+    <div class="eyebrow">Cotal &middot; $300 best-use &mdash; a resident bot is live</div>
+    <h2 class="slide-title">A resident auditor, awake on #team.climatico.</h2>
+    <p class="lede"><span class="inline" style="color:var(--ok)">meshaudit</span> joins <span class="inline">wss://hack.cotal.ai/mesh-ws</span> as its own actor, subscribes <span class="inline">#team.climatico</span>, and serves each region mention through Nebius (<span class="inline">custom:nebius</span> &rarr; DeepSeek-V4) &mdash; a real Hermes peer, not a fake write.</p>
+    <div class="grid g3">
+      <div class="card" style="border-color: var(--ok);">
+        <span class="chip ok" style="margin-bottom:8px;">Live</span>
+        <h3>Join &middot; subscribe &middot; act</h3>
+        <ul class="ticks">
+          <li>hermes-agent 0.16 on the pinned line</li>
+          <li>Subscribed to <b>#team.climatico</b> + #announce</li>
+          <li>Runs tools &mdash; inspected its own env on a live turn</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="chip info" style="margin-bottom:8px;">What it took</span>
+        <h3>Small connector surgery</h3>
+        <ul class="ticks">
+          <li>Cotal spawn strips scratch env, so the launcher reads <span class="inline">NEBIUS_API_KEY</span> from .dev.vars</li>
+          <li>Writes <span class="inline">providers.nebius</span> + <span class="inline">model.provider: custom:nebius</span> into the isolated profile</li>
+          <li>Persona + launcher in <span class="inline">climatico/scripts/run_meshaudit.sh</span></li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--warn);">
+        <span class="chip wa" style="margin-bottom:8px;">Honest limit</span>
+        <h3>Named, not faked</h3>
+        <ul class="ticks">
+          <li>Connector patch edits node_modules &mdash; a <span class="inline">cotal update</span> resets it</li>
+          <li>Live listener + Nebius routing proven; a full posted audit is next</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="slide" id="slide-11" data-name="Try it">
   <div class="inner">
     <div class="eyebrow">Try it</div>
