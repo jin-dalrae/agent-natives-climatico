@@ -10,7 +10,8 @@
   "vars": {
     "PRODUCT_NAME": "Climatico",
     "PUBLIC_BASE_URL": "",
-    "PROVIDER_NAME": "green-offset-co"
+    "PROVIDER_NAME": "green-offset-co",
+    "AI_MODEL": "@cf/moonshotai/kimi-k2.6"
   },
   "ai": {
     "binding": "AI",

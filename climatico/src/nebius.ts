@@ -21,7 +21,8 @@ export async function workersGroundingSummary(
   const prompt = `You are grounding an emission factor for the class "${className}". Using only the sources below, write one or two plain-English sentences on what they establish about this class's emission factor or methodology. Do not invent a number that is not in the sources. If the sources don't support a specific factor, say what they do establish instead.\n\nSources:\n${sources}`;
 
   try {
-    const res = await env.AI.run("@cf/moonshotai/kimi-k2.6", {
+    const model = ((env as Env & { AI_MODEL?: string }).AI_MODEL || "@cf/moonshotai/kimi-k2.6") as Parameters<typeof env.AI.run>[0];
+    const res = await env.AI.run(model, {
       messages: [{ role: "user", content: prompt }],
       max_tokens: 150,
       stream: false,

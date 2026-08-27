@@ -61,7 +61,8 @@ export async function summarizeAbatement(
   const prompt = `The company's "${className}" emits ${currentTons} tonnes CO2e/year (modeled). Based ONLY on these real sources, suggest 2-3 concrete ways to reduce it. Be specific — name technologies, methods, or vendors if mentioned. If sources don't support a specific reduction, say what they do establish.\n\nSources:\n${sources}`;
 
   try {
-    const res = await env.AI.run("@cf/moonshotai/kimi-k2.6", {
+    const model = ((env as Env & { AI_MODEL?: string }).AI_MODEL || "@cf/moonshotai/kimi-k2.6") as Parameters<typeof env.AI.run>[0];
+    const res = await env.AI.run(model, {
       messages: [{ role: "user", content: prompt }],
       max_tokens: 300,
       temperature: 0.3,

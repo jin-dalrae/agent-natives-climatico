@@ -6,7 +6,8 @@ import { getLedger } from "./ledger";
 
 export class Clerk extends Think<Env> {
   getModel() {
-    return createWorkersAI({ binding: this.env.AI })("@cf/moonshotai/kimi-k2.6");
+    const model = (this.env as Env & { AI_MODEL?: string }).AI_MODEL || "@cf/moonshotai/kimi-k2.6";
+    return createWorkersAI({ binding: this.env.AI })(model);
   }
 
   getSystemPrompt() {
