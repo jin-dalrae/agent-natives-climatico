@@ -2,12 +2,22 @@ import { Agent, callable, getAgentByName } from "agents";
 import { getLedger } from "./ledger";
 import type { FleetRun } from "./types";
 
+type RunRecord = {
+  at: number;
+  location: string;
+  spend: number;
+  kgCO2e: number;
+  status: "committed" | "refused";
+  offsetCents: number;
+  receiptId: string;
+};
+
 /**
  * Simulates an Orepath employee's agent that monitors cloud spend and
  * proactively files fleet runs. Runs on alarm every ~15 min.
  */
-export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: number; active: boolean }> {
-  initialState = { lastSpend: 0, runsFiled: 0, active: true };
+export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: number; active: boolean; history: RunRecord[]; totalCommitted: number; totalRefused: number; totalOffsetCents: number }> {
+  initialState = { lastSpend: 0, runsFiled: 0, active: true, history: [], totalCommitted: 0, totalRefused: 0, totalOffsetCents: 0 };
 
   async onStart() {
     // nothing yet
@@ -17,7 +27,6 @@ export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: num
     if (!this.state.active) return;
     const now = Date.now();
     const hour = new Date(now).getHours();
-    // Only run during working hours (8am-8pm)
     if (hour < 8 || hour >= 20) {
       await this.ctx.storage.setAlarm(now + 30 * 60 * 1000);
       return;
@@ -29,7 +38,6 @@ export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: num
       scopes: ["climatico:read", "climatico:transact"],
     });
 
-    // Simulate varying cloud spend (realistic: $200-$600 random spikes)
     const spend = Math.round(200 + Math.random() * 400);
     const locations = ["SJC", "PDX", "IAD", "LHR"];
     const loc = locations[Math.floor(Math.random() * locations.length)];
@@ -42,10 +50,26 @@ export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: num
       monthToDateKg: Math.round(30 + Math.random() * 40),
     }, minted.principal);
 
+    const kg = run.audit?.kgCO2e ?? 0;
+    const offsetCents = run.offsetReceipt?.amountCents ?? 0;
+    const record: RunRecord = {
+      at: now,
+      location: loc,
+      spend,
+      kgCO2e: kg,
+      status: run.status === "committed" ? "committed" : "refused",
+      offsetCents,
+      receiptId: run.offsetReceipt?.id ?? run.id,
+    };
+    const history = [record, ...(this.state.history ?? [])].slice(0, 10);
     this.setState({
       lastSpend: spend,
       runsFiled: this.state.runsFiled + 1,
       active: true,
+      history,
+      totalCommitted: this.state.totalCommitted + (run.status === "committed" ? 1 : 0),
+      totalRefused: this.state.totalRefused + (run.status === "refused" ? 1 : 0),
+      totalOffsetCents: this.state.totalOffsetCents + offsetCents,
     });
 
     console.log(JSON.stringify({
@@ -56,7 +80,6 @@ export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: num
       runsFiled: this.state.runsFiled + 1,
     }));
 
-    // Next check in 15 min
     await this.ctx.storage.setAlarm(now + 15 * 60 * 1000);
   }
 
@@ -67,6 +90,10 @@ export class OrepathAgent extends Agent<Env, { lastSpend: number; runsFiled: num
       runsFiled: this.state.runsFiled,
       lastSpend: this.state.lastSpend,
       active: this.state.active,
+      totalCommitted: this.state.totalCommitted,
+      totalRefused: this.state.totalRefused,
+      totalOffsetCents: this.state.totalOffsetCents,
+      history: this.state.history ?? [],
     };
   }
 
@@ -90,7 +117,16 @@ export async function getOrepathAgent(env: Env) {
 }
 
 export type OrepathAgentApi = {
-  getStatus: () => Promise<{ agent: string; runsFiled: number; lastSpend: number; active: boolean }>;
+  getStatus: () => Promise<{
+    agent: string;
+    runsFiled: number;
+    lastSpend: number;
+    active: boolean;
+    totalCommitted: number;
+    totalRefused: number;
+    totalOffsetCents: number;
+    history: RunRecord[];
+  }>;
   start: () => Promise<{ ok: boolean }>;
   stop: () => Promise<{ ok: boolean }>;
 };

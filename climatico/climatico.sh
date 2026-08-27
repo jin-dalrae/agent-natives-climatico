@@ -471,6 +471,73 @@ print('  • Provider — can fulfill any committed offset')
     echo ""
     echo "Next: ./climatico.sh status | ./climatico.sh fleet SJC 420 | ./climatico.sh report"
     ;;
+  observe)
+    echo "=== Watching Orepath · refresh: ctrl+c to stop ==="
+    echo ""
+    while true; do
+      clear
+      res=$(curl -sS "$BASE/v1/observe")
+      echo "$res" | python3 -c "
+import json,sys,datetime
+try:
+  d=json.loads(sys.stdin.read())
+except Exception as e:
+  print('Error:', e)
+  sys.exit(1)
+
+now = datetime.datetime.fromtimestamp(d.get('refreshedAt', 0)/1000).strftime('%H:%M:%S')
+print(f'  refreshed: {now}')
+print()
+
+# Orepath
+o = d.get('orepath', {})
+print('  ╔═══ OREPATH AGENT (compute-watcher) ═══╗')
+print(f'  ║  active: {o.get(\"active\")}  ·  runs filed: {o.get(\"runsFiled\",0)}  ·  committed: {o.get(\"totalCommitted\",0)}  ·  refused: {o.get(\"totalRefused\",0)}')
+print(f'  ║  last spend: \${o.get(\"lastSpend\",0)}  ·  total offsets: \${o.get(\"totalOffsetCents\",0)/100:.2f}')
+hist = o.get('history', [])
+if hist:
+    print('  ║  recent runs:')
+    for h in hist[:5]:
+        at = datetime.datetime.fromtimestamp(h['at']/1000).strftime('%H:%M')
+        icon = '✓' if h['status']=='committed' else '✗'
+        print(f'  ║    {at} {h[\"location\"]:5s} \${h[\"spend\"]:>4} → {h[\"kgCO2e\"]:>5.1f} kg · {h[\"status\"]} {icon} \${h[\"offsetCents\"]/100:.2f}')
+print('  ╚' + '═'*47 + '╝')
+print()
+
+# Provider
+p = d.get('provider', {})
+print('  Provider (green-offset-co):')
+print(f'    services: {\", \".join(p.get(\"services\", []))}')
+print(f'    contracts: {p.get(\"contracts\",0)} · revenue: \${p.get(\"revenueCents\",0)/100:.2f}')
+print()
+
+# Summary
+s = d.get('summary', {})
+print('  Ledger:')
+print(f'    {s.get(\"committed\",0)} commits · {s.get(\"refused\",0)} refusals · {s.get(\"fleetRuns\",0)} fleet runs · {s.get(\"watches\",0)} watches')
+print()
+
+# Inbox alerts
+alerts = d.get('inboxAlerts', [])
+if alerts:
+    print('  Inbox alerts:')
+    for a in alerts[:3]:
+        print(f'    [{a[\"tone\"]:>3}] {a[\"title\"][:80]}')
+    print()
+
+# Memory
+mem = d.get('memory', [])
+if mem:
+    print('  Cortex memory (last 3):')
+    for m in mem[:3]:
+        at = datetime.datetime.fromtimestamp(m['at']/1000).strftime('%H:%M')
+        print(f'    {at}  {m[\"content\"][:100]}')
+    print()
+"
+      echo "  (refreshing in 10s... ctrl+c to stop)"
+      sleep 10
+    done
+    ;;
   status)
     [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
     echo "=== Connected folders ==="
@@ -488,5 +555,4 @@ if not d.get('connections'):
     print('  (none) — run: ./climatico.sh connect ~/my-startup')
 "
     ;;
-
-  discover)esac
+esac

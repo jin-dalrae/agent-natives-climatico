@@ -332,6 +332,51 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     return json(request, await agent.stop());
   }
 
+  if (path === "/v1/observe" && request.method === "GET") {
+    const ore = await getOrepathAgent(env);
+    const oreStatus = await ore.getStatus();
+    const ledger = await getLedger(env);
+    const runs = await ledger.listFleetRuns(5);
+    const receipts = await ledger.listReceipts(10);
+    const provider = await getProviderAgent(env, "green-offset-co");
+    const providerStatus = await provider.getStatus();
+    const workspace = await ledger.workspace();
+    const d = await ledger.dashboard();
+    const memory = await cortexRecall(env, "fleet-runs", 3);
+    return json(request, {
+      orepath: oreStatus,
+      provider: providerStatus,
+      recentRuns: runs.map((r) => ({
+        id: r.id,
+        location: r.ingest.location,
+        spend: r.ingest.spendUsd,
+        kgCO2e: r.audit?.kgCO2e ?? null,
+        overBudgetKg: r.audit?.overBudgetKg ?? null,
+        status: r.status,
+        offsetCents: r.offsetReceipt?.amountCents ?? null,
+        at: r.createdAt,
+      })),
+      recentReceipts: receipts.map((r) => ({
+        id: r.id,
+        intent: r.intent,
+        location: r.location,
+        amountCents: r.amountCents,
+        status: r.status,
+        at: r.createdAt,
+        note: r.note?.slice(0, 80),
+      })),
+      inboxAlerts: workspace.inbox.filter((m) => m.tone === "no" || m.tone === "wa").slice(0, 5),
+      summary: {
+        committed: d.committed,
+        refused: d.refused,
+        fleetRuns: d.fleetRuns ?? 0,
+        watches: d.watches,
+      },
+      memory: memory.map((m) => ({ content: m.content.slice(0, 120), at: m.timestamp })),
+      refreshedAt: Date.now(),
+    });
+  }
+
   // --- Provider agent endpoints ---
   if (path === "/v1/agents/provider" && request.method === "GET") {
     const agent = await getProviderAgent(env, "green-offset-co");

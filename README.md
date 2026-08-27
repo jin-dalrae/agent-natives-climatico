@@ -298,6 +298,9 @@ export CLIMATICO_TOKEN="<token>"
 ./climatico.sh connect ~/my-startup  # Scan folder, auto-assess 7 classes
 ./climatico.sh connect ~/my-startup --dry-run  # Show the payload, send nothing
 ./climatico.sh status            # Show connected folders + assessments
+./climatico.sh switch SJC "move compute to FRA" <priorId> 3580 500  # Log a switch
+./climatico.sh refund SJC <priorId> 3580 500  # Claim refund on prior offset
+./climatico.sh observe           # Watch Orepath agent live (10s refresh)
 ./climatico.sh receipts          # Recent receipts
 ./climatico.sh handoffs          # Recent handoff log
 ./climatico.sh help              # Full command list

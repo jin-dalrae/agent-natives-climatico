@@ -1,6 +1,6 @@
 import type { FleetRun } from "./types";
 
-const RUNTPE_API = "https://api.runtype.com/v1";
+const RUNTYPE_API = "https://api.runtype.com/v1";
 
 /**
  * Wires Runtype's agent platform. Uses the stored API key to invoke a
@@ -12,7 +12,7 @@ export async function runtypeAnalysis(
   task: "audit" | "suggest" | "forecast",
   data: { location?: string; kg?: number; spend?: number; trend?: string },
 ): Promise<string | null> {
-  const key = (env as Env & { RUNTPE_API_KEY?: string }).RUNTPE_API_KEY?.trim();
+  const key = (env as Env & { RUNTYPE_API_KEY?: string }).RUNTYPE_API_KEY?.trim();
   if (!key) return null;
 
   const prompts: Record<string, string> = {
@@ -22,7 +22,7 @@ export async function runtypeAnalysis(
   };
 
   try {
-    const res = await fetch(`${RUNTPE_API}/agents/run`, {
+    const res = await fetch(`${RUNTYPE_API}/agents/run`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
