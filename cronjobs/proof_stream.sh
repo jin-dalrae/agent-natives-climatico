@@ -45,7 +45,8 @@ jq -c '.receipts[] | select(.status == "committed")' receipts.json | while read 
   timestamp=$(echo "$receipt" | jq -r '.timestamp')
   evidence_count=$(echo "$receipt" | jq -r '.evidence | length')
 
-  # Build proof object
+  # Build proof object. Only link to our own receipt — never invent a source URL;
+  # a fabricated citation is exactly what this project refuses to do.
   proof=$(cat << EOF
 {
   "action": "offset",
@@ -54,7 +55,6 @@ jq -c '.receipts[] | select(.status == "committed")' receipts.json | while read 
   "kgCO2e": $kgCO2e,
   "spendUsd": $spendUsd,
   "evidence": [
-    "https://tavily.com/${location//-/_}-carbon-factors-2026",
     "https://climatico.dalrae-jin-work.workers.dev/v1/receipt/$id"
   ],
   "timestamp": "$timestamp",
