@@ -1250,6 +1250,24 @@ export function App() {
       <main className="main">
         {tab === "assess" ? (
           <>
+            <section className="identity">
+              <div className="avatar-circle">RJ</div>
+              <div>
+                <div className="name">
+                  {story.name} · {story.company}
+                </div>
+                <div className="domain">
+                  {story.role} · {story.stage}
+                </div>
+                <p>{story.product}</p>
+                <p>
+                  <b>Spark. </b>
+                  {story.spark}
+                </p>
+              </div>
+              <span className="badge">logistics · modeled</span>
+            </section>
+
             <section className="cover">
               <SponsorPills
                 tavilyKey={ws?.tavilyKey}
@@ -1330,23 +1348,6 @@ export function App() {
 
         {tab === "assess" ? (
           <>
-            <section className="identity">
-              <img src="/assets/rae.jpg" alt={story.name} width="72" height="72" />
-              <div>
-                <div className="name">
-                  {story.name} · {story.company}
-                </div>
-                <div className="domain">
-                  {story.role} · {story.stage}
-                </div>
-                <p>{story.product}</p>
-                <p>
-                  <b>Spark. </b>
-                  {story.spark}
-                </p>
-              </div>
-              <span className="badge">logistics · modeled</span>
-            </section>
             <div className="grid g2">
               <section className="card">
                 <span className="kicker">Hotspots &amp; Greener Alternatives</span>
