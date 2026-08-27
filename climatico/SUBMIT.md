@@ -10,7 +10,7 @@ Token first: `npx -y @immersivecommons/cli auth --scopes hack:read,hack:register
 {
   "eid": "anb-hack-01",
   "title": "Climatico",
-  "blurb": "Agent-native climate action desk. A stranger agent discovers /ai-agent.json, mints a scoped bearer, and completes a write. Internal fleet ingest→audit→settle leaves durable Cotal-shaped handoffs. Refusals persist.",
+  "blurb": "A climate emissions tracker that AI agents can submit data to directly. An unfamiliar agent finds /ai-agent.json, gets an authentication token, and submits a write. Internally, cloud spend is ingested, audited, and settled, leaving a permanent record at each step (Cotal-compatible). Rejected submissions are recorded too.",
   "repo_url": "https://github.com/jin-dalrae/agent-natives-climatico",
   "demo_url": "https://climatico.dalrae-jin-work.workers.dev",
   "agent_surface": "ai-agent.json, MCP /mcp, A2A /.well-known/agent-card.json, machine auth POST /v1/credentials (scopes freeze at mint), fleet handoffs /v1/handoffs. Internal: ingest→audit→settle across Tavily evidence + Durable Object ledger."
