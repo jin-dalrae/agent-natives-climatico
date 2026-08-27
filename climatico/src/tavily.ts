@@ -13,12 +13,10 @@ type TavilyResponse = {
   results?: TavilyHit[];
 };
 
-export async function gatherEvidence(
+async function tavilySearch(
   env: Env,
-  location: string,
-  intent: string,
+  query: string,
 ): Promise<{ evidence: EvidenceItem[]; grounded: boolean; error?: string }> {
-  const query = climateQuery(location, intent);
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   const apiKey = (env as Env & { TAVILY_API_KEY?: string }).TAVILY_API_KEY;
   if (apiKey) {
@@ -40,7 +38,7 @@ export async function gatherEvidence(
     });
     if (!response.ok) {
       const err = `tavily_http_${response.status}`;
-      console.error(JSON.stringify({ message: "tavily search failed", error: err, location }));
+      console.error(JSON.stringify({ message: "tavily search failed", error: err, query }));
       return { evidence: [], grounded: false, error: err };
     }
     const body = (await response.json()) as TavilyResponse;
@@ -55,9 +53,17 @@ export async function gatherEvidence(
     return { evidence, grounded: evidence.length > 0 };
   } catch (error) {
     const message = error instanceof Error ? error.message : "tavily_unreachable";
-    console.error(JSON.stringify({ message: "tavily search error", error: message, location }));
+    console.error(JSON.stringify({ message: "tavily search error", error: message, query }));
     return { evidence: [], grounded: false, error: message };
   }
+}
+
+export async function gatherEvidence(
+  env: Env,
+  location: string,
+  intent: string,
+): Promise<{ evidence: EvidenceItem[]; grounded: boolean; error?: string }> {
+  return tavilySearch(env, climateQuery(location, intent));
 }
 
 function climateQuery(location: string, intent: string): string {
@@ -71,4 +77,28 @@ function climateQuery(location: string, intent: string): string {
     default:
       return `current climate risk heat air quality drought flood ${location} 2026`;
   }
+}
+
+/** Search query per emission class, used to ground a class's modeled factor in a live source. */
+const CLASS_QUERIES: Record<string, string> = {
+  hardware: "embodied carbon footprint OEM hardware electronics manufacturing emission factor methodology 2026",
+  travel: "business travel commuting emission factor DEFRA EPA distance mode methodology 2026",
+  saas: "vendor SaaS spend-based emission factor USEEIO carbon accounting methodology 2026",
+  logistics: "freight logistics tonne-km emission factor GLEC ISO 14083 methodology 2026",
+  electricity: "grid electricity emission factor eGRID IEA location-based methodology 2026",
+  direct: "Scope 1 direct combustion fugitive emission factor IPCC AR6 GWP100 methodology 2026",
+};
+
+export function isGroundableClass(classId: string): boolean {
+  return classId in CLASS_QUERIES;
+}
+
+/** Ground one of the six non-compute emission classes in a live source instead of a modeled default. */
+export async function gatherClassEvidence(
+  env: Env,
+  classId: string,
+): Promise<{ evidence: EvidenceItem[]; grounded: boolean; error?: string }> {
+  const query = CLASS_QUERIES[classId];
+  if (!query) return { evidence: [], grounded: false, error: "unknown_class" };
+  return tavilySearch(env, query);
 }

@@ -15,6 +15,7 @@
 .idea/
 .vscode/
 .omo/
+.hermes/
 
 # Scratch fetches and generated reports from cronjobs/ — regenerated each run.
 /receipts.json

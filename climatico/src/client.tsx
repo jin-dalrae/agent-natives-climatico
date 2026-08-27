@@ -95,7 +95,26 @@ function InboxList({ items }: { items: InboxMessage[] }) {
   );
 }
 
-function Hotspots({ classes, hotId }: { classes: EmissionClass[]; hotId?: string }) {
+const GROUNDABLE_CLASS_IDS = new Set([
+  "hardware",
+  "travel",
+  "saas",
+  "logistics",
+  "electricity",
+  "direct",
+]);
+
+function Hotspots({
+  classes,
+  hotId,
+  onGround,
+  busy,
+}: {
+  classes: EmissionClass[];
+  hotId?: string;
+  onGround?: (classId: string) => void;
+  busy?: boolean;
+}) {
   const max = Math.max(...classes.map((c) => c.modeledT), 1);
   return (
     <div className="hotspots-grid">
@@ -121,6 +140,11 @@ function Hotspots({ classes, hotId }: { classes: EmissionClass[]; hotId?: string
             <span>{c.restsOn}</span>
           </div>
           {c.liveNote ? <div className="live-pill">⚡ {c.liveNote}</div> : null}
+          {c.status === "modeled" && onGround && GROUNDABLE_CLASS_IDS.has(c.id) ? (
+            <button type="button" className="ghost" disabled={busy} onClick={() => onGround(c.id)}>
+              Ground with Tavily
+            </button>
+          ) : null}
         </div>
       ))}
     </div>
@@ -1301,7 +1325,14 @@ export function App() {
                 <p className="lede" style={{ marginBottom: 12 }}>
                   {story.hotspotWhy}
                 </p>
-                <Hotspots classes={classes} hotId={story.hotspotClass} />
+                <Hotspots
+                  classes={classes}
+                  hotId={story.hotspotClass}
+                  busy={busy}
+                  onGround={(classId) =>
+                    void write("/v1/actions", { intent: "assess", source: classId, location })
+                  }
+                />
                 <div className="callout">
                   <strong>Try this first: </strong>
                   {firstAction}

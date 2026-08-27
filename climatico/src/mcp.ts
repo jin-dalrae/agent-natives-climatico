@@ -53,7 +53,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         "complete_action",
         {
           description:
-            "Commit a climate action. Allowed intents: brief, watch, offset, assess, abate. Requires location. offset also requires amountCents. abate records a modeled abatement plan for a business source. Refusals persist as receipts.",
+            "Commit a climate action. Allowed intents: brief, watch, offset, assess, abate. Requires location. offset also requires amountCents. abate records a modeled abatement plan for a business source. assess with source set to one of the six non-compute classes (hardware, travel, saas, logistics, electricity, direct) grounds that class in a live Tavily source instead of a modeled default — it stays modeled if no source is found. Refusals persist as receipts.",
           inputSchema: {
             intent: z
               .string()
@@ -62,7 +62,9 @@ export function mcpHandler(env: Env, principal: Principal) {
             source: z
               .string()
               .optional()
-              .describe("Business source for abate: compute | logistics | electricity | travel | hardware | saas | direct."),
+              .describe(
+                "For abate: compute | logistics | electricity | travel | hardware | saas | direct. For assess: one of hardware | travel | saas | logistics | electricity | direct to ground that emission class instead of doing a location risk brief.",
+              ),
             amountCents: z
               .number()
               .int()

@@ -138,25 +138,37 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - **Tenki** used for sandboxes / testing agent workflows
 - **Runtype** A2A agent surface for consumption
 - Cotal-shaped handoffs (webhook ready if we want it)
+- All 6 non-compute emission classes can be grounded live against real Tavily
+  sources on demand (`assess` with `source` set to the class id, or the "Ground
+  with Tavily" button in the Assess tab). They start modeled and stay modeled
+  until grounded — nothing is claimed live until it actually is.
+- **Nebius** (Token Factory, DeepSeek-V4-Flash) writes the grounded summary
+  when a class is assessed — a real call, not a label
 
 ### 🔜 LEFT (honest "not yet" list)
 
-- **6 of 7 emission classes are still modeled** — they are estimates with error
-  bars, clearly labelled. Only "cloud & AI compute" is backed by real live writes.
+- Each emission class starts **modeled** — an estimate with an error bar — until
+  it's actually grounded. Compute grounds automatically from fleet activity; the
+  other six ground on request (see above), not automatically.
 - The **hardware / freight PO write** — the star feature for our customer story —
   is *named, not built*. It needs supplier-only and buyer-only tokens that do not
   exist yet. We are NOT faking it.
 - Tavily runs **keyless** right now (the `26HACK` coupon, which grants 8,000 extra
   credits, is not yet claimed — two days only).
-- Cotal live mesh not joined (webhook shape is ready, joining is optional).
-- Nebius GPU not wired (Workers AI is doing the job).
+- Cotal live mesh not joined via the Worker's webhook — the shape is ready
+  (`announceHandoff` fires whenever `COTAL_WEBHOOK_URL` is set), it just needs a
+  real URL from the Cotal booth. The `meshaudit` resident bot is a separate,
+  already-live connection to the mesh.
 - Runtype $500 prize: deliberately **not** building on Runtype unless we really do.
-- Mitosis / Hacker Bob / HUD: **not** integrated. Booths, credits, or prizes only.
+- Hacker Bob / HUD: **not** integrated. Booths, credits, or prizes only.
+- Mitosis memory is real (verified `cortex_remember`/`cortex_recall` round-trip,
+  27 Aug) but it's the team's own agent memory via MCP — no Climatico Worker
+  code calls it, so it stays out of the product's write path.
 
 ### 🚫 We will not fake
 
-No fake Runtype deploy, no fake Mitosis memory, no fake Hacker Bob scan, no fake
-GHG Protocol engine, no invented climate numbers.
+No fake Runtype deploy, no fake Hacker Bob scan, no fake GHG Protocol engine,
+no invented climate numbers.
 
 ---
 
@@ -171,7 +183,8 @@ GHG Protocol engine, no invented climate numbers.
 | Cotal | Organiser. Agent mesh | Almost — handoffs shaped like Cotal, mesh join optional |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
 | Runtype | Sponsor. A2A agent surface | YES — agent card exposed |
-| Mitosis, Hacker Bob, HUD, Nebius | Credits / prizes / booths | No — not wired in, on purpose |
+| Mitosis | Sponsor. Cortex agent memory | Partial — real, verified write/recall; team's own memory via MCP, not a Climatico API |
+| Hacker Bob, HUD, Nebius | Credits / prizes / booths | No — not wired in, on purpose |
 
 The UI keeps this distinction visible so nothing *looks* wired in when it isn't.
 

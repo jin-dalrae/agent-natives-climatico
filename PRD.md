@@ -141,8 +141,9 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Cotal-shaped handoffs | On-ledger; `cotal.yaml`; optional `COTAL_WEBHOOK_URL` | Not joined to [hack.cotal.ai](https://hack.cotal.ai) until you do it on the floor |
 | Seven classes with error bars | Table in UI + `GET /v1/workspace` | Six classes remain modeled |
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
+| Mitosis memory | `cortex_remember`/`cortex_recall` verified live (real `universal_id`, real office, write→recall round-trip confirmed 27 Aug) | It's agent memory for the team, not a Climatico API — no Worker code calls Mitosis |
 
-**Do not ship:** fake AIsa payment, fake Mitosis memory, fake Hacker Bob scan, fake GHG Protocol engine. (Runtype is now wired — agent card exposed, best-use flow in deck)
+**Do not ship:** fake AIsa payment, fake Hacker Bob scan, fake GHG Protocol engine. (Runtype is now wired — agent card exposed, best-use flow in deck. Mitosis memory is real now too — see row above, not a "do not ship.")
 
 ---
 
@@ -199,7 +200,8 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | AIsa | Real balance read only | **Partial** — `GET /v1/aisa/balance` is real; the M2M payment rail itself is **not** in the write path |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
 | Runtype | A2A agent surface | **Yes** — agent card exposed; Exa flow for best use |
-| Mitosis, Hacker Bob, HUD, Nebius | Credits / prizes / booths | **No** until a real call exists |
+| Mitosis | Cortex memory (`cortex_remember`/`cortex_recall`) | **Partial** — real, verified round-trip (write + recall, real `universal_id`); it's the team's own agent-memory layer via MCP, not called from inside the Climatico Worker's write path |
+| Hacker Bob, HUD, Nebius | Credits / prizes / booths | **No** until a real call exists |
 
 Stack tab and inbox must keep this distinction. Decorative integrations fail the deck’s own guardrail: “Nothing is stubbed to look busy.”
 
