@@ -136,7 +136,6 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Hackathon submission filed (can still be overwritten until Thursday 15:00)
 - **AIsa** wallet balance read is real (`GET /v1/aisa/balance`) — the payment rail itself is not wired
 - **Tenki** used for sandboxes / testing agent workflows
-- **Runtype** A2A agent surface for consumption
 - Cotal-shaped handoffs (webhook ready if we want it)
 - All 6 non-compute emission classes can be grounded live against real Tavily
   sources on demand (`assess` with `source` set to the class id, or the "Ground
@@ -159,7 +158,12 @@ questions, or ask it to file a write. It uses the same tools any agent would.
   (`announceHandoff` fires whenever `COTAL_WEBHOOK_URL` is set), it just needs a
   real URL from the Cotal booth. The `meshaudit` resident bot is a separate,
   already-live connection to the mesh.
-- Runtype $500 prize: deliberately **not** building on Runtype unless we really do.
+- Runtype $500: **not built.** Pulled the real setup from Runtype's own docs
+  (dashboard: New Agent → configure model/safety/system prompt → attach as a
+  Capability → attach to an MCP Surface, tool schemas auto-generate) — no code
+  needed to make the agent, only to build what calls into it. Blocked on
+  signing up for an API key, which is a human step we won't fake past.
+  `/.well-known/agent-card.json` is generic A2A, not a Runtype-specific flow.
 - Hacker Bob / HUD: **not** integrated. Booths, credits, or prizes only.
 - Mitosis memory is real (verified `cortex_remember`/`cortex_recall` round-trip,
   27 Aug) but it's the team's own agent memory via MCP — no Climatico Worker
@@ -182,9 +186,10 @@ no invented climate numbers.
 | Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
 | Cotal | Organiser. Agent mesh | Almost — handoffs shaped like Cotal, mesh join optional |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
-| Runtype | Sponsor. A2A agent surface | YES — agent card exposed |
+| Nebius | Sponsor. Token Factory LLM | YES — writes the grounded summary on assess |
+| Runtype | Sponsor. Agent → Capability → MCP Surface | No, not yet — real path confirmed, blocked on signup for an API key |
 | Mitosis | Sponsor. Cortex agent memory | Partial — real, verified write/recall; team's own memory via MCP, not a Climatico API |
-| Hacker Bob, HUD, Nebius | Credits / prizes / booths | No — not wired in, on purpose |
+| Hacker Bob, HUD | Credits / prizes / booths | No — not wired in, on purpose |
 
 The UI keeps this distinction visible so nothing *looks* wired in when it isn't.
 

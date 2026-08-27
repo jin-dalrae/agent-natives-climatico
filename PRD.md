@@ -143,7 +143,7 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
 | Mitosis memory | `cortex_remember`/`cortex_recall` verified live (real `universal_id`, real office, write→recall round-trip confirmed 27 Aug) | It's agent memory for the team, not a Climatico API — no Worker code calls Mitosis |
 
-**Do not ship:** fake AIsa payment, fake Hacker Bob scan, fake GHG Protocol engine. (Runtype is now wired — agent card exposed, best-use flow in deck. Mitosis memory is real now too — see row above, not a "do not ship.")
+**Do not ship:** fake AIsa payment, fake Hacker Bob scan, fake GHG Protocol engine, fake Runtype deploy. (Mitosis memory and Nebius grounding are real now — see rows above, not a "do not ship.")
 
 ---
 
@@ -174,7 +174,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 
 | Item | Kind | How Climatico treats it |
 | --- | --- | --- |
-| Runtype **$500** | Best use of Runtype | **Claiming** — Runtype flow: Exa researches shipping route → Climatico files assess → returns receipt. Agent card exposed at `/.well-known/agent-card.json`. One prompt, two services, real data flow. |
+| Runtype **$500** | Best use of Runtype | **Not built.** Verified how it actually works (dashboard: Agent → Capability → MCP Surface, tool schemas auto-generate) but have no API key — signup is a human step, not something to fake. Planned flow below; `/.well-known/agent-card.json` is generic A2A, not Runtype-specific. |
 | Cotal **$300** | Best use of Cotal | Honest path: [hack.cotal.ai](https://hack.cotal.ai) + `cotal.yaml` / webhook. **No credits.** David + Sven on site. |
 | Sandbox VR | Experience, 1/track | Irrelevant to product |
 | HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
@@ -199,9 +199,10 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
 | AIsa | Real balance read only | **Partial** — `GET /v1/aisa/balance` is real; the M2M payment rail itself is **not** in the write path |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
-| Runtype | A2A agent surface | **Yes** — agent card exposed; Exa flow for best use |
+| Nebius | Token Factory LLM | **Yes** — `nebiusGroundingSummary()` writes a real grounded summary when a class is assessed |
+| Runtype | Agent → Capability → MCP Surface | **No, not yet** — real no-code path confirmed from their docs, blocked on signup (a human step) for an API key |
 | Mitosis | Cortex memory (`cortex_remember`/`cortex_recall`) | **Partial** — real, verified round-trip (write + recall, real `universal_id`); it's the team's own agent-memory layer via MCP, not called from inside the Climatico Worker's write path |
-| Hacker Bob, HUD, Nebius | Credits / prizes / booths | **No** until a real call exists |
+| Hacker Bob, HUD | Credits / prizes / booths | **No** until a real call exists |
 
 Stack tab and inbox must keep this distinction. Decorative integrations fail the deck’s own guardrail: “Nothing is stubbed to look busy.”
 
