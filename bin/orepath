@@ -8,6 +8,11 @@
 #   orepath watch <location>        # start a watch
 #   orepath offset <location> <¢>   # commit an offset
 #   orepath fleet <loc> <$> [budget] [mtd]
+#   orepath freight <lane> <mode> <kg> <km>  # file a real freight leg (sea|air|road|rail)
+#   orepath switch <loc> <newSolution> <priorReceiptId> <priorCents> <newCents>
+#   orepath refund <loc> <priorReceiptId> <priorCents> <newCents>
+#   orepath provider                # 3rd-party provider agent status
+#   orepath observe                 # watch Orepath agent live (10s refresh)
 #   orepath refuse [location]       # test a greenwash (gets refused + stored)
 #   orepath report                  # progress report
 #   orepath receipts [n]            # recent receipts
@@ -172,9 +177,9 @@ print(json.dumps(items))
     ;;
   # Pass-through: every other subcommand goes to climatico.sh.
   # Token is already exported; URL is exported; everything just works.
-  discover|whoami|fleet|offset|brief|watch|refuse|report|receipts|\
-  handoffs|dashboard|memory|orepath|status|agents-start|agents-stop|\
-  connect|help)
+  discover|whoami|fleet|offset|brief|watch|freight|switch|refund|refuse|\
+  report|receipts|handoffs|dashboard|memory|orepath|provider|observe|\
+  status|agents-start|agents-stop|connect|help)
     # Special-case `connect`: the path arg defaults to the config's
     # connect_target. Pull out --dry-run explicitly so it isn't mistaken
     # for a folder path.
