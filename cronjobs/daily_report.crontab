@@ -1,0 +1,6 @@
+crontab -a
+# Daily report: run at 6:00 AM every day
+0 6 * * * /Users/dalrae/Downloads/Developed/2608 cf hackathon/cronjobs/daily_report.sh
+
+# Optional: Remove this line after initial setup
+# For testing, run: bash cronjobs/daily_report.sh

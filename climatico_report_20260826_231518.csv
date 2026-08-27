@@ -1,0 +1,40 @@
+=== DASHBOARD SUMMARY ===
+Metric,Value
+Committed Actions,6
+Refused Actions,3
+Fleet Runs,3
+Last Receipt ID,93295b1a-d5c4-4431-82eb-895c2069e1a2
+Last Fleet Run ID,301a9bc3-fc72-4229-a5b5-d20c350737aa
+
+=== MATURITY LEVELS ===
+Level,Name,Done,How
+0,L0 · estimated,Yes,"Seven classes, each with a modeled number and an error bar. None claimed as measured yet."
+1,L1 · credential,Yes,"Mint a climatico:transact token. Its scopes lock in immediately, capped at $50."
+2,L2 · grounded write,Yes,"File a brief or assessment. If we can't find real sources, we refuse instead of guessing."
+3,L3 · fleet,Yes,"Run the fleet on a spend spike: ingest, then audit, then settle. Each step is saved."
+4,L4 · settlement,Yes,"When a spike goes over budget, it commits an offset receipt, capped by the token."
+5,L5 · continuous,No,Start watching a place. It keeps running even after you close the laptop.
+
+=== RECEIPTS ===
+ID,Intent,Location,Status,Amount (cents),Created At
+93295b1a-d5c4-4431-82eb-895c2069e1a2,brief,Climatico Project,committed,N/A,2026-08-26 22:56:07
+0a40a9ab-721a-46c3-ba4f-db547c724064,brief,San Francisco,committed,N/A,2026-08-26 22:52:52
+15d243d6-7b53-409a-ade5-d201c138b563,abate,Oakland port,committed,N/A,2026-08-26 19:06:03
+eac21a5b-2b19-4fd0-9587-5f2183c3bfda,greenwash,Orepath Global Chain,refused,N/A,2026-08-26 17:59:17
+02564267-b9a0-44c8-b11f-4166e93de500,offset,SJC,committed,3580,2026-08-26 17:59:11
+9f547678-3595-47e0-96f8-96b82315096b,greenwash,Orepath Global Chain,refused,N/A,2026-08-26 17:27:34
+2fea3a78-2f89-4e46-bbda-ad4b9ad9a490,offset,SJC,committed,3580,2026-08-26 17:27:29
+16f8fc58-71b7-492e-b154-f79b31017167,greenwash,everywhere,refused,N/A,2026-08-26 16:01:18
+ea3328bd-adf7-43e0-9b85-a7cf3446a4ec,offset,SJC,committed,3580,2026-08-26 16:01:18
+
+=== HANDOFFS (INBOX) ===
+ID,Run ID,From,To,Kind,Created At
+67d5d1c6-5a2d-42ed-aa4c-7984988ed192,301a9bc3-fc72-4229-a5b5-d20c350737aa,ingest,audit,usage_parsed,2026-08-26 17:59:10
+334df43e-bac4-4e87-9d45-6941bc8a6ddf,301a9bc3-fc72-4229-a5b5-d20c350737aa,audit,settle,emissions_scored,2026-08-26 17:59:10
+3450679f-c102-40fd-a099-551ccc899a43,301a9bc3-fc72-4229-a5b5-d20c350737aa,settle,ledger,offset_attempt,2026-08-26 17:59:10
+93bb70b2-b490-478e-844a-8283d9103d27,122ce7ef-3044-44c5-a165-499b6145558e,ingest,audit,usage_parsed,2026-08-26 17:27:27
+4b812735-1e1a-409b-b815-806857c30efe,122ce7ef-3044-44c5-a165-499b6145558e,audit,settle,emissions_scored,2026-08-26 17:27:27
+dff6f7fd-1c29-44d2-980a-f6f84c980ca2,122ce7ef-3044-44c5-a165-499b6145558e,settle,ledger,offset_attempt,2026-08-26 17:27:27
+f463b669-49a7-47f4-901c-e87318d8d9ad,dd8eeac4-325a-4674-a7bb-2a9725d35dc8,ingest,audit,usage_parsed,2026-08-26 16:01:17
+12a87d89-380a-4363-976c-c4885b1a909e,dd8eeac4-325a-4674-a7bb-2a9725d35dc8,audit,settle,emissions_scored,2026-08-26 16:01:17
+528b0b1f-1cc0-4331-a663-ec25c06c9bac,dd8eeac4-325a-4674-a7bb-2a9725d35dc8,settle,ledger,offset_attempt,2026-08-26 16:01:17
