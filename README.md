@@ -158,19 +158,19 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Hackathon submission filed (can still be overwritten until Thursday 15:00)
 - **AIsa** wallet balance read is real (`GET /v1/aisa/balance`) — the payment rail itself is not wired
 - **Tenki** used for sandboxes / testing agent workflows
-- Cotal-shaped handoffs (webhook ready if we want it) **and** the team is
-  actually live on the mesh — verified at hack.cotal.ai/graph: team
-  "Climatico" registered, `meshaudit` agent on the roster, `membership: live`,
-  `feed: connected`. This is the real join mechanism per Cotal's own docs
-  (a CLI agent joining the mesh); the Worker's `COTAL_WEBHOOK_URL` is a
-  separate, still-unset, optional path.
+- Cotal: **two meshes, one live.** Our own `climatico` mesh is genuinely joined
+  and running — manager/delivery/NATS all up, 8 roster agents, 15+ min uptime.
+  The hack.cotal.ai event mesh (tied to the $300 best-use prize) is **not joined**
+  — same device-code auth blocker as day 1 (no publish rights granted). The
+  Worker's `COTAL_WEBHOOK_URL` is a separate, still-unset, optional path.
 - A `watch` write is filed (L5 onboarding step complete — a watch survives restart)
 - All 6 non-compute emission classes can be grounded live against real Tavily
   sources on demand (`assess` with `source` set to the class id, or the "Ground
   with Tavily" button in the Assess tab). They start modeled and stay modeled
   until grounded — nothing is claimed live until it actually is.
-- **Nebius** (Token Factory, DeepSeek-V4-Flash) writes the grounded summary
-  when a class is assessed — a real call, not a label
+- Grounding summaries (written when a class is assessed) run on **Workers AI**,
+  no external key needed. Nebius Token Factory was tried first and dropped —
+  see "Who's actually in the room" below.
 - **Mitosis** Cortex memory — verified real `cortex_remember`/`cortex_recall`
   round-trip (write + recall, real `universal_id`) — the team's own agent
   memory via MCP, not a Climatico API
@@ -187,7 +187,8 @@ questions, or ask it to file a write. It uses the same tools any agent would.
   credits, is not yet claimed — two days only).
 - The Worker's own Cotal webhook (`COTAL_WEBHOOK_URL`) is still unset — the
   code path (`announceHandoff`) fires automatically once it is, it just needs
-  a real URL from the Cotal booth. Mesh presence itself is real (see above).
+  a real URL from the Cotal booth. Our own `climatico` mesh is live regardless
+  (see above).
 - Runtype $500: **in progress, not working end to end yet.** With a real API
   key, we created a real Secret, a real `file_climate_action` Tool (its code
   does an actual `fetch()` against `climatico.dalrae-jin-work.workers.dev/v1/actions`),
@@ -214,9 +215,9 @@ GHG Protocol engine, no invented climate numbers.
 | Tavily | Sponsor. Web search = evidence | YES — the write path |
 | AIsa | Sponsor. Machine payment rail | Partial — real balance read only; payment rail not wired |
 | Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
-| Cotal | Organiser. Agent mesh | YES — team live on the mesh graph (verified hack.cotal.ai/graph); Worker-side webhook still optional/unset |
+| Cotal | Organiser. Agent mesh | Partial — own `climatico` mesh live (8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook unset |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
-| Nebius | Sponsor. Token Factory LLM | YES — writes the grounded summary on assess |
+| Nebius | Sponsor. GPU Cloud / $75 Builder Program | No — grounding summaries moved to Workers AI, no external key used |
 | Runtype | Sponsor. Agent → Capability → MCP Surface | Partial — real Agent/Tool/Secret live on their platform via API; tool-calling not firing yet |
 | Mitosis | Sponsor. Cortex agent memory | Partial — real, verified write/recall; team's own memory via MCP, not a Climatico API |
 | Hacker Bob, HUD | Credits / prizes / booths | No — not wired in, on purpose |

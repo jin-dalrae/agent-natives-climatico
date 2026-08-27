@@ -357,7 +357,6 @@ export class Ledger extends Agent<Env, LedgerState> {
       runs: this.listFleetRuns(8),
       tavilyKey: Boolean((this.env as Env & { TAVILY_API_KEY?: string }).TAVILY_API_KEY),
       cotalWebhook: Boolean((this.env as Env & { COTAL_WEBHOOK_URL?: string }).COTAL_WEBHOOK_URL),
-      nebiusKey: Boolean((this.env as Env & { NEBIUS_API_KEY?: string }).NEBIUS_API_KEY),
       aisaConfigured: Boolean((this.env as Env & { AISA_API_KEY?: string }).AISA_API_KEY?.trim()),
       tenkiConfigured: Boolean((this.env as Env & { TENKI_API_KEY?: string }).TENKI_API_KEY?.trim()),
     });

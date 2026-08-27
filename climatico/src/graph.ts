@@ -1,7 +1,7 @@
 import type { ActionInput, EvidenceItem, Principal, Receipt } from "./types";
 import { evaluatePolicy } from "./policy";
 import { gatherEvidence, gatherClassEvidence, isGroundableClass } from "./tavily";
-import { nebiusGroundingSummary } from "./nebius";
+import { workersGroundingSummary } from "./nebius";
 import { impactForSource, ABATEMENT } from "./impact";
 
 export type GraphContext = {
@@ -79,7 +79,7 @@ export async function runActionGraph(
     }
     evidence = gathered.evidence;
     if (groundingClass && !base.note) {
-      const summary = await nebiusGroundingSummary(ctx.env, classId, evidence);
+      const summary = await workersGroundingSummary(ctx.env, classId, evidence);
       base.note = summary ? `class-assess:${classId}: ${summary}` : `class-assess:${classId}`;
     }
   } else if (intent === "offset" || intent === "watch") {

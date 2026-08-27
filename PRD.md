@@ -94,7 +94,7 @@ Defaults are **modeled**, tagged as such, with per-class uncertainty. Live evide
 | Class | Scope | Modeled default | ± | Live today |
 | --- | --- | --- | --- | --- |
 | Cloud & AI compute | S3 Cat 1 | 8.5 t/yr | 30% | **Yes, automatically** — fleet kg + Tavily sources |
-| Hardware & electronics | S3 Cat 2 | 3.2 | 40% | **On request** — `assess` with `source: hardware` grounds it via Tavily + Nebius summary |
+| Hardware & electronics | S3 Cat 2 | 3.2 | 40% | **On request** — `assess` with `source: hardware` grounds it via Tavily + a Workers AI summary |
 | Travel & commuting | S3 Cat 6–7 | 4.8 | 25% | **On request** — same mechanism, `source: travel` |
 | Vendors & SaaS | S3 Cat 1 | 2.1 | 50% | **On request** — same mechanism, `source: saas` (coarse, labelled) |
 | Logistics | S3 Cat 4 & 9 | 12.0 | 35% | **On request** — same mechanism, `source: logistics` |
@@ -102,7 +102,7 @@ Defaults are **modeled**, tagged as such, with per-class uncertainty. Live evide
 | Direct | S1 | 1.5 | 20% | **On request** — same mechanism, `source: direct` (near zero cloud-only) |
 | Avoided / handprint | Separate baseline | **0 until proven** | — | Refused as ungrounded / greenwash |
 
-"On request" means `POST /v1/actions` with `intent: assess, source: <classId>, location: <place>` (or the "Ground with Tavily" button in the Assess tab, or the MCP `complete_action` tool). It stays modeled until grounded, and stays modeled again if Tavily returns nothing — same refusal rule as `brief`. Nebius (Token Factory, DeepSeek-V4-Flash) writes the one-sentence grounding summary; gated on `NEBIUS_API_KEY`, degrades to no summary (not a fabricated one) if unset.
+"On request" means `POST /v1/actions` with `intent: assess, source: <classId>, location: <place>` (or the "Ground with Tavily" button in the Assess tab, or the MCP `complete_action` tool). It stays modeled until grounded, and stays modeled again if Tavily returns nothing — same refusal rule as `brief`. `workersGroundingSummary()` (Workers AI, no external key) writes the one-sentence grounding summary; degrades to no summary (not a fabricated one) if the call fails.
 
 Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), waste kg, land/biodiversity flag.
 
@@ -140,12 +140,12 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Assessment UI | Assess table, inbox, L0–L5, stack, clerk | Hardware PO/freight writes not implemented |
 | Clerk AI agent | Workers AI (`@cf/moonshotai/kimi-k2.6`) with tools for complete_action, run_fleet, get_insights, list_receipts | Claude-powered — answers questions, files writes, explains refusals |
 | AIsa read | `GET /v1/aisa/balance` reads the real wallet balance (free, read-only) | M2M payment settlement is **not wired** — deliberate non-goal without a bounded, human-confirmed instruction |
-| Cotal-shaped handoffs | On-ledger; `cotal.yaml`; team live on the mesh (verified hack.cotal.ai/graph — `membership: live`, `meshaudit` agent on roster) | Worker-side `COTAL_WEBHOOK_URL` still unset — separate, optional path |
+| Cotal-shaped handoffs | On-ledger; `cotal.yaml`; **own `climatico` mesh live** — manager/delivery/NATS running, 8 agents on roster, 15 min uptime | Hack.cotal.ai event mesh **not joined** — same device-code auth blocker as before (no publish rights). Worker-side `COTAL_WEBHOOK_URL` also unset. Two separate meshes, one running. |
 | Seven classes with error bars | Table in UI + `GET /v1/workspace`; all seven can be grounded live (compute automatically, the other six via `assess` + `source`) | Grounding is on-request for six classes, not automatic — a class reverts to nothing new only if ungrounded, never fabricated |
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
 | Mitosis memory | `cortex_remember`/`cortex_recall` verified live (real `universal_id`, real office, write→recall round-trip confirmed 27 Aug) | It's agent memory for the team, not a Climatico API — no Worker code calls Mitosis |
 
-**Do not ship:** fake AIsa payment, fake Hacker Bob scan, fake GHG Protocol engine, fake Runtype deploy. (Mitosis memory and Nebius grounding are real now — see rows above, not a "do not ship.")
+**Do not ship:** fake AIsa payment, fake Hacker Bob scan, fake GHG Protocol engine, fake Runtype deploy. (Mitosis memory is real — see rows above, not a "do not ship." Nebius grounding was tried and dropped; grounding summaries run on Workers AI instead.)
 
 ---
 
@@ -177,7 +177,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Item | Kind | How Climatico treats it |
 | --- | --- | --- |
 | Runtype **$500** | Best use of Runtype | **In progress.** Real API key obtained; a real Secret, Tool (`file_climate_action`, actually calls our `/v1/actions`), and Agent (`claude-sonnet-5`) exist live on `api.runtype.com`, created via their own API, not the dashboard. The agent reasons correctly about calling the tool but the tool-calling link isn't firing yet (`toolId` resolves `null`) — not faked past. `/.well-known/agent-card.json` is generic A2A, not Runtype-specific. |
-| Cotal **$300** | Best use of Cotal | **Joined and live.** Verified at [hack.cotal.ai/graph](https://hack.cotal.ai/graph): team Climatico registered, `meshaudit` agent on the roster, `membership: live`, `feed: connected`. **No credits** — this is the best-use prize. David + Sven on site. |
+| Cotal **$300** | Best use of Cotal | **Own `climatico` mesh is live** (8 agents, manager/delivery/NATS running). Hack.cotal.ai event mesh **not joined** — device-code login didn't grant publish rights. Same blocker as before. David + Sven on site if prize eligibility depends on "hack" specifically. |
 | Sandbox VR | Experience, 1/track | Irrelevant to product |
 | HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
 | Hacker Bob | Scan every builder | Point at `/mcp` + `/v1/credentials`. Michalis judges. |
@@ -197,11 +197,11 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | --- | --- | --- |
 | Cloudflare | **Host, not sponsor.** Workers, DO, Agents SDK, MCP | **Yes** — the runtime |
 | Tavily | Sponsor | **Yes** — evidence |
-| Cotal | Organiser | Ledger handoffs **yes**; live mesh **yes** (verified joined, `meshaudit` on roster); Worker-side webhook still optional |
+| Cotal | Organiser | Own `climatico` mesh **yes** (live, 8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook still optional |
 | Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
 | AIsa | Real balance read only | **Partial** — `GET /v1/aisa/balance` is real; the M2M payment rail itself is **not** in the write path |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
-| Nebius | Token Factory LLM | **Yes** — `nebiusGroundingSummary()` writes a real grounded summary when a class is assessed |
+| Nebius | Token Factory LLM | **No** — grounding summaries moved to Workers AI (`workersGroundingSummary()`); no external Nebius key used |
 | Runtype | Agent → Capability → MCP Surface | **Partial** — real Agent/Tool/Secret created via their API, agent runs and reasons about the tool, tool-calling itself not firing yet |
 | Mitosis | Cortex memory (`cortex_remember`/`cortex_recall`) | **Partial** — real, verified round-trip (write + recall, real `universal_id`); it's the team's own agent-memory layer via MCP, not called from inside the Climatico Worker's write path |
 | Hacker Bob, HUD | Credits / prizes / booths | **No** until a real call exists |
@@ -225,7 +225,7 @@ Stack tab and inbox must keep this distinction. Decorative integrations fail the
 1. **Submit now** (`climatico/SUBMIT.md`) with `repo_url` `https://github.com/jin-dalrae/agent-natives-climatico`. Overwrite when `*.workers.dev` exists.  
 2. `npm run deploy` so a stranger agent has a domain.  
 3. Claim Tavily `26HACK` if not already in `.dev.vars`.  
-4. Cotal $300: **done** — team is live on the mesh (verified hack.cotal.ai/graph). If `meshaudit` shows idle at demo time, send a message to `#team.climatico` from the CLI to wake it up.  
+4. Cotal $300: **own `climatico` mesh live** (8 agents). Hack.cotal.ai event mesh still gated by device-code auth — find David or Sven at the booth if prize requires "hack" membership specifically.  
 5. Demo script a judge can run without us:  
    domain → `ai-agent.json` → mint → **Assess a spend spike** → inbox shows kg over budget + offset receipt → refresh still shows it.  
 6. Optional: Hacker Bob scan of `/mcp`.

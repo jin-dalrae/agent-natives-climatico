@@ -75,7 +75,6 @@ export type WorkspaceView = {
   runs: FleetRun[];
   tavilyKey: boolean;
   cotalWebhook: boolean;
-  nebiusKey: boolean;
   aisaConfigured: boolean;
   tenkiConfigured: boolean;
 };
@@ -262,12 +261,10 @@ export function buildWorkspace(input: {
   runs: FleetRun[];
   tavilyKey: boolean;
   cotalWebhook: boolean;
-  nebiusKey?: boolean;
   aisaConfigured?: boolean;
   tenkiConfigured?: boolean;
 }): WorkspaceView {
   const { dashboard, receipts, handoffs, runs, tavilyKey, cotalWebhook } = input;
-  const nebiusKey = Boolean(input.nebiusKey);
   const aisaConfigured = Boolean(input.aisaConfigured);
   const tenkiConfigured = Boolean(input.tenkiConfigured);
   const lastRun = runs[0] ?? null;
@@ -548,11 +545,9 @@ export function buildWorkspace(input: {
     {
       id: "nebius",
       name: "Nebius Token Factory",
-      role: "DeepSeek-V4-Flash · grounding summaries",
-      status: nebiusKey ? "live" : "booth",
-      insight: nebiusKey
-        ? "Connected · writes the grounded summary when a modeled class is assessed against live sources. Workers AI still runs the chat."
-        : "Workers AI is default. Nebius writes grounding summaries for assessed classes when configured.",
+      role: "GPU cloud · $75 Builder Program",
+      status: "booth",
+      insight: "Workers AI runs the Clerk and grounding summaries. No external key needed.",
       how: "nebius.builders",
       href: "https://studio.nebius.ai",
     },
@@ -587,7 +582,6 @@ export function buildWorkspace(input: {
     runs,
     tavilyKey,
     cotalWebhook,
-    nebiusKey,
     aisaConfigured,
     tenkiConfigured,
   };

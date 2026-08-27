@@ -33,11 +33,9 @@ function fromDeck(): boolean {
 function SponsorPills({
   tavilyKey,
   cotalWebhook,
-  nebiusKey,
 }: {
   tavilyKey?: boolean;
   cotalWebhook?: boolean;
-  nebiusKey?: boolean;
 }) {
   return (
     <div className="sponsor-matrix">
@@ -55,11 +53,6 @@ function SponsorPills({
         <span className="dot ok" />
         <strong>Cotal Mesh</strong>
         <span className="sub">#team.climatico</span>
-      </div>
-      <div className={`sponsor-badge ${nebiusKey ? "live" : "info"}`}>
-        <span className={`dot ${nebiusKey ? "ok" : "info"}`} />
-        <strong>Nebius AI</strong>
-        <span className="sub">{nebiusKey ? "Studio API (Llama 3.3 70B)" : "GPU Cloud"}</span>
       </div>
       <div className="sponsor-badge info">
         <span className="dot info" />
@@ -1232,7 +1225,6 @@ export function App() {
           <SponsorPills
             tavilyKey={ws?.tavilyKey}
             cotalWebhook={ws?.cotalWebhook}
-            nebiusKey={ws?.nebiusKey}
           />
           <p className="kicker">Climatico</p>
           <h1>{title[tab]}</h1>
