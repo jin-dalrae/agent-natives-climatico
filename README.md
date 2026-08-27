@@ -118,8 +118,9 @@ script, not separately-running services.
 | --- | --- | --- |
 | `/mcp` | AI agents (MCP protocol), 9 tools | **DONE** |
 | `/a2a` | AI agents (Agent-to-Agent protocol) | **DONE** |
-| `/v1/*` | Any program (REST API) | **DONE** |
+| `/v1/*` | Any program (REST API) — includes `/v1/report`, `/v1/agents/*`, `/v1/memory`, `/v1/dashboard` | **DONE** |
 | `/` (web page) | Humans — 9 tabs: Assess, Grow, Fleet Pipeline, Swarm, Ledger, Inbox, Clerk, Onboard, Stack | **DONE** |
+| `climatico.sh` | CLI — 15 commands from your terminal | **DONE** |
 
 All four read and write the **same** notebook: one Durable Object running SQLite
 on Cloudflare. That notebook survives restarts — nothing important is lost
@@ -143,12 +144,15 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Tavily web search on the write path (grounds briefs/audits; refuses if no evidence)
 - Clerk AI chat agent
 - Hackathon submission filed (can still be overwritten until Thursday 15:00)
-✅ **Orepath compute-watcher agent** — lives on a Durable Object alarm, files fleet runs every 15 min during working hours. `/v1/agents/orepath`
+- ✅ **Orepath compute-watcher agent** — DO alarm, files fleet runs every 15 min during working hours. `/v1/agents/orepath`
 - ✅ **3rd-party provider agent** — `green-offset-co` fulfills offsets, reviews receipts. `/v1/agents/provider`
 - ✅ **Scheduled fleet** — cron every 30 min runs ingest→audit→settle with random location/spend
 - ✅ **Abatement researcher** — Tavily search for real greener alternatives per emission class
 - ✅ **Report builder** — `/v1/report` compiles fleet runs + receipts + budget into plain-English summary
 - ✅ **Inbox analyst** — hotspot alerts and suggestions pushed to the workspace inbox automatically
+- ✅ **Cortex memory** — `cortex.ts` stores fleet run summaries, retrievable via `/v1/memory`. **Mitosis Cortex** wired into scheduler.
+- ✅ **Runtype enrichment** — `runtype.ts` wired into scheduler for audit/suggest/forecast
+- ✅ **CLI** — `climatico.sh` with 15 commands: discover, mint, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard
 - Cotal: **two meshes, one live.** Our own `climatico` mesh is genuinely joined
   and running — manager/delivery/NATS all up, 8 roster agents, 15+ min uptime.
   The hack.cotal.ai event mesh (tied to the $300 best-use prize) is **not joined**
@@ -235,14 +239,14 @@ We ship what runs and we say what we haven't.
 | Name | Role | Do we really use it? |
 | --- | --- | --- |
 | Cloudflare | **Host.** Runtime: Workers, Durable Objects, Workers AI, Agents SDK | YES — everything runs on it |
-| Tavily | Sponsor. Web search = evidence | YES — the write path |
+| Tavily | Sponsor. Web search = evidence + abatement research | YES — the write path + cron research |
 | AIsa | Sponsor. Machine payment rail | Partial — real balance read only; payment rail not wired |
 | Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
 | Cotal | Organiser. Agent mesh | Partial — own `climatico` mesh live (8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook unset |
+| Mitosis | Sponsor. Cortex agent memory | YES — `cortex.ts` wired into scheduler; fleet run summaries stored/recalled |
+| Runtype | Sponsor. Enrichment (audit/suggest/forecast) | Partial — `runtype.ts` wired into scheduler; tool-runtime egress blocks end-to-end |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
 | Nebius | Sponsor. GPU Cloud / $75 Builder Program | No — grounding summaries moved to Workers AI, no external key used |
-| Runtype | Sponsor. Agent → Capability → MCP Surface | Partial — real Agent/Tool/Secret live on their platform via API; capability → tool link works (tool fires), but Runtype's tool-runtime blocks outbound `fetch()` to the Worker, so no end-to-end receipt yet. Not competing for the $500 (track doesn't require it). |
-| Mitosis | Sponsor. Cortex agent memory | Partial — real, verified write/recall; team's own memory via MCP, not a Climatico API |
 | Hacker Bob, HUD | Credits / prizes / booths | No — not wired in, on purpose |
 
 The UI keeps this distinction visible so nothing *looks* wired in when it isn't.
@@ -276,6 +280,25 @@ npm run dev                      # http://127.0.0.1:8787
 ```
 
 `TAVILY_API_KEY` and `COTAL_WEBHOOK_URL` are optional. `AISA_API_KEY` is configured for a free wallet-balance read only — it does not enable payments.
+
+---
+
+## CLI
+
+```bash
+cd climatico
+./climatico.sh discover          # Agent discovery files
+./climatico.sh mint judge        # Mint a bearer token
+export CLIMATICO_TOKEN="<token>"
+./climatico.sh fleet SJC 420     # Ingest → audit → settle
+./climatico.sh report            # Plain-English progress report
+./climatico.sh refuse            # Test a forbidden claim
+./climatico.sh orepath           # Check Orepath agent status
+./climatico.sh agents-start      # Start auto-pilot (15 min cycles)
+./climatico.sh receipts          # Recent receipts
+./climatico.sh handoffs          # Recent handoff log
+./climatico.sh help              # Full command list
+```
 
 ---
 

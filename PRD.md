@@ -1,6 +1,6 @@
 # Climatico PRD
 
-**Version:** 0.3 · **Date:** 27 August 2026, ~01:30 PDT  
+**Version:** 0.4 · **Date:** 27 August 2026, ~13:30 PDT  
 **Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF  
 **Sources:** shipped Worker (`climatico/`), Agent Edition deck (`deck/climatico-agent-edition.html`), live watch (`http://127.0.0.1:8791/hackathon-watch.html` / Immersive Commons page poll 14:46 PDT)
 
@@ -143,9 +143,15 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Cotal-shaped handoffs | On-ledger; `cotal.yaml`; **own `climatico` mesh live** — manager/delivery/NATS running, 8 agents on roster, 15 min uptime | Hack.cotal.ai event mesh **not joined** — same device-code auth blocker as before (no publish rights). Worker-side `COTAL_WEBHOOK_URL` also unset. Two separate meshes, one running. |
 | Seven classes with error bars | Table in UI + `GET /v1/workspace`; all seven can be grounded live (compute automatically, the other six via `assess` + `source`) | Grounding is on-request for six classes, not automatic — a class reverts to nothing new only if ungrounded, never fabricated |
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
-| Mitosis memory | `cortex_remember`/`cortex_recall` verified live (real `universal_id`, real office, write→recall round-trip confirmed 27 Aug) | It's agent memory for the team, not a Climatico API — no Worker code calls Mitosis |
+| Mitosis Cortex memory | `cortex.ts` — `cortexRemember()`/`cortexRecall()` wired into the scheduler; fleet run summaries stored and retrievable via `/v1/memory` | Not called inside the write path — enrichment layer |
+| Runtype enrichment | `runtype.ts` — audit/suggest/forecast via Runtype platform, wired into scheduler | Best-effort enrichment; tool-runtime egress still blocks end-to-end |
+| CLI | `climatico.sh` — 15 commands: discover, mint, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start/stop | No auth token persistence (must `export` after mint) |
+| Orepath compute-watcher agent | Durable Object alarm — files fleet runs autonomously every 15 min during working hours. `/v1/agents/orepath` | Single compute-spike pattern; no freight/PO agent |
+| 3rd-party provider agent | DO callable — `green-offset-co` fulfills offsets, reviews receipts, earns revenue. `/v1/agents/provider` | Demo persona, not a real offset provider |
+| Proactive scheduler | Cron `*/30 * * * *` — random fleet run + Tavily abatement research + Runtype analysis + Cortex memory store + provider fulfillment | Runs every 30 min regardless of actual spend events |
+| Report endpoint | `GET /v1/report` — compiles fleet runs + receipts + budget into plain-English summary with suggestions | Static model values (37.7 t total) — not dynamically recalculated |
 
-**Do not ship:** fake AIsa payment, fake Hacker Bob scan, fake GHG Protocol engine, fake Runtype deploy. (Mitosis memory is real — see rows above, not a "do not ship." Nebius grounding was tried and dropped; grounding summaries run on Workers AI instead.)
+**Do not ship:** fake AIsa payment, fake Hacker Bob scan, fake GHG Protocol engine.
 
 ---
 
@@ -166,7 +172,22 @@ Any agent
 **Reads:** `discover_climatico`, `get_policy`, `whoami`, `get_receipt`, `list_receipts`, `list_handoffs`, `get_insights`  
 **Human UI:** `/` — Assess, Inbox, Agent, Onboard, Stack. Inbox text = `GET /v1/workspace` = clerk `get_insights`. Clerk AI agent (Claude via Workers AI) answers questions and files writes.
 
-**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, AIsa wallet balance readable, Tenki sandbox ready, next actions.
+**Agent endpoints:**
+| Endpoint | What | Auth |
+| --- | --- | --- |
+| `GET /v1/report` | Plain-English progress report (fleet runs, commits, refusals, suggestions) | Public |
+| `GET /v1/agents/orepath` | Orepath compute-watcher status | Public |
+| `POST /v1/agents/orepath/start` | Start the Orepath agent (DO alarm, 15 min cycle) | Public |
+| `POST /v1/agents/orepath/stop` | Stop the Orepath agent | Public |
+| `GET /v1/agents/provider` | 3rd-party provider discovery (services) | Public |
+| `GET /v1/agents/provider/status` | Provider contracts + revenue | Public |
+| `POST /v1/memory` | Store a memory in Cortex | Bearer |
+| `GET /v1/memory?namespace=` | Recall memories from Cortex | Bearer |
+| `GET /v1/dashboard` | Committed/refused/watches/fleetRuns counters | Public |
+
+**CLI:** `climatico/climatico.sh` — discover, mint, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start, agents-stop, dashboard.
+
+**Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, AIsa wallet balance readable, Tenki sandbox ready, hotspot alerts from scheduler, abatement suggestions, next actions.
 
 ---
 
@@ -176,7 +197,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 
 | Item | Kind | How Climatico treats it |
 | --- | --- | --- |
-| Runtype **$500** | Best use of Runtype | **Not competing.** Nate confirmed on site (12:44 PDT) that Runtype track does not require building on their platform. API key obtained, real Secret/Tool/Agent created on api.runtype.com but tool-calling never resolved. [persona-chat.dev](https://persona-chat.dev) presented as a reference. |
+| Runtype **$500** | Best use of Runtype | **Not competing.** Nate confirmed the track doesn't require building on Runtype. `runtype.ts` wired into scheduler for enrichment (audit/suggest/forecast); tool-runtime egress blocks end-to-end. [persona-chat.dev](https://persona-chat.dev) is the reference implementation. |
 | Cotal **$300** | Best use of Cotal | **Own `climatico` mesh is live** (8 agents, manager/delivery/NATS running). Hack.cotal.ai event mesh **not joined** — device-code login didn't grant publish rights. Same blocker as before. David + Sven on site if prize eligibility depends on "hack" specifically. |
 | Sandbox VR | Experience, 1/track | Irrelevant to product |
 | HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
@@ -196,14 +217,14 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Name | Role in the room | In the write path? |
 | --- | --- | --- |
 | Cloudflare | **Host, not sponsor.** Workers, DO, Agents SDK, MCP | **Yes** — the runtime |
-| Tavily | Sponsor | **Yes** — evidence |
+| Tavily | Sponsor | **Yes** — evidence + abatement research |
 | Cotal | Organiser | Own `climatico` mesh **yes** (live, 8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook still optional |
 | Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
 | AIsa | Real balance read only | **Partial** — `GET /v1/aisa/balance` is real; the M2M payment rail itself is **not** in the write path |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
-| Nebius | Token Factory LLM | **No** — grounding summaries moved to Workers AI (`workersGroundingSummary()`); no external Nebius key used |
-| Runtype | Agent → Capability → MCP Surface | **Not competing.** Nate confirmed track doesn't require building on Runtype. Tooling experimented with but never resolved. [persona-chat.dev](https://persona-chat.dev) shown as reference. |
-| Mitosis | Cortex memory (`cortex_remember`/`cortex_recall`) | **Partial** — real, verified round-trip (write + recall, real `universal_id`); it's the team's own agent-memory layer via MCP, not called from inside the Climatico Worker's write path |
+| Mitosis | Cortex agent memory | **Yes** — `cortex.ts` wired into scheduler; fleet run summaries stored and recalled via `/v1/memory` |
+| Runtype | Enrichment (audit/suggest/forecast) | **Partial** — `runtype.ts` wired into scheduler; tool-runtime egress blocks end-to-end |
+| Nebius | GPU Cloud / $75 Builder Program | **No** — grounding summaries moved to Workers AI; no external Nebius key used |
 | Hacker Bob, HUD | Credits / prizes / booths | **No** until a real call exists |
 
 Stack tab and inbox must keep this distinction. Decorative integrations fail the deck’s own guardrail: “Nothing is stubbed to look busy.”
@@ -216,19 +237,24 @@ Stack tab and inbox must keep this distinction. Decorative integrations fail the
 - Handprint / net-zero marketing claims  
 - Multi-tenant SaaS, document upload of BOMs  
 - Overnight jobs (venue forbids overnight; DO hibernation is the stand-in)  
-- Building **on** Runtype unless we actually do — Nate confirmed track doesn't require it  
+- Building **on** Runtype — Nate confirmed the track doesn't require it. (`runtype.ts` is enrichment only)
 
 ---
 
 ## 9. Day-two sequence
 
-1. **Submit now** (`climatico/SUBMIT.md`) with `repo_url` `https://github.com/jin-dalrae/agent-natives-climatico`. Overwrite when `*.workers.dev` exists.  
-2. `npm run deploy` so a stranger agent has a domain.  
-3. Claim Tavily `26HACK` if not already in `.dev.vars`.  
-4. Cotal $300: **own `climatico` mesh live** (8 agents). Hack.cotal.ai event mesh still gated by device-code auth — find David or Sven at the booth if prize requires "hack" membership specifically.  
-5. Demo script a judge can run without us:  
-   domain → `ai-agent.json` → mint → **Assess a spend spike** → inbox shows kg over budget + offset receipt → refresh still shows it.  
-6. Optional: Hacker Bob scan of `/mcp`.
+1. **Submit** — filed and overwritable until lock.  
+2. `npm run deploy` — current version deployed to `workers.dev`.  
+3. **Tavily `26HACK`** — claimed and live on the write path.  
+4. **Cotal $300** — own `climatico` mesh live (8 agents). Hack.cotal.ai event mesh gated by device-code auth — find David or Sven if prize requires "hack" membership.  
+5. **Demo script** a judge can run without us:  
+   - `climatico/climatico.sh discover` → agent discovery files  
+   - `climatico/climatico.sh mint judge` → bearer token  
+   - `climatico/climatico.sh fleet SJC 420` → ingest→audit→settle  
+   - Open browser: inbox shows kg over budget + offset receipt  
+   - `climatico/climatico.sh refuse` → greenwash refused + stored  
+   - Refresh page: receipt still there (DO persistence)  
+6. **Optional:** Hacker Bob scan of `/mcp`, `POST /v1/agents/orepath/start` for live Orepath agent.
 
 ---
 
