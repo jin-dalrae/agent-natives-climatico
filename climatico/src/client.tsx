@@ -7,12 +7,13 @@ import { OREPATH, OREPATH_GROWTH } from "./insights";
 import type { FleetRun, Handoff, Receipt } from "./types";
 import "./styles.css";
 
-type Tab = "assess" | "grow" | "pipeline" | "swarm" | "ledger" | "inbox" | "agent" | "onboard" | "stack";
+type Tab = "assess" | "grow" | "pipeline" | "swarm" | "impact" | "ledger" | "inbox" | "agent" | "onboard" | "stack";
 const TABS: { id: Tab; label: string }[] = [
   { id: "assess", label: "Assess" },
   { id: "grow", label: "Grow" },
   { id: "pipeline", label: "Fleet Pipeline" },
   { id: "swarm", label: "3-Sided Swarm" },
+  { id: "impact", label: "Impact & Abate" },
   { id: "ledger", label: "Ledger & Receipts" },
   { id: "inbox", label: "Inbox" },
   { id: "agent", label: "Agent Clerk" },
@@ -1165,6 +1166,7 @@ export function App() {
     grow: "Growth vs. footprint",
     pipeline: "Fleet: ingest, audit, settle",
     swarm: "Who's talking to whom",
+    impact: "Impact & abatement — the modeled cascade and the same business, run differently",
     ledger: "Receipts & refusals",
     inbox: "Inbox",
     agent: "Ask the clerk",
@@ -1397,6 +1399,88 @@ export function App() {
             buyerAudit={buyerAudit}
             busy={busy}
           />
+        ) : null}
+
+        {tab === "impact" ? (
+          <section className="card">
+            <span className="kicker">Impact & abatement · modeled, not measured</span>
+            <h3>The cascade — and the same business, run differently</h3>
+            <p className="lede">
+              CO₂e is the modeled core. Water, air pollution and e-waste are upstream knock-ons, named
+              but not scored — Climatico refuses to print a number it can't back. Each row is a business
+              source an agent already touches (a PO, a booking, a port). File an abatement plan with
+              <span className="inline"> intent: abate</span> to record the alternative + modeled projection.
+            </p>
+            <div className="metrics">
+              <div className="metric">
+                <div className="k">Today (modeled)</div>
+                <div className="v">{ws?.abatement?.nowT ?? "—"} t</div>
+              </div>
+              <div className="metric">
+                <div className="k">+24m abating</div>
+                <div className="v">{ws?.abatement?.quarters?.[4]?.climaT ?? "—"} t</div>
+              </div>
+              <div className="metric">
+                <div className="k">+24m if nothing changes</div>
+                <div className="v">{ws?.abatement?.quarters?.[4]?.defaultT ?? "—"} t</div>
+              </div>
+              <div className="metric">
+                <div className="k">Abate plans filed</div>
+                <div className="v">{ws?.abatementPlans ?? 0}</div>
+              </div>
+            </div>
+            <table className="dataTable">
+              <thead>
+                <tr>
+                  <th>Business source</th>
+                  <th>Impact (t CO₂e/yr)</th>
+                  <th>Upstream knock-ons</th>
+                  <th>Same business, differently</th>
+                  <th>Abatement lever</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {(ws?.impact ?? []).map((row) => (
+                  <tr key={row.id}>
+                    <td>
+                      <strong>{row.name}</strong>
+                      <div className="sub">{row.scope}</div>
+                    </td>
+                    <td>
+                      {row.modeledT} t <small>±{row.uncertaintyPct}%</small>
+                    </td>
+                    <td>{row.upstream}</td>
+                    <td>{row.alternative}</td>
+                    <td>{row.lever}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="ghost"
+                        disabled={busy}
+                        onClick={() =>
+                          void write("/v1/actions", {
+                            intent: "abate",
+                            location,
+                            source: row.id,
+                            note: row.alternative,
+                          })
+                        }
+                      >
+                        File abatement
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="sub" style={{ marginTop: 10 }}>
+              AIsa{" "}
+              {ws?.aisaConfigured
+                ? "configured — offsets settle through the AIsa machine-payment rail when used."
+                : "is the machine-payment rail (M2M). Not collected here yet — offsets settle on our ledger. No fake call."}
+            </p>
+          </section>
         ) : null}
 
         {tab === "ledger" ? <LedgerView receipts={ws?.receipts ?? []} /> : null}

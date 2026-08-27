@@ -20,7 +20,7 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     return {
       allow: false,
       code: "intent_required",
-      reason: "Climatico only commits named climate actions: brief, watch, offset, or assess.",
+      reason: "Climatico only commits named climate actions: brief, watch, offset, assess, or abate.",
     };
   }
 
@@ -36,7 +36,7 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     return {
       allow: false,
       code: "unknown_intent",
-      reason: `Unknown intent '${intent}'. Allowed writes: brief, watch, offset, assess.`,
+      reason: `Unknown intent '${intent}'. Allowed writes: brief, watch, offset, assess, abate.`,
     };
   }
 

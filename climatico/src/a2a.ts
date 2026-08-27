@@ -51,6 +51,7 @@ export async function handleA2A(
         intent: String(dataPart.intent ?? ""),
         location: String(dataPart.location ?? ""),
         amountCents: typeof dataPart.amountCents === "number" ? dataPart.amountCents : undefined,
+        source: typeof dataPart.source === "string" ? dataPart.source : undefined,
         note: typeof dataPart.note === "string" ? dataPart.note : text,
       }
     : parseText(text);
@@ -75,21 +76,23 @@ function parseText(text: string): {
   intent: string;
   location: string;
   amountCents?: number;
+  source?: string;
   note?: string;
 } {
   const lower = text.toLowerCase();
   let intent = "brief";
   if (/\boffset\b/.test(lower)) intent = "offset";
+  else if (/\babate\b/.test(lower)) intent = "abate";
   else if (/\bwatch\b/.test(lower)) intent = "watch";
   else if (/\bassess\b/.test(lower)) intent = "assess";
   else if (/\bbrief\b/.test(lower)) intent = "brief";
-
+  const sourceMatch = text.match(/\b(logistics|compute|electricity|travel|hardware|saas|direct)\b/i);
   const amountMatch = text.match(/\$(\d+(?:\.\d{1,2})?)/);
   const amountCents = amountMatch ? Math.round(Number(amountMatch[1]) * 100) : undefined;
   const locationMatch =
     text.match(/\b(?:for|on|in|at)\s+(.+)$/i) || text.match(/\b([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)?)\b/);
   const location = locationMatch?.[1]?.replace(/[.?!]$/, "").trim() ?? "";
-  return { intent, location, amountCents, note: text };
+  return { intent, location, amountCents, source: sourceMatch?.[1].toLowerCase(), note: text };
 }
 
 function rpcResult(id: string | number | null, result: unknown) {

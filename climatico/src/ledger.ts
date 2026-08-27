@@ -230,6 +230,7 @@ export class Ledger extends Agent<Env, LedgerState> {
       tavilyKey: Boolean((this.env as Env & { TAVILY_API_KEY?: string }).TAVILY_API_KEY),
       cotalWebhook: Boolean((this.env as Env & { COTAL_WEBHOOK_URL?: string }).COTAL_WEBHOOK_URL),
       nebiusKey: Boolean((this.env as Env & { NEBIUS_API_KEY?: string }).NEBIUS_API_KEY),
+      aisaConfigured: Boolean((this.env as Env & { AISA_API_KEY?: string }).AISA_API_KEY?.trim()),
     });
   }
 
@@ -286,7 +287,7 @@ export class Ledger extends Agent<Env, LedgerState> {
   policyDoc() {
     return {
       product: "Climatico",
-      writes: ["brief", "watch", "offset", "assess", "fleet.run"],
+      writes: ["brief", "watch", "offset", "assess", "abate", "fleet.run"],
       refuses: [
         "payout",
         "wire_transfer",

@@ -1,4 +1,5 @@
 import type { Dashboard, FleetRun, Handoff, Receipt } from "./types";
+import { IMPACT_ROWS, ABATEMENT, type ImpactRow, type Abatement } from "./impact";
 
 export type EmissionClass = {
   id: string;
@@ -62,6 +63,9 @@ export type WorkspaceView = {
   dashboard: Dashboard;
   maturity: MaturityStep[];
   classes: EmissionClass[];
+  impact: ImpactRow[];
+  abatement: Abatement;
+  abatementPlans: number;
   inbox: InboxMessage[];
   sponsors: SponsorLink[];
   next: string[];
@@ -72,6 +76,7 @@ export type WorkspaceView = {
   tavilyKey: boolean;
   cotalWebhook: boolean;
   nebiusKey: boolean;
+  aisaConfigured: boolean;
 };
 
 /** One user. Logistics is the agentic interface; compute is the write we can file today. */
@@ -257,9 +262,11 @@ export function buildWorkspace(input: {
   tavilyKey: boolean;
   cotalWebhook: boolean;
   nebiusKey?: boolean;
+  aisaConfigured?: boolean;
 }): WorkspaceView {
   const { dashboard, receipts, handoffs, runs, tavilyKey, cotalWebhook } = input;
   const nebiusKey = Boolean(input.nebiusKey);
+  const aisaConfigured = Boolean(input.aisaConfigured);
   const lastRun = runs[0] ?? null;
   const lastCompute = lastRun?.audit?.kgCO2e ?? null;
 
@@ -546,6 +553,9 @@ export function buildWorkspace(input: {
     dashboard,
     maturity,
     classes,
+    impact: IMPACT_ROWS,
+    abatement: ABATEMENT,
+    abatementPlans: receipts.filter((r) => r.intent === "abate" && r.status === "committed").length,
     inbox,
     sponsors,
     next,
@@ -556,5 +566,6 @@ export function buildWorkspace(input: {
     tavilyKey,
     cotalWebhook,
     nebiusKey,
+    aisaConfigured,
   };
 }

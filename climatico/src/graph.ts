@@ -1,6 +1,7 @@
 import type { ActionInput, EvidenceItem, Principal, Receipt } from "./types";
 import { evaluatePolicy } from "./policy";
 import { gatherEvidence } from "./tavily";
+import { impactForSource, ABATEMENT } from "./impact";
 
 export type GraphContext = {
   env: Env;
@@ -61,6 +62,17 @@ export async function runActionGraph(
   } else if (intent === "offset" || intent === "watch") {
     const gathered = await gatherEvidence(ctx.env, location as string, intent);
     evidence = gathered.evidence;
+  } else if (intent === "abate") {
+    const row = impactForSource(input.source);
+    const alt = (input.note ?? "").trim() || row.alternative;
+    evidence = [
+      {
+        title: `Modeled abatement plan · ${row.name}`,
+        url: "ledger://abatement/modeled",
+        snippet: `Run the same business differently on ${row.name} (${row.modeledT} t ±${row.uncertaintyPct}%): ${alt}. ${row.upstream}. Modeled projection — not a measured cut. Baseline ${ABATEMENT.nowT} t → ${ABATEMENT.quarters[ABATEMENT.quarters.length - 1].climaT} t by +24m vs ${ABATEMENT.quarters[ABATEMENT.quarters.length - 1].defaultT} t if nothing changes (−${ABATEMENT.reductionT} t, ${ABATEMENT.reductionPct}%).`,
+      },
+    ];
+    if (!base.note) base.note = alt;
   }
 
   return {

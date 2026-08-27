@@ -142,6 +142,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       intent?: string;
       location?: string;
       amountCents?: number;
+      source?: string;
       note?: string;
       idempotencyKey?: string;
     }>(request)) ?? {};
@@ -151,6 +152,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
         intent: body.intent ?? "",
         location: body.location,
         amountCents: body.amountCents,
+        source: body.source,
         note: body.note,
         idempotencyKey: body.idempotencyKey,
       },

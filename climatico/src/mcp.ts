@@ -52,18 +52,22 @@ export function mcpHandler(env: Env, principal: Principal) {
         "complete_action",
         {
           description:
-            "Commit a climate action. This is a write. Allowed intents: brief, watch, offset, assess. Requires location. offset also requires amountCents. Refusals persist as receipts.",
+            "Commit a climate action. Allowed intents: brief, watch, offset, assess, abate. Requires location. offset also requires amountCents. abate records a modeled abatement plan for a business source. Refusals persist as receipts.",
           inputSchema: {
             intent: z
               .string()
-              .describe("brief | watch | offset | assess. Other values are refused, not guessed."),
+              .describe("brief | watch | offset | assess | abate. Other values are refused, not guessed."),
             location: z.string().describe("City, site name, or lat,lon."),
+            source: z
+              .string()
+              .optional()
+              .describe("Business source for abate: compute | logistics | electricity | travel | hardware | saas | direct."),
             amountCents: z
               .number()
               .int()
               .optional()
               .describe("Required for offset. Ceiling is the token's maxAmountCents."),
-            note: z.string().optional().describe("Free-text context from the calling agent."),
+            note: z.string().optional().describe("Free-text context from the calling agent (for abate: the alternative chosen)."),
             idempotencyKey: z
               .string()
               .optional()
@@ -98,6 +102,33 @@ export function mcpHandler(env: Env, principal: Principal) {
             refused: receipt.status === "refused",
             receipt,
           });
+        },
+      );
+
+      server.registerTool(
+        "plan_abatement",
+        {
+          description:
+            "File a modeled abatement plan against a business source (compute, logistics, electricity, travel, hardware, saas, direct). Returns the modeled impact today, the alternative way to run the same business, and the projected +12m/+24m reduction. Requires climatico:transact. The reduction is a labeled MODELED projection, not a measured cut.",
+          inputSchema: {
+            location: z.string().describe("City, site name, or lat,lon."),
+            source: z
+              .string()
+              .optional()
+              .describe("compute | logistics | electricity | travel | hardware | saas | direct. Default compute."),
+            note: z.string().optional().describe("The alternative chosen for this source."),
+          },
+        },
+        async (args) => {
+          if (!hasScope(principal, "climatico:transact")) {
+            return text({ ok: false, refused: true, code: "missing_scope" }, true);
+          }
+          const ledger = await getLedger(env);
+          const receipt = await ledger.runAction(
+            { intent: "abate", location: args.location, source: args.source, note: args.note },
+            principal,
+          );
+          return text({ ok: receipt.status === "committed", refused: receipt.status === "refused", receipt });
         },
       );
 
