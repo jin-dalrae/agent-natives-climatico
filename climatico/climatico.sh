@@ -227,51 +227,172 @@ print(f\"Fleet runs: {d.get('fleetRuns',0)}  Last receipt: {d.get('lastReceiptId
     echo "Stopping Orepath employee agent..."
     curl -sS -X POST "$BASE/v1/agents/orepath/stop" | python3 -m json.tool
     ;;
-  help|*)
-    echo "Climatico — CLI for the climate action desk"
-    echo "Base URL: $BASE"
-    echo
-    echo "Usage: $0 <command> [args]"
-    echo
-    echo "Discovery:"
-    echo "  discover              Show agent discovery files"
-    echo
-    echo "Auth:"
-    echo "  mint [subject]        Mint a token (default: cli-user)"
-    echo "  whoami <token>        Check what a token can do"
-    echo
-    echo "Actions:"
-    echo "  fleet <loc> <$>       Ingest → audit → settle a spend spike"
-    echo "  offset <loc> <¢>      Commit an offset payment"
-    echo "  brief <loc>           File a climate brief with real sources"
-    echo "  watch <loc>           Watch a location (survives restart)"
-    echo "  refuse <loc>          Test a forbidden claim (gets refused + stored)"
-    echo
-    echo "Reports:"
-    echo "  report                Progress report from the scheduler"
-    echo "  receipts [n]          Recent receipts (default: 5)"
-    echo "  handoffs [n]          Recent handoff log entries"
-    echo "  dashboard             Dashboard summary"
-    echo
-    echo "Agents:"
-    echo "  orepath               Orepath employee agent status"
-    echo "  provider              3rd-party provider agent status"
-    echo "  agents-start          Start the Orepath agent (auto-runs every 15min)"
-    echo "  agents-stop           Stop the Orepath agent"
-    echo "  memory [ns]           Read Cortex memory"
-    echo
-    echo "Environment:"
-    echo "  CLIMATICO_URL         API base (default: $BASE)"
-    echo "  CLIMATICO_TOKEN       Bearer token (set after 'mint')"
-    echo
-    echo "Quick demo:"
-    echo "  ./climatico.sh discover"
-    echo "  ./climatico.sh mint judge"
-    echo "  export CLIMATICO_TOKEN=\"<token>\""
-    echo "  ./climatico.sh fleet SJC 420"
-    echo "  ./climatico.sh report"
-    echo "  ./climatico.sh refuse"
-    echo "  ./climatico.sh receipts"
-    echo "  ./climatico.sh agents-start"
+  help)
+    cat <<'EOF'
+Climatico — CLI for the climate action desk
+Base URL: $BASE
+
+Usage: $0 <command> [args]
+
+Onboarding:
+  connect <folder>    Scan a folder, ingest signals, auto-assess your footprint
+  status              Show connected folders and their assessments
+
+Discovery:
+  discover            Show agent discovery files
+
+Auth:
+  mint [subject]      Mint a token (default: cli-user)
+  whoami <token>      Check what a token can do
+
+Actions:
+  fleet <loc> <$>     Ingest → audit → settle a spend spike
+  offset <loc> <¢>    Commit an offset payment
+  brief <loc>         File a climate brief with real sources
+  watch <loc>         Watch a location (survives restart)
+  refuse <loc>        Test a forbidden claim (gets refused + stored)
+
+Reports:
+  report              Progress report from the scheduler
+  receipts [n]        Recent receipts (default: 5)
+  handoffs [n]        Recent handoff log entries
+  dashboard           Dashboard summary
+
+Agents:
+  orepath             Orepath employee agent status
+  provider            3rd-party provider agent status
+  agents-start        Start the Orepath agent (auto-runs every 15min)
+  agents-stop         Stop the Orepath agent
+  memory [ns]         Read Cortex memory
+
+Environment:
+  CLIMATICO_URL       API base (default: $BASE)
+  CLIMATICO_TOKEN     Bearer token (set after 'mint')
+
+Quick demo:
+  ./climatico.sh discover
+  ./climatico.sh mint judge
+  export CLIMATICO_TOKEN="<token>"
+  ./climatico.sh fleet SJC 420
+  ./climatico.sh report
+  ./climatico.sh refuse
+  ./climatico.sh receipts
+  ./climatico.sh agents-start
+
+Onboarding flow:
+  ./climatico.sh connect ~/my-startup
+  ./climatico.sh status
+EOF
     ;;
-esac
+
+  connect)
+    folder="${1:-.}"
+    if [ ! -d "$folder" ]; then
+      echo "Folder not found: $folder"
+      exit 1
+    fi
+    [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
+
+    echo "Scanning $folder for climate-impact signals..."
+    signals_json="["
+    first=1
+    file_count=0
+
+    if [ -f "$folder/package.json" ]; then
+      file_count=$((file_count+1))
+      cloud=$(python3 -c "import json; p=json.load(open('$folder/package.json')); d={**p.get('dependencies',{}), **p.get('devDependencies',{})}; cl=[k for k in ['@aws-sdk','aws-sdk','@google-cloud','@azure','wrangler','firebase','@supabase'] if any(k==i or i.startswith(k) for i in d)]; print((cl[0] if cl else 'node'), ('cloud' if cl else 'unknown'))" 2>/dev/null)
+      provider=$(echo "$cloud" | awk '{print $1}')
+      is_cloud=$(echo "$cloud" | awk '{print $2}')
+      [ "$is_cloud" = "cloud" ] && {
+        if [ $first -eq 0 ]; then signals_json+=","; fi
+        first=0
+        signals_json+="{\"kind\":\"cloud\",\"class\":\"compute\",\"evidence\":\"$provider\",\"confidence\":0.8}"
+        echo "  + compute · $provider (package.json)"
+      }
+    fi
+
+    if [ -f "$folder/wrangler.toml" ] || [ -f "$folder/wrangler.jsonc" ]; then
+      file_count=$((file_count+1))
+      if [ $first -eq 0 ]; then signals_json+=","; fi
+      first=0
+      signals_json+="{\"kind\":\"cloud\",\"class\":\"compute\",\"evidence\":\"Cloudflare Workers\",\"confidence\":0.9}"
+      echo "  + compute · Cloudflare Workers (wrangler config)"
+    fi
+
+    if [ -f "$folder/package.json" ]; then
+      for vendor in $(python3 -c "import json; p=json.load(open('$folder/package.json')); d={**p.get('dependencies',{}), **p.get('devDependencies',{})}; print(' '.join([k for k in ['stripe','twilio','sendgrid','datadog','sentry','slack','notion','linear','vercel','netlify','planetscale','mongodb','snowflake','databricks','algolia','segment','amplitude','mixpanel','hubspot','intercom','zendesk','mailgun','postmark'] if any(k==i or i.startswith(k+'/') for i in d)]))" 2>/dev/null); do
+        if [ $first -eq 0 ]; then signals_json+=","; fi
+        first=0
+        signals_json+="{\"kind\":\"vendor\",\"class\":\"saas\",\"evidence\":\"$vendor\",\"confidence\":0.75}"
+        echo "  + saas · $vendor (package.json)"
+      done
+    fi
+
+    if [ -f "$folder/README.md" ]; then
+      for kw in "shipping" "freight" "logistics" "warehouse" "fulfillment" "port" "ocean" "trucking"; do
+        if grep -qi "$kw" "$folder/README.md" 2>/dev/null; then
+          if [ $first -eq 0 ]; then signals_json+=","; fi
+          first=0
+          signals_json+="{\"kind\":\"logistics\",\"class\":\"logistics\",\"evidence\":\"README mentions $kw\",\"confidence\":0.5}"
+          echo "  + logistics · README mentions $kw"
+          break
+        fi
+      done
+    fi
+
+    [ $first -eq 1 ] && signals_json+="{\"kind\":\"office\",\"class\":\"direct\",\"evidence\":\"no infra signals detected\",\"confidence\":0.3}"
+    signals_json+="]"
+
+    abs_path=$(cd "$folder" 2>/dev/null && pwd || echo "$folder")
+    echo ""
+    echo "→ $file_count files scanned"
+    echo "→ Sending to Climatico for auto-assessment..."
+
+    body="{\"path\":\"$abs_path\",\"signals\":$signals_json}"
+    res=$(curl -sS -X POST "$BASE/v1/connect" \
+      -H 'content-type: application/json' \
+      -H "authorization: Bearer $TOKEN" \
+      -d "$body")
+    echo ""
+    echo "=== Auto-assessment ==="
+    echo "$res" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+if 'error' in d:
+    print('Error:', d['error'])
+    sys.exit(1)
+print(f'Connection: {d[\"id\"][:8]} · {d[\"signals\"]} signals · {d[\"path\"]}')
+print()
+for a in d.get('assessments',[]):
+    status_icon = '🟢' if a['status']=='live' else '⚪' if a['status']=='modeled' else '🔴'
+    note = a.get('liveNote','')
+    print(f'  {status_icon} {a[\"classId\"]:12s} [{a[\"status\"]:8s}] {a[\"evidence\"]} source(s) · {note[:80]}')
+print()
+print('Background agents now watching:')
+print('  • Scheduler — runs fleet + research every 30 min')
+print('  • Orepath agent — autonomous compute-spend monitoring')
+print('  • Inbox analyst — pushes suggestions as they emerge')
+print('  • Provider — can fulfill any committed offset')
+"
+    echo ""
+    echo "Next: ./climatico.sh status | ./climatico.sh fleet SJC 420 | ./climatico.sh report"
+    ;;
+  status)
+    [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
+    echo "=== Connected folders ==="
+    api GET /v1/connections | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+for c in d.get('connections',[]):
+    print(f'  {c[\"id\"][:8]}  {c[\"path\"]}')
+    print(f'    status: {c[\"status\"]} · {len(c.get(\"signals\",[]))} signals')
+    for a in c.get('assessments',[]) or []:
+        status_icon = '🟢' if a['status']=='live' else '⚪' if a['status']=='modeled' else '🔴'
+        print(f'    {status_icon} {a[\"classId\"]:12s} [{a[\"status\"]}] {a[\"evidence\"]} src')
+    print()
+if not d.get('connections'):
+    print('  (none) — run: ./climatico.sh connect ~/my-startup')
+"
+    ;;
+
+  discover)esac

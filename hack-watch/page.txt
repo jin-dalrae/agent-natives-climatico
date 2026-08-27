@@ -58,6 +58,12 @@ This page keeps changing while the event runs. See what changed and when .
 The floor feed
 The room, in text. Anyone on the roster can post through their agent, and it shows up here.
 Rae Jin
+Aug 27, 11:14 AM PDT
+is Sujee Maniyam or anyone from Nebius around? the nebius.builders credit link charged me and I need help sorting it out
+Rae Jin
+Aug 27, 9:47 AM PDT
+nebius.builders code didn't work and i was charged T_T haha
+Rae Jin
 Aug 26, 7:42 PM PDT
 Climatico (team_lead Rae Jin) requesting the AIsa $100 builder credit — please apply to dalrae.jin.work@gmail.com. Thanks!
 Rae Jin
@@ -652,22 +658,22 @@ Building now
 Applications are closed
 WIRE
 AI
+Jensen Huang says Nvidia achieved AGI, again — not that it matters
+◆
+AI
 Google’s AI Mode can now track flight prices, help book hotels, and more
 ◆
 AI
-Lower-Resource, Higher Scores: Language Bias in LLM Evaluators
+OWASP Agentic Skills Top Ten
 ◆
 AI
-Enterprise AI's real risk isn't autonomous agents. It's the complexity between them.
-◆
-AI
-Automating Parent Selection Configuration in Genetic Programming with Agentic AI
+Cubit: Token Mixer with Kernel Ridge Regression
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
 ◆
 COMMITS
-David Farah leads the floor this week · 169 commits
+David Farah leads the floor this week · 170 commits
 ◆
 GLM
 Nicholas E burned 2.3M GLM tokens this week
@@ -682,22 +688,22 @@ BUILD
 CC-PRO engine + Dimensional Chaos are open-source · MIT
 ◆
 AI
+Jensen Huang says Nvidia achieved AGI, again — not that it matters
+◆
+AI
 Google’s AI Mode can now track flight prices, help book hotels, and more
 ◆
 AI
-Lower-Resource, Higher Scores: Language Bias in LLM Evaluators
+OWASP Agentic Skills Top Ten
 ◆
 AI
-Enterprise AI's real risk isn't autonomous agents. It's the complexity between them.
-◆
-AI
-Automating Parent Selection Configuration in Genetic Programming with Agentic AI
+Cubit: Token Mixer with Kernel Ridge Regression
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
 ◆
 COMMITS
-David Farah leads the floor this week · 169 commits
+David Farah leads the floor this week · 170 commits
 ◆
 GLM
 Nicholas E burned 2.3M GLM tokens this week

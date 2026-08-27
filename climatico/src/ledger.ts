@@ -110,6 +110,18 @@ export class Ledger extends Agent<Env, LedgerState> {
       )
     `;
     this.sql`
+      CREATE TABLE IF NOT EXISTS connections (
+        id TEXT PRIMARY KEY,
+        subject TEXT NOT NULL,
+        path TEXT NOT NULL,
+        signals_json TEXT NOT NULL,
+        status TEXT NOT NULL,
+        assessments_json TEXT,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      )
+    `;
+    this.sql`
       CREATE TABLE IF NOT EXISTS sandbox_checks (
         id TEXT PRIMARY KEY,
         session_id TEXT NOT NULL,
@@ -415,6 +427,43 @@ export class Ledger extends Agent<Env, LedgerState> {
       fleetRuns: this.state.fleetRuns ?? 0,
       lastFleetRunId: this.state.lastFleetRunId ?? null,
     };
+  }
+
+  @callable()
+  storeConnection(input: { subject: string; path: string; signals: unknown; status: string; assessments?: unknown }): { id: string } {
+    const id = crypto.randomUUID();
+    const now = Date.now();
+    this.sql`
+      INSERT INTO connections (id, subject, path, signals_json, status, assessments_json, created_at, updated_at)
+      VALUES (${id}, ${input.subject}, ${input.path}, ${JSON.stringify(input.signals)}, ${input.status}, ${input.assessments ? JSON.stringify(input.assessments) : null}, ${now}, ${now})
+    `;
+    return { id };
+  }
+
+  @callable()
+  listConnections(subject: string): Array<{ id: string; path: string; status: string; signals: unknown; assessments: unknown | null; createdAt: number; updatedAt: number }> {
+    const rows = [...this.sql<{ id: string; path: string; status: string; signals_json: string; assessments_json: string | null; created_at: number; updated_at: number }>`
+      SELECT id, path, status, signals_json, assessments_json, created_at, updated_at
+      FROM connections WHERE subject = ${subject} ORDER BY created_at DESC LIMIT 10
+    `];
+    return rows.map((r) => ({
+      id: r.id,
+      path: r.path,
+      status: r.status,
+      signals: JSON.parse(r.signals_json),
+      assessments: r.assessments_json ? JSON.parse(r.assessments_json) : null,
+      createdAt: r.created_at,
+      updatedAt: r.updated_at,
+    }));
+  }
+
+  @callable()
+  updateConnectionAssessment(id: string, assessments: unknown): { ok: boolean } {
+    const now = Date.now();
+    this.sql`
+      UPDATE connections SET assessments_json = ${JSON.stringify(assessments)}, updated_at = ${now} WHERE id = ${id}
+    `;
+    return { ok: true };
   }
 
   policyDoc() {

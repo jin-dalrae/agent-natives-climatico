@@ -450,6 +450,32 @@ export function buildWorkspace(input: {
     });
   }
 
+  // Proactive report-driven inbox messages
+  if (lastCompute != null && lastRun?.audit) {
+    if (lastRun.audit.overBudgetKg > 0) {
+      inbox.push({
+        id: `hotspot-${lastRun.id}`,
+        from: "analyst",
+        channel: "fleet.audit",
+        tone: "no",
+        title: `🚨 ${lastRun.ingest.location}: ${lastRun.audit.overBudgetKg} kg over budget this month`,
+        body: `A $${lastRun.ingest.spendUsd} spike scored ${lastRun.audit.kgCO2e} kg. Projected month: ${lastRun.audit.projectedMonthKg} kg vs ${lastRun.audit.monthlyBudgetKg} kg budget. ${lastRun.audit.evidence.length} Tavily sources.`,
+        action: `Cut spend at ${lastRun.ingest.location} or settle the offset (${(lastRun.offsetReceipt?.amountCents ?? 0) / 100} USD already committed).`,
+        createdAt: Date.now(),
+      });
+    }
+    inbox.push({
+      id: `suggest-${lastRun.id}`,
+      from: "analyst",
+      channel: "fleet.abatement",
+      tone: "info",
+      title: `Suggestion: review ${lastRun.ingest.location} compute usage`,
+      body: `The fleet auto-runs every 30 min. $${lastRun.ingest.spendUsd} in ${lastRun.ingest.source} spend at ${lastRun.ingest.location} this cycle.`,
+      action: `Schedule a workload review for ${lastRun.ingest.location}. Consider carbon-aware scheduling or moving batch jobs to a lower-carbon region.`,
+      createdAt: Date.now(),
+    });
+  }
+
   inbox.sort((a, b) => b.createdAt - a.createdAt);
 
   const sponsors: SponsorLink[] = [

@@ -320,15 +320,17 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <path d="M50 44.6A24 24 0 1 1 50 19.4l-8.17 5.71a14 14 0 1 0 0 13.78Z" fill="var(--accent)"/>
         <path d="M33.15 33.28C48.1 29.24 54.7 19.49 51.2 9.41c-11.87 5.04-17.59 12.1-18.05 23.87Z" fill="var(--accent-2)"/>
       </svg>
-      <span class="tag">Website edition · Agent Edition · Internal track</span>
+      <span class="tag">Website edition · Agent Edition · Internal track · 13 agents</span>
     </div>
     <h1>Helping startups scale<br>sustainably, from <em>day one.</em></h1>
-    <p class="lede">That is why we built Climatico. Website edition: a founder sees their own EI and a task list before early habits become permanent. Agent Edition: the same product, but an AI agent can submit data to it directly.</p>
+    <p class="lede">That is why we built Climatico. Website edition: a founder sees their own EI and a task list before early habits become permanent. Agent Edition: the same product, but any AI agent can submit data to it directly — and a fleet of agents runs the calculation, evidence, suggestions, and offset settlement without a human in the loop.</p>
     <div class="cover-meta">
       <div><span>Event</span><b>Agent Natives · Cloudflare SF · 26–27 Aug 2026</b></div>
-      <div><span>Runtime</span><b>One Worker · Durable Object SQLite</b></div>
+      <div><span>Runtime</span><b>One Worker · 4 DOs · SQLite ledger</b></div>
       <div><span>Cold start</span><b>/ai-agent.json · mint · write</b></div>
       <div><span>Fleet</span><b>ingest → audit → settle</b></div>
+      <div><span>Agents</span><b>13 — Orepath, Provider, Scheduler, 3× Fleet, 4× Analysts, Clerk, Abatement, Cortex</b></div>
+      <div><span>Surfaces</span><b>/mcp · /a2a · /v1/* · CLI</b></div>
       <div><span>Desk</span><b id="coverBase">127.0.0.1:8787</b></div>
       <div><span>Dashboard</span><b><a href="/?tab=assess&from=deck" id="coverDash">Open live desk</a></b></div>
     </div>
@@ -810,57 +812,56 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 
 <section class="slide" id="slide-runtype" data-name="Runtype — the real path">
   <div class="inner wide">
-    <div class="eyebrow">Best use of Runtype &middot; verified from their own docs, not built</div>
-    <h2 class="slide-title">The real path is no-code. We don't have a key yet, so we won't fake the last mile.</h2>
-    <p class="lede">Pulled straight from Runtype's docs, not guessed: creating the agent needs zero code &mdash; a dashboard flow. What's blocked is one human step: signing up for an API key. Everything past that dashed line is real Climatico API, already shipped.</p>
+    <div class="eyebrow">Best use of Runtype &middot; a real key, a real agent, a real egress block</div>
+    <h2 class="slide-title">Nate confirmed the track doesn't require building on Runtype. We have a key anyway &mdash; and it goes through us as enrichment.</h2>
+    <p class="lede">A real Runtype API key. A real Secret, Tool (<code>file_climate_action</code>) and Agent (<code>claude-sonnet-5</code>) live on <code>api.runtype.com/v1</code>. The capability-to-tool link is fixed (the earlier <code>toolId: null</code> orphan was rebuilt via POST <code>/v1/agents/{id}/capabilities</code> &mdash; Runtype's spec has no PATCH/PUT on agent capabilities, only POST/DELETE, confirmed in the live OpenAPI). <code>runtype.ts</code> is wired into the scheduler as enrichment: audit/suggest/forecast get a Runtype-agent perspective. The Climatico Worker itself returns 201 + real receipt on direct call &mdash; what's blocked is Runtype's tool-runtime egress, not our code.</p>
     <figure>
-      <svg viewBox="0 0 1020 220" role="img" aria-label="On the Runtype dashboard, a no-code agent is configured and attached to a Capability then an MCP Surface. A caller would discover and call that surface as an MCP tool, then write a real Climatico action and receive a receipt. Everything before the blocked line is not built; everything after is real and shipped.">
+      <svg viewBox="0 0 1020 220" role="img" aria-label="Runtype agent (claude-sonnet-5) calls our scheduler enrichment, which calls Tavily and Workers AI. Tool-runtime egress is the only thing between the agent and a real receipt.">
         <g font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="currentColor" opacity=".55">
-          <text x="8" y="18">RUNTYPE DASHBOARD &middot; NO CODE</text>
-          <text x="700" y="18">CLIMATICO &middot; ALREADY REAL</text>
+          <text x="8" y="18">RUNTYPE &middot; REAL</text>
+          <text x="500" y="18">CLIMATICO &middot; ENRICHMENT</text>
         </g>
 
-        <rect x="8" y="40" width="190" height="90" fill="none" stroke="var(--warn)" stroke-width="1.25" stroke-dasharray="4 3"/>
-        <text x="103" y="64" text-anchor="middle" font-size="12" fill="var(--warn)" font-family="IBM Plex Mono, monospace">New Agent</text>
-        <text x="103" y="82" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">model + safety +</text>
-        <text x="103" y="96" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">system prompt</text>
-        <text x="103" y="118" text-anchor="middle" font-size="9" fill="var(--warn)" font-family="IBM Plex Mono, monospace">not built</text>
+        <rect x="8" y="40" width="190" height="90" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
+        <text x="103" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">Agent</text>
+        <text x="103" y="82" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">claude-sonnet-5</text>
+        <text x="103" y="96" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">api.runtype.com/v1</text>
+        <text x="103" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">live, real</text>
 
         <path d="M198,85 H236" stroke="currentColor" fill="none" stroke-width="1.25"/>
 
-        <rect x="238" y="40" width="200" height="90" fill="none" stroke="var(--warn)" stroke-width="1.25" stroke-dasharray="4 3"/>
-        <text x="338" y="64" text-anchor="middle" font-size="12" fill="var(--warn)" font-family="IBM Plex Mono, monospace">Capability &rarr; MCP Surface</text>
-        <text x="338" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">tool schema</text>
-        <text x="338" y="98" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">auto-generates</text>
-        <text x="338" y="118" text-anchor="middle" font-size="9" fill="var(--warn)" font-family="IBM Plex Mono, monospace">not built</text>
+        <rect x="238" y="40" width="200" height="90" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
+        <text x="338" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">runtype.ts</text>
+        <text x="338" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">audit / suggest</text>
+        <text x="338" y="98" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">forecast</text>
+        <text x="338" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">wired, real</text>
+
+        <rect x="478" y="40" width="180" height="90" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
+        <text x="568" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">Workers AI</text>
+        <text x="568" y="82" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">kimi-k2.6</text>
+        <text x="568" y="96" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">summarizer</text>
+        <text x="568" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">real, shipped</text>
+
+        <rect x="688" y="40" width="150" height="90" fill="none" stroke="var(--refuse)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="763" y="64" text-anchor="middle" font-size="12" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">Tool fetch</text>
+        <text x="763" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">POST /v1/actions</text>
+        <text x="763" y="102" text-anchor="middle" font-size="9.5" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">non-JSON &quot;Network ac…&quot;</text>
+        <text x="763" y="118" text-anchor="middle" font-size="9" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">egress block</text>
 
         <path d="M438,85 H476" stroke="currentColor" fill="none" stroke-width="1.25"/>
+        <path d="M658,85 H686" stroke="currentColor" fill="none" stroke-width="1.25"/>
 
-        <rect x="478" y="40" width="200" height="90" fill="none" stroke="var(--refuse)" stroke-width="1.5" stroke-dasharray="4 3"/>
-        <text x="578" y="64" text-anchor="middle" font-size="12" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">Caller discovers + calls</text>
-        <text x="578" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".65" font-family="IBM Plex Mono, monospace">the exposed tool</text>
-        <text x="578" y="102" text-anchor="middle" font-size="9.5" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">blocked: needs an API key</text>
-        <text x="578" y="118" text-anchor="middle" font-size="9" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">a human signup, not faked</text>
+        <line x1="680" y1="20" x2="680" y2="200" stroke="var(--refuse)" stroke-width="1.25" stroke-dasharray="5 4"/>
 
-        <line x1="700" y1="20" x2="700" y2="200" stroke="var(--refuse)" stroke-width="1.25" stroke-dasharray="5 4"/>
+        <rect x="858" y="40" width="150" height="90" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="933" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">Receipt</text>
+        <text x="933" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".7" font-family="IBM Plex Mono, monospace">committed or</text>
+        <text x="933" y="102" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".7" font-family="IBM Plex Mono, monospace">refused</text>
+        <text x="933" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">real, shipped</text>
 
-        <path d="M678,85 H716" stroke="currentColor" fill="none" stroke-width="1.25" stroke-dasharray="3 3"/>
-
-        <rect x="718" y="40" width="150" height="90" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-        <text x="793" y="64" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">POST /v1/actions</text>
-        <text x="793" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".7" font-family="IBM Plex Mono, monospace">intent: assess</text>
-        <text x="793" y="102" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".7" font-family="IBM Plex Mono, monospace">Tavily-grounded</text>
-        <text x="793" y="118" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">real, shipped</text>
-
-        <path d="M868,85 H906" stroke="currentColor" fill="none" stroke-width="1.25"/>
-
-        <rect x="908" y="55" width="104" height="60" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-        <text x="960" y="80" text-anchor="middle" font-size="12" fill="var(--accent)" font-family="Newsreader, serif">Receipt</text>
-        <text x="960" y="98" text-anchor="middle" font-size="9" fill="var(--ok)" font-family="IBM Plex Mono, monospace">real, shipped</text>
-
-        <text x="700" y="215" text-anchor="middle" font-size="9.5" fill="var(--refuse)" font-family="IBM Plex Mono, monospace">&larr; nothing to the left of this line exists yet &middot; everything to the right already runs &rarr;</text>
+        <path d="M838,85 H856" stroke="currentColor" fill="none" stroke-dasharray="3 3"/>
       </svg>
-      <figcaption>The bounty is "best use of Runtype," not "mention Runtype." That means actually building the left half &mdash; which needs an account we can't create for the team. Once there's a key, the right half is a one-line wire-up: it's the same <span class="inline">POST /v1/actions</span> a stranger agent already calls today.</figcaption>
+      <figcaption>The bounty is "best use of Runtype," and we did build on it &mdash; the agent exists, the tool fires, the capability → tool link works. The only thing between the Runtype tool and a real receipt is their tool-runtime's outbound network policy, not our Worker.</figcaption>
     </figure>
   </div>
 </section>
@@ -869,27 +870,27 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <div class="inner wide">
     <div class="eyebrow">Agent Edition &middot; an agent army on both sides of one ledger</div>
     <h2 class="slide-title">Client swarm &harr; Climatico service &rarr; buyer ecosystem.</h2>
-    <p class="lede">The same write surface grew a real cast of agents around it this weekend. Enterprise clients file operations, Climatico enforces policy and settles receipts, and downstream buyers verify with read-only credentials. One ledger underneath all three.</p>
+    <p class="lede">The same write surface grew a real cast of agents around it this weekend. Orepath's employee agents file operations autonomously, Climatico's fleet enforces policy and settles receipts, third-party providers deliver services through the same surface, and downstream buyers verify with read-only credentials. One ledger underneath all three.</p>
     <div class="grid g3">
       <div class="card" style="border-color: var(--warn);">
         <span class="chip wa" style="margin-bottom:8px;">Client army</span>
         <h3>Orepath + Hardware Co</h3>
-        <p><b>TracerFleetAgent</b> spikes $420 of graph compute in SJC; <b>PortLogisticsAgent</b> grounds the Oakland port. Hardware Co&rsquo;s <b>FactoryProcurementAgent</b> files factory POs; <b>OceanFreightAgent</b> watches the port. A rogue <b>MarketingBot</b> tries to mint a green claim on purpose.</p>
+        <p><b>compute-watcher</b> (Durable Object alarm) spikes cloud spend every 15 min during working hours. <b>PortLogisticsAgent</b> grounds the Oakland port. Hardware Co&rsquo;s <b>FactoryProcurementAgent</b> files factory POs; <b>OceanFreightAgent</b> watches the port. A rogue <b>MarketingBot</b> tries to mint a green claim on purpose.</p>
       </div>
       <div class="card" style="border-color: var(--ok);">
         <span class="chip ok" style="margin-bottom:8px;">Service army</span>
-        <h3>Climatico ingest &rarr; audit &rarr; settle</h3>
-        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e against live Tavily sources. <b>Settle</b> commits a token-capped offset. <b>Policy</b> refuses forbidden intents &mdash; and records the rejection. Every handoff is a row.</p>
+        <h3>Climatico: 10 agents in one Worker</h3>
+        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e against live Tavily sources. <b>Settle</b> commits a token-capped offset. <b>Policy</b> refuses forbidden intents &mdash; and records the rejection. <b>Scheduler</b> (cron) runs all three plus Tavily abatement research every 30 min. <b>Abatement researcher</b> + <b>summary writer</b> (Workers AI) find real greener alternatives. <b>Report builder</b> compiles <code>/v1/report</code>. <b>Inbox analyst</b> pushes hotspot alerts. <b>Clerk</b> (Workers AI) answers questions. Every handoff is a row.</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
-        <span class="chip info" style="margin-bottom:8px;">Buyer ecosystem</span>
-        <h3>EV OEM read-only auditor</h3>
-        <p>The buyer mints a <span class="inline">climatico:read</span>-only credential and audits the ledger before accepting any supplier claim. Transact rights: none. Proof of attribution that cannot write.</p>
+        <span class="chip info" style="margin-bottom:8px;">3rd-party + buyer</span>
+        <h3>Provider agent &middot; EV OEM auditor</h3>
+        <p><b>green-offset-co</b> (Durable Object) fulfills offsets the fleet writes, reviews receipts, earns revenue &mdash; delivered <em>through</em> the same surface. The buyer mints a <span class="inline">climatico:read</span>-only credential and audits the ledger before accepting any supplier claim. Transact rights: none. Proof of attribution that cannot write.</p>
       </div>
     </div>
     <div class="card" style="margin-top:14px;">
       <span class="kicker">The boundary &middot; what every agent must cross</span>
-      <p><span class="inline">/.well-known/agent-card.json</span> A2A discovery &middot; <span class="inline">/v1/credentials</span> scopes freeze at mint (5&nbsp;000&cent; ceiling) &middot; <span class="inline">/mcp &middot; /a2a &middot; /v1/*</span> one policy underneath &middot; <span class="inline">SQLite Ledger</span> the settlement of record. In the UI this is the <b>3-Sided Swarm</b> tab, deployed and live.</p>
+      <p><span class="inline">/.well-known/agent-card.json</span> A2A discovery &middot; <span class="inline">/v1/credentials</span> scopes freeze at mint (5&nbsp;000&cent; ceiling) &middot; <span class="inline">/mcp &middot; /a2a &middot; /v1/*</span> one policy underneath &middot; <span class="inline">SQLite Ledger</span> the settlement of record &middot; <span class="inline">climatico.sh</span> CLI for human operators. In the UI this is the <b>3-Sided Swarm</b> tab, deployed and live.</p>
     </div>
   </div>
 </section>
@@ -1023,8 +1024,11 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 cp .dev.vars.example .dev.vars
 npm install &amp;&amp; npx wrangler types
 npm run dev          <span class="c"># 127.0.0.1:8787</span>
-npm run demo         <span class="c"># this slide, in a shell</span></pre>
-        <p style="margin-top:12px;">Mint, prove the 401, file a Houston brief, commit an offset, store a greenwash refusal, run the fleet under and over budget.</p>
+npm run demo         <span class="c"># this slide, in a shell</span>
+./climatico.sh fleet SJC 420   <span class="c"># CLI: 15 commands</span>
+./climatico.sh orepath         <span class="c"># check Orepath agent</span>
+./climatico.sh agents-start    <span class="c"># start the auto-pilot</span></pre>
+        <p style="margin-top:12px;">Mint, prove the 401, file a Houston brief, commit an offset, store a greenwash refusal, run the fleet under and over budget. CLI runs the same flows from any terminal.</p>
       </div>
       <div class="card">
         <span class="kicker">Surfaces a probe will find</span>
@@ -1034,9 +1038,14 @@ npm run demo         <span class="c"># this slide, in a shell</span></pre>
           <tr><td class="k">/v1/credentials</td><td>mint, scopes freeze</td></tr>
           <tr><td class="k">/mcp</td><td>9 tools, bearer required</td></tr>
           <tr><td class="k">/a2a</td><td>SendMessage</td></tr>
-          <tr><td class="k">/v1/actions</td><td>the write</td></tr>
+          <tr><td class="k">/v1/actions</td><td>the write (brief, watch, offset, assess, run_fleet)</td></tr>
           <tr><td class="k">/v1/fleet/run</td><td>ingest → audit → settle</td></tr>
+          <tr><td class="k">/v1/report</td><td>plain-English progress + suggestions</td></tr>
+          <tr><td class="k">/v1/agents/orepath</td><td>Orepath employee agent (auto-fleet)</td></tr>
+          <tr><td class="k">/v1/agents/provider</td><td>3rd-party offset provider</td></tr>
+          <tr><td class="k">/v1/memory</td><td>Cortex memory store / recall</td></tr>
           <tr><td class="k">/v1/workspace</td><td>same feed as the desk</td></tr>
+          <tr><td class="k">climatico/climatico.sh</td><td>CLI — 15 commands</td></tr>
         </table>
       </div>
     </div>

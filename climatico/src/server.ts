@@ -20,6 +20,7 @@ import { getOrepathAgent, OrepathAgent } from "./orepath-agent";
 import { getProviderAgent, ProviderAgent } from "./provider";
 import { cortexRemember, cortexRecall } from "./cortex";
 import { runtypeAnalysis } from "./runtype";
+import { runAutoAssessment, type FolderScan } from "./ingest";
 
 export { Clerk, Ledger, OrepathAgent, ProviderAgent };
 
@@ -350,6 +351,39 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     const ns = url.searchParams.get("namespace") || "general";
     const memories = await cortexRecall(env, ns, 10);
     return json(request, { memories });
+  }
+
+  if (path === "/v1/connect" && request.method === "POST") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const body = (await readJson<{ path: string; signals: Array<{ kind: string; class: string; evidence: string; confidence: number; spendUsd?: number }> }>(request)) ?? {};
+    if (!body.path || !body.signals) {
+      return json(request, { error: "missing_path_or_signals" }, 422);
+    }
+    const scan: FolderScan = {
+      path: body.path,
+      signals: body.signals as never,
+      fileCount: 0,
+      scannedAt: Date.now(),
+    };
+    const ledger = await getLedger(env);
+    const { id } = await ledger.storeConnection({
+      subject: principal.subject,
+      path: body.path,
+      signals: scan.signals,
+      status: "scanned",
+    });
+    const assessments = await runAutoAssessment(env, scan, principal.subject);
+    await ledger.updateConnectionAssessment(id, assessments);
+    return json(request, { id, path: body.path, signals: scan.signals.length, assessments }, 201);
+  }
+
+  if (path === "/v1/connections" && request.method === "GET") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const ledger = await getLedger(env);
+    const conns = await ledger.listConnections(principal.subject);
+    return json(request, { connections: conns });
   }
 
   if (path === "/a2a") {

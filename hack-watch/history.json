@@ -875,5 +875,65 @@
     ]
    }
   ]
+ },
+ {
+  "at": "2026-08-27T18:00:22.159664+00:00",
+  "at_pdt": "2026-08-27 11:00:22 PDT",
+  "changes": [
+   {
+    "field": "body_hash",
+    "label": "Page prose changed (no tracked field moved)",
+    "from": "6d1062cd33d57f56",
+    "to": "8605884397c62fae"
+   }
+  ]
+ },
+ {
+  "at": "2026-08-27T19:06:41.879788+00:00",
+  "at_pdt": "2026-08-27 12:06:41 PDT",
+  "changes": [
+   {
+    "field": "team_count",
+    "label": "Teams that exist",
+    "from": 7,
+    "to": 9
+   },
+   {
+    "field": "teams",
+    "label": "Team names",
+    "from": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Motel4",
+     "Physical Capability Cloud",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "finddomain"
+    ],
+    "to": [
+     "@nikhilkulkarni1755",
+     "Climatico",
+     "Gatekeeper V2",
+     "Motel4",
+     "Physical Capability Cloud",
+     "Showtonic",
+     "Surf, Skate, or Bike",
+     "attest",
+     "finddomain"
+    ]
+   }
+  ]
+ },
+ {
+  "at": "2026-08-27T19:44:24.559031+00:00",
+  "at_pdt": "2026-08-27 12:44:24 PDT",
+  "changes": [
+   {
+    "field": "api_seats_used",
+    "label": "Seats used (API)",
+    "from": 16,
+    "to": 17
+   }
+  ]
  }
 ]

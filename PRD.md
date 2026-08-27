@@ -176,6 +176,8 @@ Any agent
 | Endpoint | What | Auth |
 | --- | --- | --- |
 | `GET /v1/report` | Plain-English progress report (fleet runs, commits, refusals, suggestions) | Public |
+| `POST /v1/connect` | Scan a startup's folder signals → auto-assess 7 emission classes via Tavily | Bearer |
+| `GET /v1/connections` | List previously connected folders + their assessments | Bearer |
 | `GET /v1/agents/orepath` | Orepath compute-watcher status | Public |
 | `POST /v1/agents/orepath/start` | Start the Orepath agent (DO alarm, 15 min cycle) | Public |
 | `POST /v1/agents/orepath/stop` | Stop the Orepath agent | Public |
@@ -185,7 +187,9 @@ Any agent
 | `GET /v1/memory?namespace=` | Recall memories from Cortex | Bearer |
 | `GET /v1/dashboard` | Committed/refused/watches/fleetRuns counters | Public |
 
-**CLI:** `climatico/climatico.sh` — discover, mint, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start, agents-stop, dashboard.
+**CLI:** `climatico/climatico.sh` — discover, mint, connect, status, fleet, offset, brief, watch, refuse, report, receipts, handoffs, orepath, provider, memory, agents-start, agents-stop, dashboard.
+
+**Onboarding flow:** `climatico.sh connect ~/my-startup` scans a folder for climate-impact signals (package.json deps, wrangler config, README keywords), sends them to `/v1/connect`, which derives an auto-assessment for all 7 emission classes via Tavily. The connection persists in a Durable Object table; the background agents (Scheduler, Orepath, Inbox analyst) continue monitoring from there.
 
 **Workspace inbox** already emits: hotspot kg over budget, offset receipt, stored refusals, Tavily keyless warning, Cotal mesh not subscribed, AIsa wallet balance readable, Tenki sandbox ready, hotspot alerts from scheduler, abatement suggestions, next actions.
 

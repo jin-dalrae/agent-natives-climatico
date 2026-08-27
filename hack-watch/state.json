@@ -1,9 +1,9 @@
 {
- "checked_at": "2026-08-27T16:06:38.899135+00:00",
- "checked_at_pdt": "2026-08-27 09:06:38 PDT",
+ "checked_at": "2026-08-27T19:44:24.559031+00:00",
+ "checked_at_pdt": "2026-08-27 12:44:24 PDT",
  "http_status": 200,
  "reachable": true,
- "page_bytes": 350966,
+ "page_bytes": 352389,
  "status_banner": "Building now",
  "phase_line": "Building now",
  "kicker": "August 26-27, 2026 \u00b7 Cloudflare SF, 101 Townsend St \u00b7 50 builder seats",
@@ -181,20 +181,22 @@
  },
  "api_phase": "BUILD",
  "applied": false,
- "api_seats_used": 16,
- "api_seats_remaining": 34,
+ "api_seats_used": 17,
+ "api_seats_remaining": 33,
  "bounty_count": 1,
- "team_count": 7,
+ "team_count": 9,
  "teams": [
   "@nikhilkulkarni1755",
   "Climatico",
+  "Gatekeeper V2",
   "Motel4",
   "Physical Capability Cloud",
   "Showtonic",
   "Surf, Skate, or Bike",
+  "attest",
   "finddomain"
  ],
- "body_hash": "6d1062cd33d57f56",
- "checks_run": 45,
- "change_events": 42
+ "body_hash": "0d151686cb7bf88f",
+ "checks_run": 48,
+ "change_events": 45
 }

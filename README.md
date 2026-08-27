@@ -295,6 +295,8 @@ export CLIMATICO_TOKEN="<token>"
 ./climatico.sh refuse            # Test a forbidden claim
 ./climatico.sh orepath           # Check Orepath agent status
 ./climatico.sh agents-start      # Start auto-pilot (15 min cycles)
+./climatico.sh connect ~/my-startup  # Scan folder, auto-assess 7 classes
+./climatico.sh status            # Show connected folders + assessments
 ./climatico.sh receipts          # Recent receipts
 ./climatico.sh handoffs          # Recent handoff log
 ./climatico.sh help              # Full command list
