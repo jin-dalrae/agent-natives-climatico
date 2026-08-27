@@ -119,6 +119,7 @@ h2.slide-title { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.12; }
 .g2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
 .g3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
 .g4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.g5 { grid-template-columns: repeat(5, minmax(0,1fr)); }
 .card {
   background: var(--panel); border: 1px solid var(--line);
   padding: 14px 15px;
@@ -278,7 +279,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   .rail { display: none; }
   .deck { margin-left: 0; }
   .slide { padding: 28px 16px; min-height: auto; }
-  .g2, .g3, .g4, .desk-ui .stats { grid-template-columns: 1fr; }
+  .g2, .g3, .g4, .g5, .desk-ui .stats { grid-template-columns: 1fr; }
   .step { grid-template-columns: 28px 1fr; }
   .step-d { grid-column: 2; }
   .hint { display: none; }
@@ -724,8 +725,8 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 <section class="slide" id="slide-sponsors" data-name="Sponsor stack">
   <div class="inner">
     <div class="eyebrow">Who's in the room · real, not booth-only</div>
-    <h2 class="slide-title">Four sponsors make this live.</h2>
-    <div class="grid g4">
+    <h2 class="slide-title">Five sponsors make this live.</h2>
+    <div class="grid g5">
       <div class="card" style="border-color: var(--accent);">
         <span class="chip ok">Host</span>
         <h3>Cloudflare</h3>
@@ -746,6 +747,15 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <h3>Tenki</h3>
         <p class="sub">Agent test environments</p>
       </div>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip info">Deploy</span>
+        <h3>Runtype</h3>
+        <p class="sub">A2A agent surface + Exa for best use</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <span class="kicker">Best use · Runtype orchestrates</span>
+      <p><b>Runtype flow:</b> Exa researches a shipping route (Shenzhen → Oakland) → pipes to Climatico → Climatico files <span class="inline">assess</span> + returns receipt → Runtype displays result. One prompt, two services, real data.</p>
     </div>
   </div>
 </section>

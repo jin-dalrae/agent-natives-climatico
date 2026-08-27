@@ -74,7 +74,18 @@ curl -sS -X POST "$BASE/v1/fleet/run" \
 
 echo
 echo "== handoffs =="
-curl -sS "$BASE/v1/handoffs" -H "authorization: Bearer $TOKEN" \
+curl -sS "$BASE/v1/handoffs" -H "authorization: Bearer ***" \
   | python3 -c 'import json,sys; hs=json.load(sys.stdin)["handoffs"];
 [print(h["from"], "→", h["to"], h["channel"], h["kind"]) for h in hs[:8]]'
+echo
+
+echo
+echo "== Runtype A2A consumption =="
+echo "Agent card for Runtype:"
+curl -sS "$BASE/.well-known/agent-card.json" | head -c 500
+echo
+echo "A2A endpoint:"
+curl -sS "$BASE/a2a" -X POST \
+  -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tasks/send","params":{"message":{"role":"user","content":"What climate actions can I file?"}}}' | head -c 300
 echo

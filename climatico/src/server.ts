@@ -1,4 +1,5 @@
 import { routeAgentRequest } from "agents";
+import { getAisaBalance } from "./aisa";
 import { handleA2A } from "./a2a";
 import { bearerFrom, type CredentialGrant } from "./auth";
 import {
@@ -213,6 +214,13 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     if (principal instanceof Response) return principal;
     const ledger = await getLedger(env);
     return json(request, { checks: await ledger.listSandboxChecks(10) });
+  }
+
+  if (path === "/v1/aisa/balance" && request.method === "GET") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const balance = await getAisaBalance(env);
+    return json(request, { balance }, "error" in balance ? 422 : 200);
   }
 
   if (path === "/a2a") {

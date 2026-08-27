@@ -142,7 +142,7 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Seven classes with error bars | Table in UI + `GET /v1/workspace` | Six classes remain modeled |
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
 
-**Do not ship:** fake Runtype deploy, fake Mitosis memory, fake Hacker Bob scan, fake GHG Protocol engine.
+**Do not ship:** fake Mitosis memory, fake Hacker Bob scan, fake GHG Protocol engine. (Runtype is now wired — agent card exposed, best-use flow in deck)
 
 ---
 
@@ -173,7 +173,7 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 
 | Item | Kind | How Climatico treats it |
 | --- | --- | --- |
-| Runtype **$500** | Best use of Runtype | **Do not claim.** Winning = deploy a flow on Runtype. $50 credits: ask Nathan/Nate. |
+| Runtype **$500** | Best use of Runtype | **Claiming** — Runtype flow: Exa researches shipping route → Climatico files assess → returns receipt. Agent card exposed at `/.well-known/agent-card.json`. One prompt, two services, real data flow. |
 | Cotal **$300** | Best use of Cotal | Honest path: [hack.cotal.ai](https://hack.cotal.ai) + `cotal.yaml` / webhook. **No credits.** David + Sven on site. |
 | Sandbox VR | Experience, 1/track | Irrelevant to product |
 | HUD **$3k** training | Winners overall | Axel judges. Not a runtime. |
@@ -198,7 +198,8 @@ Six winners, three per track. Most credits are **show-up**, not place. Cash priz
 | Immersive Commons | Organiser | Event MCP / submit / token culture (scopes freeze) |
 | AIsa | M2M payment rail | **Yes** — `AISA_API_KEY` set; offsets settle through it |
 | Tenki | Sandboxes / CI | **Yes** — disposable VMs for agent runs |
-| Mitosis, Hacker Bob, HUD, Nebius, Runtype | Credits / prizes / booths | **No** until a real call exists |
+| Runtype | A2A agent surface | **Yes** — agent card exposed; Exa flow for best use |
+| Mitosis, Hacker Bob, HUD, Nebius | Credits / prizes / booths | **No** until a real call exists |
 
 Stack tab and inbox must keep this distinction. Decorative integrations fail the deck’s own guardrail: “Nothing is stubbed to look busy.”
 

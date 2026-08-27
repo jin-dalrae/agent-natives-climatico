@@ -1486,7 +1486,7 @@ export function App() {
             <p className="sub" style={{ marginTop: 10 }}>
               AIsa{" "}
               {ws?.aisaConfigured
-                ? "configured — offsets settle through the AIsa machine-payment rail when used."
+                ? "is connected — this desk can read the real wallet balance (GET /v1/credits/balance), free and read-only. Machine-to-machine payment settlement stays off: that write needs a specific, bounded, human-confirmed instruction, not a standing key."
                 : "is the machine-payment rail (M2M). Not collected here yet — offsets settle on our ledger. No fake call."}
             </p>
           </section>

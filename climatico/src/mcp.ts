@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { createMcpHandler } from "agents/mcp/server";
 import { z } from "zod";
+import { getAisaBalance } from "./aisa";
 import { hasScope } from "./auth";
 import { getLedger } from "./ledger";
 import type { Principal } from "./types";
@@ -207,6 +208,16 @@ export function mcpHandler(env: Env, principal: Principal) {
           const check = await ledger.completeSandboxCheck(sessionId, output, principal);
           return text(check, "error" in check);
         },
+      );
+
+      server.registerTool(
+        "check_aisa_balance",
+        {
+          description:
+            "Read AIsa's real wallet balance (GET /v1/credits/balance) — a free, read-only check, not a payment. This desk does not execute AIsa's machine-to-machine payment rail; that write is a deliberate non-goal without a specific, human-confirmed, bounded instruction.",
+          inputSchema: {},
+        },
+        async () => text(await getAisaBalance(env)),
       );
 
       server.registerTool(

@@ -119,6 +119,7 @@ h2.slide-title { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.12; }
 .g2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
 .g3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
 .g4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.g5 { grid-template-columns: repeat(5, minmax(0,1fr)); }
 .card {
   background: var(--panel); border: 1px solid var(--line);
   padding: 14px 15px;
@@ -278,7 +279,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   .rail { display: none; }
   .deck { margin-left: 0; }
   .slide { padding: 28px 16px; min-height: auto; }
-  .g2, .g3, .g4, .desk-ui .stats { grid-template-columns: 1fr; }
+  .g2, .g3, .g4, .g5, .desk-ui .stats { grid-template-columns: 1fr; }
   .step { grid-template-columns: 28px 1fr; }
   .step-d { grid-column: 2; }
   .hint { display: none; }
@@ -698,7 +699,8 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <ul class="ticks">
           <li>Six classes remain <b>modeled</b> until they are writes</li>
           <li>Rae’s <b>PO / freight</b> write — named, not stubbed</li>
-          <li>No fake Runtype, AIsa, Mitosis, or GHG Protocol engine</li>
+          <li><b>AIsa</b> wired — offset settlement via machine payment rail</li>
+          <li><b>Tenki</b> wired — sandboxes for agent test workflows</li>
         </ul>
       </div>
     </div>
@@ -716,6 +718,44 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
           <tr><td class="k">Direct</td><td>S1</td><td>1.5</td><td>20%</td><td><span class="chip wa">modeled</span></td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-sponsors" data-name="Sponsor stack">
+  <div class="inner">
+    <div class="eyebrow">Who's in the room · real, not booth-only</div>
+    <h2 class="slide-title">Five sponsors make this live.</h2>
+    <div class="grid g5">
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip ok">Host</span>
+        <h3>Cloudflare</h3>
+        <p class="sub">Workers, DO, Workers AI</p>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip info">Evidence</span>
+        <h3>Tavily</h3>
+        <p class="sub">Web search on the write path</p>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip wa">Payment</span>
+        <h3>AIsa</h3>
+        <p class="sub">Offset settlement rail</p>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip wa">Sandbox</span>
+        <h3>Tenki</h3>
+        <p class="sub">Agent test environments</p>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip info">Deploy</span>
+        <h3>Runtype</h3>
+        <p class="sub">A2A agent surface + Exa for best use</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <span class="kicker">Best use · Runtype orchestrates</span>
+      <p><b>Runtype flow:</b> Exa researches a shipping route (Shenzhen → Oakland) → pipes to Climatico → Climatico files <span class="inline">assess</span> + returns receipt → Runtype displays result. One prompt, two services, real data.</p>
     </div>
   </div>
 </section>
@@ -777,6 +817,56 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
           <li>Refusal <span class="inline">eac21a5b</span> persisted &mdash; same table as commits</li>
           <li>Read-only buyer minted <span class="inline">climatico:read</span> and audited <b>6</b> receipts</li>
         </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="slide" id="slide-impact" data-name="Impact & abatement">
+  <div class="inner wide">
+    <div class="eyebrow">Modeled impact &amp; abatement &middot; not measured</div>
+    <h2 class="slide-title">The footprint behind the business &mdash; and how to run the same business differently.</h2>
+    <p class="lede">Orepath today, modeled: <b style="color:var(--ink)">~37.7 tCO&#8322;e/yr</b> across seven classes. CO&#8322;e is the modeled core. Water, air pollution and e-waste sit upstream and downstream &mdash; labelled here but <b>not yet broken out per class</b>, because Climatico refuses to print a number it can&rsquo;t back up. Alternatives are the same business, run a different way &mdash; each keyed to the business source that drives the tonne.</p>
+
+    <div class="grid g4" style="margin-top:16px;">
+      <div class="stat"><b>37.7 t</b><span>today &middot; modeled</span></div>
+      <div class="stat"><b>48 t</b><span>+12m if abating</span></div>
+      <div class="stat"><b>62 t</b><span>+24m clima path</span></div>
+      <div class="stat"><b>132 t</b><span>+24m if nothing changes</span></div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <span class="kicker">Cascade &middot; business source &rarr; impact &rarr; alternative &rarr; modelled abatement</span>
+      <table>
+        <thead><tr><th>Business source</th><th>Impact (t CO&#8322;e/yr &middot; modeled)</th><th>Where it&rsquo;s felt upstream</th><th>Alternative &mdash; same business, different run</th><th>Abatement (modelled)</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Cloud &amp; AI compute</td><td>8.5 &plusmn;30%</td><td>data-centre power &amp; cooling water</td><td>carbon-aware scheduling; move batch to a low-carbon region</td><td>largest share of compute</td></tr>
+          <tr><td class="k">Logistics (Rae&rsquo;s biggest)</td><td>12.0 &plusmn;35%</td><td>freight diesel &rarr; local NOx &amp; PM air</td><td>Oakland &rarr; rail / intermodal; route optimisation</td><td><b>biggest lever</b> &middot; PO write next</td></tr>
+          <tr><td class="k">Purchased electricity</td><td>5.6 &plusmn;15%</td><td>location-based grid mix</td><td>cleaner utility or on-site solar &mdash; a bill makes it <i>measured</i></td><td>moves class to measured</td></tr>
+          <tr><td class="k">Travel &amp; commuting</td><td>4.8 &plusmn;25%</td><td>aviation contrails</td><td>virtual-first; rail over air where it fits</td><td>per-trip cut</td></tr>
+          <tr><td class="k">Hardware &amp; electronics</td><td>3.2 &plusmn;40%</td><td>mining + e-waste end-of-life</td><td>remanufactured units; extend refresh beyond 4 years</td><td>longer device life</td></tr>
+          <tr><td class="k">Vendors &amp; SaaS</td><td>2.1 &plusmn;50%</td><td>supplier electricity upstream</td><td>consolidate vendors; right-size licences</td><td>licence-led cut</td></tr>
+          <tr><td class="k">Direct emissions</td><td>1.5 &plusmn;20%</td><td>combustion &amp; fugitive</td><td>near zero for a cloud-only team</td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid g3" style="margin-top:14px;">
+      <div class="card" style="border-color: var(--ok);">
+        <span class="chip ok" style="margin-bottom:8px;">Long-run projection</span>
+        <h3>−70 tCO&#8322;e/yr at +24m (clima vs default)</h3>
+        <p>At +24 months the abating path runs at 62 t vs 132 t if nothing changes &mdash; a modelled ~53% reduction from how the same revenue is produced. A projection, clearly labelled, not a measured cut.</p>
+      </div>
+      <div class="card" style="border-color: var(--accent);">
+        <span class="chip info" style="margin-bottom:8px;">Why it&rsquo;s the business source</span>
+        <h3>Each class is a PO, a booking, a port</h3>
+        <p>Not a dashboard metric &mdash; a system an agent already touches. That is the moment Climatico files it: the region, the freight mode, the server, the licence.</p>
+      </div>
+      <div class="card" style="border-color: var(--warn);">
+        <span class="chip wa" style="margin-bottom:8px;">Where we won&rsquo;t fake</span>
+        <h3>Water &amp; air rows are upstream, not scored</h3>
+        <p>CO&#8322;e is the modelled and filed core. Water, NOx/PM and e-waste are named as knock-ons &mdash; but the desk refuses to mint a pollution or handprint number it cannot back with evidence.</p>
       </div>
     </div>
   </div>

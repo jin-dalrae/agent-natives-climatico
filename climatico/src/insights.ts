@@ -489,9 +489,13 @@ export function buildWorkspace(input: {
       id: "aisa",
       name: "AIsa",
       role: "Machine payments · $100 list",
-      status: "booth",
-      insight: "Offsets settle on our ledger until credits land.",
-      how: "Give an organiser the email. No self-serve page.",
+      status: aisaConfigured ? "live" : "booth",
+      insight: aisaConfigured
+        ? "Worker reads the real wallet balance (free, read-only). M2M payment settlement stays a deliberate non-goal — that write needs a bounded, human-confirmed instruction, not a standing key."
+        : "Offsets settle on our ledger until credits land.",
+      how: aisaConfigured
+        ? "GET /v1/aisa/balance, or MCP check_aisa_balance."
+        : "Give an organiser the email. No self-serve page.",
       href: "https://aisa.one",
     },
     {

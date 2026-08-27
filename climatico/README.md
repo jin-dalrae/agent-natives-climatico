@@ -136,6 +136,7 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Hackathon submission filed (can still be overwritten until Thursday 15:00)
 - **AIsa** API key configured (machine-to-machine payment rail — offsets can settle through it)
 - **Tenki** used for sandboxes / testing agent workflows
+- **Runtype** A2A agent surface for consumption
 - Cotal-shaped handoffs (webhook ready if we want it)
 
 ### 🔜 LEFT (honest "not yet" list)
@@ -169,7 +170,8 @@ GHG Protocol engine, no invented climate numbers.
 | Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
 | Cotal | Organiser. Agent mesh | Almost — handoffs shaped like Cotal, mesh join optional |
 | Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
-| Runtype, Mitosis, Hacker Bob, HUD, Nebius | Credits / prizes / booths | No — not wired in, on purpose |
+| Runtype | Sponsor. A2A agent surface | YES — agent card exposed |
+| Mitosis, Hacker Bob, HUD, Nebius | Credits / prizes / booths | No — not wired in, on purpose |
 
 The UI keeps this distinction visible so nothing *looks* wired in when it isn't.
 
