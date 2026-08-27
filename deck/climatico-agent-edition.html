@@ -738,9 +738,9 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <p class="sub">Web search on the write path</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
-        <span class="chip wa">Payment</span>
+        <span class="chip wa">Read</span>
         <h3>AIsa</h3>
-        <p class="sub">Offset settlement rail</p>
+        <p class="sub">Real wallet balance, no payments</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
         <span class="chip wa">Sandbox</span>
@@ -760,6 +760,53 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   </div>
 </section>
 
+<section class="slide" id="slide-mechanics" data-name="How they work">
+  <div class="inner wide">
+    <div class="eyebrow">Two sponsors, two real mechanics &middot; not badges</div>
+    <h2 class="slide-title">A sandbox the Worker can create but not run. A wallet it can read but not spend.</h2>
+    <p class="lede">Both hit a real platform limit this weekend. Both got built around it honestly instead of faked past it.</p>
+    <div class="grid g2">
+      <div class="card" style="border-color: var(--accent);">
+        <span class="kicker">Tenki &middot; two hops, because a Worker can only do one</span>
+        <h3 style="margin-top:4px;">/v1/sandbox/verify &rarr; exec outside &rarr; /v1/sandbox/complete</h3>
+        <div class="steps" style="margin-top:10px;">
+          <div class="step">
+            <div class="step-n">01</div>
+            <div class="step-t">Worker creates a real sandbox</div>
+            <div class="step-d">A hand-built <span class="inline">fetch</span> transport calls Tenki's control plane straight from <span class="inline">workerd</span>. A real session id comes back.</div>
+          </div>
+          <div class="step">
+            <div class="step-n">02</div>
+            <div class="step-t">The Worker can't run anything in it</div>
+            <div class="step-d">Executing a command is a duplex stream. workerd said so directly: <span class="inline">"the http2.connect method is not implemented."</span> No transport swap fixes that.</div>
+          </div>
+          <div class="step">
+            <div class="step-n">03</div>
+            <div class="step-t">A real runtime execs it</div>
+            <div class="step-d">Hermes, or any Node/Python caller, runs the command in that exact sandbox and reports the real output back.</div>
+          </div>
+          <div class="step">
+            <div class="step-n">04</div>
+            <div class="step-t">Refused if the session isn't ours</div>
+            <div class="step-d">The reported sessionId is checked against what this ledger actually created, then re-confirmed with Tenki itself. Invented output is a 422.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="border-color: var(--warn);">
+        <span class="kicker">AIsa &middot; one real call, deliberately not the payment one</span>
+        <h3 style="margin-top:4px;">GET /v1/aisa/balance &mdash; free, read-only, real</h3>
+        <p class="lede" style="margin:10px 0;">AIsa is a real machine-payment rail &mdash; Circle, Stripe, Visa, billed per call in USD. The only call this desk makes is the documented free one: read the wallet, don't touch it.</p>
+        <pre><span class="c">GET /v1/aisa/balance &middot; 200</span>
+{
+  <span class="k">"currency"</span>: <span class="g">"USD"</span>,
+  <span class="k">"account_balance_micros_usd"</span>: <span class="g">1000000</span>,
+  <span class="k">"api_key"</span>: { <span class="k">"unlimited"</span>: <span class="g">true</span> }
+}</pre>
+        <p style="margin-top:12px;"><b>Why it stops there:</b> M2M settlement is a real, automated transfer of real money, with no confirmation checkpoint in the loop. That write needs a specific, bounded, human-confirmed instruction &mdash; a standing API key is not that.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="slide" id="slide-swarm" data-name="Agent army">
   <div class="inner wide">
