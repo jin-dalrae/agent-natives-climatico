@@ -305,7 +305,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <div>
     <div class="rail-name" id="railName">Cover</div>
     <div class="rail-count"><b id="railNum">01</b> / 09</div>
-    <a class="rail-name" href="/?tab=assess&from=deck" id="railDesk" style="display:block;margin-top:10px;color:var(--accent)">Desk</a>
+    <a class="rail-name" href="/app?tab=assess&from=deck" id="railDesk" style="display:block;margin-top:10px;color:var(--accent)">Desk</a>
   </div>
 </nav>
 
@@ -330,7 +330,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div><span>Cold start</span><b>/ai-agent.json · mint · write</b></div>
       <div><span>Fleet</span><b>ingest → audit → settle</b></div>
       <div><span>Desk</span><b id="coverBase">127.0.0.1:8787</b></div>
-      <div><span>Dashboard</span><b><a href="/?tab=assess&from=deck" id="coverDash">Open live desk</a></b></div>
+        <div><span>Dashboard</span><b><a href="/app?tab=assess&from=deck" id="coverDash">Open live desk</a></b></div>
     </div>
   </div>
 </section>
@@ -378,16 +378,17 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
           <li><b>Ground Oakland port</b> — <span class="inline">brief</span> + Tavily. Evidence on the place.</li>
           <li><b>Watch the port</b> — L5. Survives restart. Still modeled tonnes.</li>
           <li><b>File the tracer’s compute</b> — <span class="inline">run_fleet</span> on SJC. The live class.</li>
+          <li><b>File the battery freight leg</b> — <span class="inline">freight</span>: mode, weight, distance → real kg CO2e. Always commits, tagged grounded or modeled.</li>
           <li><b>Refuse a green chain</b> — <span class="inline">greenwash</span> is a receipt, not a marketing line.</li>
         </ul>
       </div>
       <div class="card">
         <span class="kicker">Honest next · not stubbed</span>
         <ul class="ticks">
-          <li>Logistics is <b>12 t ±35%</b> — largest modeled class, not a live write yet.</li>
-          <li><b>PO / freight write</b> needs supplier write-only and buyer read-only tokens.</li>
+          <li>Logistics is <b>12 t ±35%</b> modeled baseline — the freight write is shipped, but one leg doesn't retire the modeled default.</li>
+          <li>Supplier-only / buyer-only scoped tokens for the two-sided PO flow — one credential files freight today.</li>
           <li>Hardware workflow is a different client (factory they do not own). Named in the PRD. Not this Worker.</li>
-          <li>Dashboard: <a href="/?tab=assess&from=deck">open Rae's tools</a> · shows the same data agents submit.</li>
+          <li>Dashboard: <a href="/app?tab=assess&from=deck">open Rae's tools</a> · shows the same data agents submit.</li>
         </ul>
       </div>
     </div>
@@ -701,8 +702,8 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <h3>Hardware is a different client</h3>
         <ul class="ticks">
           <li>Six classes remain <b>modeled</b> until they are writes</li>
-          <li>Rae’s <b>PO / freight</b> write — named, not stubbed</li>
-          <li><b>AIsa</b> wired — offset settlement via machine payment rail</li>
+          <li>Rae’s <b>PO / freight</b> write — shipped: mode/weight/distance → graded kg CO2e, always commits</li>
+          <li>Supplier-only / buyer-only scoped tokens for the two-sided PO flow — next</li>
           <li><b>Tenki</b> wired — sandboxes for agent test workflows</li>
         </ul>
       </div>
@@ -734,7 +735,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 <section class="slide" id="slide-sponsors" data-name="Sponsor stack">
   <div class="inner">
     <div class="eyebrow">Who's in the room · real, not booth-only</div>
-    <h2 class="slide-title">Five sponsors make this live.</h2>
+    <h2 class="slide-title">Four sponsors make this live.</h2>
     <div class="grid g5">
       <div class="card" style="border-color: var(--accent);">
         <span class="chip ok">Host</span>
@@ -747,9 +748,9 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <p class="sub">Web search on the write path</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
-        <span class="chip wa">Read</span>
-        <h3>AIsa</h3>
-        <p class="sub">Real wallet balance, no payments</p>
+        <span class="chip wa">Memory</span>
+        <h3>Mitosis</h3>
+        <p class="sub">Cortex agent memory, wired into the scheduler</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
         <span class="chip wa">Sandbox</span>
@@ -793,16 +794,15 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         </div>
       </div>
       <div class="card" style="border-color: var(--warn);">
-        <span class="kicker">AIsa &middot; one real call, deliberately not the payment one</span>
-        <h3 style="margin-top:4px;">GET /v1/aisa/balance &mdash; free, read-only, real</h3>
-        <p class="lede" style="margin:10px 0;">AIsa is a real machine-payment rail &mdash; Circle, Stripe, Visa, billed per call in USD. The only call this desk makes is the documented free one: read the wallet, don't touch it.</p>
-        <pre><span class="c">GET /v1/aisa/balance &middot; 200</span>
+        <span class="kicker">Mitosis &middot; agent memory, verified round-trip</span>
+        <h3 style="margin-top:4px;">cortex_remember &rarr; cortex_recall, real universal_id</h3>
+        <p class="lede" style="margin:10px 0;">Every scheduled fleet run writes a summary to Cortex and can recall it back &mdash; the team's own agent memory, reachable via <span class="inline">/v1/memory</span> and MCP, not a Climatico-internal cache.</p>
+        <pre><span class="c">POST /v1/memory &middot; 201</span>
 {
-  <span class="k">"currency"</span>: <span class="g">"USD"</span>,
-  <span class="k">"account_balance_micros_usd"</span>: <span class="g">1000000</span>,
-  <span class="k">"api_key"</span>: { <span class="k">"unlimited"</span>: <span class="g">true</span> }
+  <span class="k">"ok"</span>: <span class="g">true</span>,
+  <span class="k">"memoryId"</span>: <span class="g">"universal_id..."</span>
 }</pre>
-        <p style="margin-top:12px;"><b>Why it stops there:</b> M2M settlement is a real, automated transfer of real money, with no confirmation checkpoint in the loop. That write needs a specific, bounded, human-confirmed instruction &mdash; a standing API key is not that.</p>
+        <p style="margin-top:12px;"><b>What it's for:</b> enrichment, not the write path itself &mdash; a fleet run commits or refuses on policy and Tavily evidence alone. Cortex is where that history becomes queryable later, by us or another agent.</p>
       </div>
     </div>
   </div>
@@ -1151,7 +1151,7 @@ npm run demo         <span class="c"># this slide, in a shell</span></pre>
     if (s.length > 1600) s = s.slice(0, 1600) + "\n…";
     return s;
   }
-  function deskHref(tab) { return BASE + "/?tab=" + tab + "&from=deck"; }
+  function deskHref(tab) { return BASE + "/app?tab=" + tab + "&from=deck"; }
 
   function setLive(on) {
     live = on;
