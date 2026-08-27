@@ -137,33 +137,33 @@ export async function runActionGraph(
       },
     ];
   } else if (intent === "freight") {
+    // The booking is a fact, not a claim — it commits regardless of grounding.
+    // Only the emission-factor citation can be grounded or modeled; the shipment happened either way.
     const mode = (input.freightMode ?? "").trim().toLowerCase();
     const weightKg = input.weightKg ?? 0;
     const distanceKm = input.distanceKm ?? 0;
-    const gathered = await gatherClassEvidence(ctx.env, "logistics");
-    if (!gathered.grounded) {
-      return {
-        ...base,
-        status: "refused",
-        refusalCode: "ungrounded",
-        refusalReason:
-          "Climatico will not score a freight leg without live logistics-factor evidence. Live web evidence (Tavily) was unavailable or empty. It stays modeled.",
-        evidence: [],
-      };
-    }
     const factor = FREIGHT_KG_PER_TONNE_KM[mode];
     const tonnes = weightKg / 1000;
     const kgCO2e = Math.round(factor * tonnes * distanceKm * 10) / 10;
-    evidence = [
-      ...gathered.evidence,
-      {
-        title: `Freight leg scored · ${mode} · ${tonnes}t × ${distanceKm}km`,
-        url: "ledger://freight/scored",
-        snippet: `Heuristic ${factor} kg CO2e/tonne-km (${mode}), cited against live web evidence. ${tonnes} t over ${distanceKm} km → ${kgCO2e} kg CO2e. This is the PO/freight write: a real booking, not a stubbed LCA.`,
-      },
-    ];
+    const gathered = await gatherClassEvidence(ctx.env, "logistics");
+    evidence = gathered.grounded
+      ? [
+          ...gathered.evidence,
+          {
+            title: `Freight leg scored · ${mode} · ${tonnes}t × ${distanceKm}km`,
+            url: "ledger://freight/scored",
+            snippet: `Heuristic ${factor} kg CO2e/tonne-km (${mode}), cited against live web evidence. ${tonnes} t over ${distanceKm} km → ${kgCO2e} kg CO2e. This is the PO/freight write: a real booking, not a stubbed LCA.`,
+          },
+        ]
+      : [
+          {
+            title: `Freight leg scored · ${mode} · ${tonnes}t × ${distanceKm}km (modeled)`,
+            url: "ledger://freight/modeled",
+            snippet: `Heuristic ${factor} kg CO2e/tonne-km (${mode}) — modeled; no live source found to ground this factor right now. ${tonnes} t over ${distanceKm} km → ${kgCO2e} kg CO2e. The booking is real and recorded; only the factor citation is unverified. It can be promoted to grounded later without refiling.`,
+          },
+        ];
     if (!base.note) {
-      base.note = `freight: ${mode} · ${tonnes}t × ${distanceKm}km → ${kgCO2e} kg CO2e`;
+      base.note = `freight: ${mode} · ${tonnes}t × ${distanceKm}km → ${kgCO2e} kg CO2e (${gathered.grounded ? "grounded" : "modeled"})`;
     }
   }
 
