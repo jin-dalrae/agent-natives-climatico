@@ -76,18 +76,8 @@ done
 # Close array
 echo "]" >> proofs/live.json
 
-# Commit to Git (if available)
-echo "Committing to Git..." >> logs/proof_stream.log
-
-git -C . add proofs/live.json
-
-git -C . commit -m "[auto] Live proof stream update: $(date +%Y-%m-%d)" || true
-
-git -C . push origin main || true
-
-# Update public proof endpoint
-# Note: This requires a backend endpoint (e.g. /v1/proof) or use GitHub Pages
-# For now, just keep it in Git
+# Writes proofs/live.json locally. Does not commit or push automatically —
+# review the diff and commit by hand so nothing reaches origin unreviewed.
 
 # Log final success
 echo "[$(date)] Live proof stream generated: proofs/live.json" >> logs/proof_stream.log
