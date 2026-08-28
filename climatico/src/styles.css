@@ -994,7 +994,8 @@ label {
   min-height: 60vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 48px;
 }
 .demo-step-card {
   background: var(--paper);
