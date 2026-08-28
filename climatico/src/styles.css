@@ -986,11 +986,12 @@ label {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-height: calc(100vh - 220px);
+  min-height: 88vh;
 }
 .demo-view > section.demo-step-card,
 .demo-view > section.card {
   flex: 1;
+  min-height: 60vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
