@@ -289,12 +289,47 @@ for m in d.get('memories',[]):
 "
     ;;
   dashboard)
-    echo "=== Dashboard ==="
-    api GET /v1/dashboard | python3 -c "
+    echo "=== Climatico Dashboard === (one call: /v1/observe)"
+    api GET /v1/observe | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
-print(f\"Committed: {d.get('committed',0)}  Flagged: {d.get('flagged',0)}  Watches: {d.get('watches',0)}\")
-print(f\"Fleet runs: {d.get('fleetRuns',0)}  Last receipt: {d.get('lastReceiptId','—')[:12]}\")
+s=d.get('summary',{})
+r=d.get('report',{})
+ei=d.get('intensity',{})
+ore=d.get('orepath',{})
+prov=d.get('provider',{})
+
+print()
+print('-- Footprint --')
+print(f\"  Current job:      {ei.get('currentJobKg','—')} kg CO2e\" if ei.get('currentJobKg') is not None else '  Current job:      no fleet run yet')
+print(f\"  Month to date:     {ei.get('monthlyKg','—')} kg CO2e\" if ei.get('monthlyKg') is not None else '  Month to date:     —')
+now=ei.get('now',{})
+print(f\"  Total modeled:     {now.get('totalT','—')} t/yr  ({now.get('tPerArrM','—')} t per \$M ARR)\")
+
+q=ei.get('quarter',{}); y=ei.get('year',{})
+print()
+print('-- Projection (modeled, ARR-scaled) --')
+if q:
+    print(f\"  {q['label']} if nothing changes: {q['ifNothingChangesT']} t  ({q['ifNothingChangesIntensity']} t/\$M)\")
+    print(f\"  {q['label']} if abating:         {q['ifAbatingT']} t  ({q['ifAbatingIntensity']} t/\$M)  -> -{q['reductionT']} t (-{q['reductionPct']}%)\")
+if y:
+    print(f\"  {y['label']} if nothing changes: {y['ifNothingChangesT']} t  ({y['ifNothingChangesIntensity']} t/\$M)\")
+    print(f\"  {y['label']} if abating:         {y['ifAbatingT']} t  ({y['ifAbatingIntensity']} t/\$M)  -> -{y['reductionT']} t (-{y['reductionPct']}%)\")
+print(f\"  {ei.get('note','')}\")
+
+print()
+print('-- Ledger --')
+print(f\"  Committed: {s.get('committed',0)}  Flagged: {s.get('flagged',0)}  Watches: {s.get('watches',0)}  Fleet runs: {s.get('fleetRuns',0)}\")
+
+print()
+print('-- Agents --')
+print(f\"  Orepath (compute-watcher): active={ore.get('active')}  runs filed={ore.get('runsFiled',0)}\")
+print(f\"  Provider (green-offset-co): contracts={prov.get('contracts',0)}  revenue=\${(prov.get('revenueCents',0)/100):.2f}\")
+
+print()
+print('-- Suggestions --')
+for sug in r.get('suggestions', []):
+    print(f\"  * {sug}\")
 "
     ;;
   agents-start)

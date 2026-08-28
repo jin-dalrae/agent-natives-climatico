@@ -1276,6 +1276,68 @@ Scanning . (file contents never leave this machine)...
         </section>
       ),
     },
+    {
+      label: "7 · Trace",
+      node: (
+        <section className="demo-step-card">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span className="kicker">Step 7 · Trace a Customer&rsquo;s Material Lot</span>
+            <button
+              type="button"
+              className="ghost"
+              disabled={busy}
+              onClick={() =>
+                onRunAction("trace", {
+                  location: "Democratic Republic of Congo",
+                  material: "cobalt",
+                  customer: "Acme EV",
+                  lotKg: 500,
+                })
+              }
+            >
+              File a Provenance Record
+            </button>
+          </div>
+          <h3>Orepath&rsquo;s Actual Product: Supply-Chain Provenance</h3>
+          <p>Everything above is Orepath&rsquo;s <em>own</em> footprint. This is different: Orepath&rsquo;s business is tracing <em>customers&rsquo;</em> battery materials from mine to cell. A 500kg cobalt lot from the DRC, bound for an EV maker, gets grounded against real sourcing-standard evidence and recorded &mdash; a real shipment, so it always commits, tagged grounded or modeled.</p>
+          <div className="cli-box">
+            <span className="prompt">$ </span><span className="cmd">./bin/orepath trace &quot;Democratic Republic of Congo&quot; cobalt &quot;Acme EV&quot; 500</span>
+            <div className="out">
+              <div>Tracing cobalt lot from &apos;Democratic Republic of Congo&apos; to &apos;Acme EV&apos; (500kg)...</div>
+              <div>Status: <span className="highlight">committed</span></div>
+              <div>Receipt: cb45056d</div>
+              <div>Note: <span className="highlight">500kg cobalt · DRC → Acme EV (grounded)</span></div>
+              <div>Sources: 5 live citations (CSIS, Umicore, Cobalt Institute)</div>
+            </div>
+          </div>
+        </section>
+      ),
+    },
+    {
+      label: "8 · Dashboard",
+      node: (
+        <section className="demo-step-card">
+          <span className="kicker">Step 8 · One Call, Full Picture</span>
+          <h3>Footprint, Projection, Agents &amp; Suggestions — One Command</h3>
+          <p><span className="inline">./bin/orepath dashboard</span> hits a single endpoint (<span className="inline">/v1/observe</span>) and prints the current job&rsquo;s footprint, month-to-date, and a modeled +6m/+12m projection two ways: if nothing changes vs. if Orepath adopts the switch Climatico already suggested — with the tonnes and % saved, and the emissions-intensity (t/$M ARR) either way.</p>
+          <div className="cli-box">
+            <span className="prompt">$ </span><span className="cmd">./bin/orepath dashboard</span>
+            <div className="out">
+              <div>-- Footprint --</div>
+              <div>  Current job: 189 kg CO2e   Month to date: 189 kg CO2e</div>
+              <div>  Total modeled: 37.7 t/yr (20.9 t per $M ARR)</div>
+              <div>&nbsp;</div>
+              <div>-- Projection (modeled, ARR-scaled) --</div>
+              <div>  +12m if nothing changes: <span className="warn-hl">68 t</span> (21.3 t/$M)</div>
+              <div>  +12m if abating:         <span className="highlight">48 t</span> (15.0 t/$M) → -20t (-29%)</div>
+              <div>&nbsp;</div>
+              <div>-- Agents --</div>
+              <div>  Orepath: active=True   Provider: 8 contracts, $268.59 revenue</div>
+            </div>
+          </div>
+        </section>
+      ),
+    },
   ];
 
   const last = slides.length - 1;

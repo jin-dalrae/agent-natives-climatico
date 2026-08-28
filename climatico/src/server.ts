@@ -20,6 +20,7 @@ import { getOrepathAgent, OrepathAgent } from "./orepath-agent";
 import { getProviderAgent, ProviderAgent } from "./provider";
 import { cortexRemember, cortexRecall } from "./cortex";
 import { runAutoAssessment, type FolderScan } from "./ingest";
+import { OREPATH_GROWTH } from "./insights";
 
 export { Clerk, Ledger, OrepathAgent, ProviderAgent };
 
@@ -383,6 +384,16 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
         fleetRuns: d.fleetRuns ?? 0,
         watches: d.watches,
       },
+      report: buildReport({
+        runs,
+        receipts,
+        handoffs: await ledger.listHandoffs(30),
+        committed: d.committed,
+        flagged: d.flagged,
+        fleetRuns: d.fleetRuns ?? 0,
+        watches: d.watches,
+      }),
+      intensity: buildIntensity(runs[0]?.audit?.kgCO2e ?? null, runs[0]?.audit?.projectedMonthKg ?? null),
       memory: memory.map((m) => ({ content: m.content.slice(0, 120), at: m.timestamp })),
       refreshedAt: Date.now(),
     });
@@ -472,6 +483,38 @@ async function principalOr401(request: Request, env: Env) {
   const principal = await ledger.resolvePrincipal(token);
   if (!principal) return unauthorized(request, "Token is invalid, expired, or revoked.");
   return principal;
+}
+
+/**
+ * Modeled EI intensity, now vs projected — and what changes if Orepath adopts
+ * the switches Climatico already suggests. ARR-scaled from OREPATH_GROWTH
+ * (the same numbers the Grow tab shows) — a modeled projection, not measured.
+ */
+function buildIntensity(currentJobKg: number | null, monthlyKg: number | null) {
+  const q = OREPATH_GROWTH.quarters;
+  const now = q[0];
+  const quarter = q.find((x) => x.label === "+6m") ?? q[1];
+  const year = q.find((x) => x.label === "+12m") ?? q[2];
+  const round1 = (n: number) => Math.round(n * 10) / 10;
+  const intensity = (t: number, arrM: number) => round1(t / arrM);
+  const period = (p: (typeof q)[number]) => ({
+    label: p.label,
+    arrM: p.arrM,
+    ifNothingChangesT: p.defaultT,
+    ifAbatingT: p.climaT,
+    reductionT: round1(p.defaultT - p.climaT),
+    reductionPct: Math.round(((p.defaultT - p.climaT) / p.defaultT) * 100),
+    ifNothingChangesIntensity: intensity(p.defaultT, p.arrM),
+    ifAbatingIntensity: intensity(p.climaT, p.arrM),
+  });
+  return {
+    currentJobKg,
+    monthlyKg,
+    now: { totalT: now.defaultT, arrM: now.arrM, tPerArrM: intensity(now.defaultT, now.arrM) },
+    quarter: period(quarter),
+    year: period(year),
+    note: "Modeled projection, ARR-scaled — not measured. 'Abating' means adopting the switch Climatico already suggests (e.g. clean-grid compute).",
+  };
 }
 
 async function enrichReport(env: Env) {
