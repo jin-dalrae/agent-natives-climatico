@@ -1077,12 +1077,15 @@ function DemoView({
   onRunFleet,
   onRunAction,
   busy,
+  lastReceiptId,
 }: {
   onRunFleet: () => void;
   onRunAction: (intent: string, payload: Record<string, unknown>) => void;
   busy: boolean;
+  lastReceiptId?: string | null;
 }) {
   const [step, setStep] = useState(0);
+  const priorReceiptId = lastReceiptId || "0fe65272";
 
   const slides: { label: string; node: React.ReactNode }[] = [
     {
@@ -1228,6 +1231,7 @@ Ceiling: $50.00
                 onRunAction("switch", {
                   location: "SJC",
                   newSolution: "FRA clean-grid datacenter",
+                  priorReceiptId,
                   priorAmountCents: 3580,
                   amountCents: 500,
                 })
@@ -1239,12 +1243,12 @@ Ceiling: $50.00
           <h3>Switch to Low-Carbon Solution &amp; Refund Prior Offset</h3>
           <p>Orepath switches tracer batch compute from high-carbon SJC to clean-grid Frankfurt (FRA). The new commitment is only $5.00, and Climatico automatically claims a $30.80 refund on the prior offset!</p>
           <div className="cli-box">
-            <span className="prompt">$ </span><span className="cmd">./bin/orepath switch SJC &quot;FRA clean-grid datacenter&quot; 0fe65272 3580 500</span>
+            <span className="prompt">$ </span><span className="cmd">./bin/orepath switch SJC &quot;FRA clean-grid datacenter&quot; {priorReceiptId} 3580 500</span>
             <div className="out">
               <div>Logging solution switch at &apos;SJC&apos;...</div>
               <div>Status: <span className="highlight">committed</span></div>
               <div>Transition: SJC high-carbon → <span className="highlight">FRA clean-grid datacenter</span></div>
-              <div>Prior Offset: $35.80 USD (Receipt 0fe65272)</div>
+              <div>Prior Offset: $35.80 USD (Receipt {priorReceiptId})</div>
               <div>New Commitment: $5.00 USD</div>
               <div>Offset Refund: <span className="highlight">+$30.80 USD claimable</span> (net emissions reduced!)</div>
             </div>
@@ -1669,6 +1673,7 @@ export function App() {
               })
             }
             busy={busy}
+            lastReceiptId={d?.lastReceiptId}
           />
         ) : null}
 
