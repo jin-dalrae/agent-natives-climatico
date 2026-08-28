@@ -294,10 +294,6 @@ th {
 td.k { color: var(--accent-deep); font-weight: 600; }
 
 .hotspot {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 6px;
-  align-items: baseline;
   padding: 10px 0;
   border-top: 1px solid var(--line);
   font-size: 13.5px;
