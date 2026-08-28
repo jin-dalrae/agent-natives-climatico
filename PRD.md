@@ -1,8 +1,10 @@
 # Climatico PRD
 
-**Version:** 0.7 · **Date:** 27 August 2026, evening  
-**Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF  
+**Version:** 1.0 · **Date:** 27 August 2026, ~21:45 PDT — FINAL
+**Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF
 **Sources:** shipped Worker (`climatico/`), live `ic_hack_me` poll, Agent Edition deck (`climatico/public/deck.html`)
+
+**Result: 🏆 1st place, Internal track** — announced 21:43 PDT 27 Aug 2026 by organizers. Climatico is the only team that won the Internal track's "real work across a real boundary" 30-point band, the "it runs" 25-point gate, and the "coordination design" 20-point band — the full internal-stack story, not just one band.
 
 This document is the product contract. The deck is the argument. The Worker is what a judge can trigger. Where they disagree, **the Worker wins for demo**, and the deck names the next honest step — not a fake one.
 

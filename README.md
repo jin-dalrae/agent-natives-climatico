@@ -2,11 +2,13 @@
 
 Cloudflare SF, 26–27 Aug 2026. Track: **Internal** (fleet) with an External-ready discovery surface.
 
+**Result: 🏆 1st place, Internal track** — announced 21:43 PDT 27 Aug 2026 by organizers. Climatico is the only team that won the Internal track's "real work across a real boundary" 30-point band, the "it runs" 25-point gate, and the "coordination design" 20-point band — the full internal-stack story, not just one band.
+
 **Live:** [`climatico.dalrae-jin-work.workers.dev`](https://climatico.dalrae-jin-work.workers.dev)
 
 | Path | What |
 | --- | --- |
-| [`PRD.md`](PRD.md) | Product requirements (v0.7) |
+| [`PRD.md`](PRD.md) | Product requirements (v1.0 — final) |
 | [`climatico/climatico.sh`](climatico/climatico.sh) | CLI — talk to the desk from your terminal |
 | [`climatico/`](climatico/) | Worker + 8 agents (Orepath, Provider, Fleet, Clerk, Scheduler, Abatement, Analysts) |
 | [`climatico/SUBMIT.md`](climatico/SUBMIT.md) | Hackathon submission payload |
