@@ -2,7 +2,7 @@
 
 Cloudflare SF, 26–27 Aug 2026. Track: **Internal** (fleet) with an External-ready discovery surface.
 
-**Result: 🏆 1st place, Internal track** — announced 21:43 PDT 27 Aug 2026 by organizers. Climatico is the only team that won the Internal track's "real work across a real boundary" 30-point band, the "it runs" 25-point gate, and the "coordination design" 20-point band — the full internal-stack story, not just one band.
+**Result: 🏆 1st place, Internal tools track** — announced 21:43 PDT 27 Aug 2026 by organizers. Climatico is the only team that won the Internal track's "real work across a real boundary" 30-point band, the "it runs" 25-point gate, and the "coordination design" 20-point band — the full internal-stack story, not just one band.
 
 **Live:** [`climatico.dalrae-jin-work.workers.dev`](https://climatico.dalrae-jin-work.workers.dev)
 
