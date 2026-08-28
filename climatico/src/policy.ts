@@ -9,6 +9,7 @@ import {
 import { hasScope } from "./auth";
 
 const FREIGHT_MODES = ["sea", "air", "road", "rail"] as const;
+const TRACE_MATERIALS = ["lithium", "cobalt", "nickel", "graphite"] as const;
 
 export function isIntent(value: string): value is Intent {
   return (INTENTS as readonly string[]).includes(value);
@@ -22,7 +23,7 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     return {
       allow: false,
       code: "intent_required",
-      reason: "Climatico only commits named climate actions: brief, watch, offset, assess, abate, switch, refund, freight.",
+      reason: "Climatico only commits named climate actions: brief, watch, offset, assess, abate, switch, refund, freight, trace.",
     };
   }
 
@@ -38,7 +39,7 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     return {
       allow: false,
       code: "unknown_intent",
-      reason: `Unknown intent '${intent}'. Allowed writes: brief, watch, offset, assess, abate, switch, refund, freight.`,
+      reason: `Unknown intent '${intent}'. Allowed writes: brief, watch, offset, assess, abate, switch, refund, freight, trace.`,
     };
   }
 
@@ -124,6 +125,31 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
         allow: false,
         code: "distance_required",
         reason: "freight requires distanceKm > 0 — the leg distance.",
+      };
+    }
+  }
+
+  if (intent === "trace") {
+    const material = (input.material ?? "").trim().toLowerCase();
+    if (!(TRACE_MATERIALS as readonly string[]).includes(material)) {
+      return {
+        allow: false,
+        code: "trace_material_required",
+        reason: `trace requires material: one of ${TRACE_MATERIALS.join(", ")}.`,
+      };
+    }
+    if (!(input.customer ?? "").trim()) {
+      return {
+        allow: false,
+        code: "trace_customer_required",
+        reason: "trace requires customer — who this material lot is for. This is Orepath's actual product: provenance for a named buyer, not an internal note.",
+      };
+    }
+    if (!Number.isFinite(input.lotKg) || (input.lotKg ?? 0) <= 0) {
+      return {
+        allow: false,
+        code: "trace_lot_required",
+        reason: "trace requires lotKg > 0 — the material lot weight.",
       };
     }
   }

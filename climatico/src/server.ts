@@ -225,6 +225,9 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       freightMode?: string;
       weightKg?: number;
       distanceKm?: number;
+      material?: string;
+      customer?: string;
+      lotKg?: number;
     }>(request)) ?? {};
     const ledger = await getLedger(env);
     const receipt = await ledger.runAction(
@@ -241,6 +244,9 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
         freightMode: body.freightMode,
         weightKg: body.weightKg,
         distanceKm: body.distanceKm,
+        material: body.material,
+        customer: body.customer,
+        lotKg: body.lotKg,
       },
       principal,
     );

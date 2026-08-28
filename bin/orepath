@@ -6,6 +6,7 @@
 #   orepath whoami                  # show what the saved token can do
 #   orepath fleet <loc> <$> [budget] [mtd]  # calculate compute emissions from spend
 #   orepath freight <lane> <mode> <kg> <km> # calculate logistics emissions for shipment
+#   orepath trace <origin> <material> <customer> <kg> # trace a customer's material lot (Orepath's actual product)
 #   orepath switch <loc> <newSolution> <priorReceiptId> <priorCents> <newCents> # switch to green option
 #   orepath refund <loc> <priorReceiptId> <priorCents> <newCents> # claim refund on prior offset
 #   orepath brief <location>        # ground location climate factors (Tavily)
@@ -175,7 +176,7 @@ print(json.dumps(items))
     ;;
   # Pass-through: every other subcommand goes to climatico.sh.
   # Token is already exported; URL is exported; everything just works.
-  discover|whoami|fleet|offset|brief|watch|freight|switch|refund|refuse|flag|\
+  discover|whoami|fleet|offset|brief|watch|freight|trace|switch|refund|refuse|flag|\
   report|receipts|handoffs|dashboard|memory|orepath|provider|observe|\
   status|agents-start|agents-stop|connect|help)
     # Special-case `connect`: the path arg defaults to the config's

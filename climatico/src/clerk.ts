@@ -1,13 +1,24 @@
 import { Think } from "@cloudflare/think";
 import { tool } from "ai";
 import { z } from "zod";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createWorkersAI } from "workers-ai-provider";
 import { getLedger } from "./ledger";
 
 export class Clerk extends Think<Env> {
   getModel() {
-    const model = (this.env as Env & { AI_MODEL?: string }).AI_MODEL || "@cf/moonshotai/kimi-k2.6";
-    return createWorkersAI({ binding: this.env.AI })(model);
+    const apiKey =
+      (this.env as Env & { GEMINI_API_KEY?: string; GOOGLE_AI_API_KEY?: string }).GEMINI_API_KEY?.trim() ||
+      (this.env as Env & { GEMINI_API_KEY?: string; GOOGLE_AI_API_KEY?: string }).GOOGLE_AI_API_KEY?.trim();
+
+    if (apiKey) {
+      const google = createGoogleGenerativeAI({ apiKey });
+      const model = (this.env as Env & { AI_MODEL?: string }).AI_MODEL?.trim() || "gemini-3.7-flash";
+      return google(model);
+    }
+
+    const fallback = (this.env as Env & { AI_MODEL?: string }).AI_MODEL || "@cf/google/gemma-4-26b-a4b-it";
+    return createWorkersAI({ binding: this.env.AI })(fallback as Parameters<ReturnType<typeof createWorkersAI>>[0]);
   }
 
   getSystemPrompt() {

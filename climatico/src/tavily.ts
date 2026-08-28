@@ -74,6 +74,8 @@ function climateQuery(location: string, intent: string): string {
       return `heat wave air quality climate risk alerts ${location}`;
     case "assess":
       return `climate risk assessment physical risk flood heat drought ${location}`;
+    case "trace":
+      return `responsible sourcing conflict minerals supply chain traceability ${location} mining 2026`;
     default:
       return `current climate risk heat air quality drought flood ${location} 2026`;
   }

@@ -226,6 +226,41 @@ export function mcpHandler(env: Env, principal: Principal) {
       );
 
       server.registerTool(
+        "file_trace",
+        {
+          description:
+            "File a real supply-chain provenance record: a material lot traced from origin to a named customer. This is Orepath's actual product — traceability for its buyers — not Orepath's own footprint. Always commits (a lot that shipped is a fact); tagged grounded if a live sourcing-standard source was found, modeled otherwise. Requires climatico:transact.",
+          inputSchema: {
+            location: z.string().describe("Origin — mine, refinery, or facility name/location."),
+            material: z.enum(["lithium", "cobalt", "nickel", "graphite"]).describe("Material being traced."),
+            customer: z.string().describe("Named buyer this lot is bound for."),
+            lotKg: z.number().positive().describe("Material lot weight in kg."),
+            note: z.string().optional().describe("Free-text context, e.g. batch/lot id."),
+            idempotencyKey: z.string().optional().describe("Replay-safe key."),
+          },
+        },
+        async (args) => {
+          if (!hasScope(principal, "climatico:transact")) {
+            return text({ ok: false, flagged: true, code: "missing_scope" }, true);
+          }
+          const ledger = await getLedger(env);
+          const receipt = await ledger.runAction(
+            {
+              intent: "trace",
+              location: args.location,
+              material: args.material,
+              customer: args.customer,
+              lotKg: args.lotKg,
+              note: args.note,
+              idempotencyKey: args.idempotencyKey,
+            },
+            principal,
+          );
+          return text({ ok: receipt.status === "committed", flagged: receipt.status === "flagged", receipt });
+        },
+      );
+
+      server.registerTool(
         "plan_abatement",
         {
           description:

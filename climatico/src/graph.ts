@@ -165,6 +165,33 @@ export async function runActionGraph(
     if (!base.note) {
       base.note = `freight: ${mode} · ${tonnes}t × ${distanceKm}km → ${kgCO2e} kg CO2e (${gathered.grounded ? "grounded" : "modeled"})`;
     }
+  } else if (intent === "trace") {
+    // Orepath's actual product: provenance for a customer's material lot. The
+    // lot moved regardless of whether a sourcing-standard citation exists —
+    // it commits either way, tagged grounded or modeled, same as freight.
+    const material = (input.material ?? "").trim().toLowerCase();
+    const customer = (input.customer ?? "").trim();
+    const lotKg = input.lotKg ?? 0;
+    const gathered = await gatherEvidence(ctx.env, `${material} ${location}`, "trace");
+    evidence = gathered.grounded
+      ? [
+          ...gathered.evidence,
+          {
+            title: `Provenance traced · ${material} · ${lotKg}kg → ${customer}`,
+            url: "ledger://trace/scored",
+            snippet: `${lotKg}kg of ${material} from ${location}, bound for ${customer}, cited against live sourcing-standard evidence. This is Orepath's traceability product, not its own footprint.`,
+          },
+        ]
+      : [
+          {
+            title: `Provenance traced · ${material} · ${lotKg}kg → ${customer} (modeled)`,
+            url: "ledger://trace/modeled",
+            snippet: `${lotKg}kg of ${material} from ${location}, bound for ${customer} — modeled; no live sourcing-standard source found right now. The lot record is real; only the sourcing citation is unverified. It can be promoted to grounded later without refiling.`,
+          },
+        ];
+    if (!base.note) {
+      base.note = `trace: ${lotKg}kg ${material} · ${location} → ${customer} (${gathered.grounded ? "grounded" : "modeled"})`;
+    }
   }
 
   return {

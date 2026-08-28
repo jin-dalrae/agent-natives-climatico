@@ -11,6 +11,7 @@
 #   brief <loc>       File an evidence-backed brief
 #   watch <loc>       Start watching a location
 #   freight <lane> <mode> <kg> <km>  File a real PO/freight leg (sea|air|road|rail)
+#   trace <origin> <material> <customer> <kg>  File a real supply-chain provenance record
 #   switch <loc> <newSolution> <priorReceiptId> <priorCents> <newCents>  Log a solution switch
 #   refund <loc> <priorReceiptId> <priorCents> <newCents>  Claim back the delta after a switch
 #   flag <loc>      Test a forbidden claim (greenwash)
@@ -146,6 +147,24 @@ print('Receipt ID:', r.get('id','?')[:8], '(flag stored permanently)')
     [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
     echo "Filing freight leg '$loc' ($mode, ${kg}kg x ${km}km)..."
     body="{\"intent\":\"freight\",\"location\":\"$loc\",\"freightMode\":\"$mode\",\"weightKg\":$kg,\"distanceKm\":$km}"
+    api POST /v1/actions "$body" | python3 -c "
+import json,sys
+r=json.load(sys.stdin).get('receipt',{})
+print('Status:', r.get('status','?'))
+print('Receipt:', r.get('id','?')[:8])
+print('Note:', r.get('note','?'))
+if r.get('status') == 'flagged':
+    print('Flagged:', r.get('flagReason','?'))
+"
+    ;;
+  trace)
+    origin="${1:-Democratic Republic of Congo}"
+    material="${2:-cobalt}"
+    customer="${3:-Acme EV}"
+    kg="${4:-500}"
+    [ -z "$TOKEN" ] && { echo "No token. Run 'mint' first."; exit 1; }
+    echo "Tracing $material lot from '$origin' to '$customer' (${kg}kg)..."
+    body="{\"intent\":\"trace\",\"location\":\"$origin\",\"material\":\"$material\",\"customer\":\"$customer\",\"lotKg\":$kg}"
     api POST /v1/actions "$body" | python3 -c "
 import json,sys
 r=json.load(sys.stdin).get('receipt',{})
