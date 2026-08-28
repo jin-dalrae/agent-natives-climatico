@@ -982,7 +982,19 @@ label {
   color: var(--muted-2);
 }
 
-.demo-view { display: grid; gap: 20px; }
+.demo-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: calc(100vh - 220px);
+}
+.demo-view > section.demo-step-card,
+.demo-view > section.card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .demo-step-card {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -1005,7 +1017,7 @@ label {
 }
 .cli-box .prompt { color: var(--leaf); font-weight: 700; user-select: none; }
 .cli-box .cmd { color: #fff; font-weight: 600; }
-.cli-box .out { color: #9ab4a3; margin-top: 6px; white-space: pre-wrap; }
+.cli-box .out { color: #9ab4a3; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); white-space: pre-wrap; }
 .cli-box .highlight { color: #5ce1a6; font-weight: 600; }
 .cli-box .warn-hl { color: #f5b041; font-weight: 600; }
 
