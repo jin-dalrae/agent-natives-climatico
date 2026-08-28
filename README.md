@@ -136,11 +136,8 @@ All four read and write the **same** notebook: one Durable Object running SQLite
 on Cloudflare. That notebook survives restarts — nothing important is lost
 overnight.
 
-There is also a **Clerk** — an AI chat agent. It calls Google Gemini 3.7 Flash
-directly if `GEMINI_API_KEY`/`GOOGLE_AI_API_KEY` is set; that key is **not set
-in production**, so it silently runs on Workers AI's `@cf/google/gemma-4-26b-a4b-it`
-instead. Ask it questions, or ask it to file a write — it uses the same tools
-any agent would.
+There is also a **Clerk** — an AI chat agent built on Workers AI. Ask it
+questions, or ask it to file a write. It uses the same tools any agent would.
 
 ---
 
@@ -179,10 +176,9 @@ any agent would.
   sources on demand (`assess` with `source` set to the class id, or the "Ground
   with Tavily" button in the Assess tab). They start modeled and stay modeled
   until grounded — nothing is claimed live until it actually is.
-- Grounding summaries (written when a class is assessed) call Google Gemini
-  3.7 Flash if a key is set — **it isn't, in production** — so they actually
-  run on **Workers AI**'s Gemma model, no external key needed. Nebius Token
-  Factory was tried first and dropped — see "Who's actually in the room" below.
+- Grounding summaries (written when a class is assessed) run on **Workers AI**,
+  no external key needed. Nebius Token Factory was tried first and dropped —
+  see "Who's actually in the room" below.
 - **Mitosis** Cortex memory — verified real `cortex_remember`/`cortex_recall`
   round-trip (write + recall, real `universal_id`) — the team's own agent
   memory via MCP, not a Climatico API
@@ -196,10 +192,6 @@ any agent would.
   still *not* built: supplier-only and buyer-only scoped tokens for the
   two-sided PO flow — right now one credential files both, there's no
   separate supplier/buyer split yet.
-- Google Gemini is **wired but not live** — no `GEMINI_API_KEY` is set in
-  production, so the Clerk and grounding summaries silently run on Workers AI
-  instead. Gemini isn't an event sponsor; it's an external dependency doing
-  nothing right now while a working, native alternative already covers it.
 - Tavily runs **keyless** right now (the `26HACK` coupon, which grants 8,000 extra
   credits, is not yet claimed — two days only).
 - The Worker's own Cotal webhook (`COTAL_WEBHOOK_URL`) is still unset — the
@@ -226,11 +218,11 @@ We ship what runs and we say what we haven't.
 | **Audit** | Scores kgCO₂e via web evidence, checks budget | Fleet pipeline | **Tavily** |
 | **Settle** | Commits offset receipt if over budget | Fleet pipeline | — |
 | **Abatement researcher** | Tavily search for real greener alternatives per class | Cron | **Tavily** |
-| **Summary writer** | Writes plain-English abatement plans — Gemini 3.7 Flash if keyed, else Workers AI Gemma (currently: Workers AI) | Gemini / Workers AI | **Workers AI** |
+| **Summary writer** | Workers AI writes plain-English abatement plans | Workers AI | **Workers AI** |
 | **Report builder** | Compiles runs+receipts into `/v1/report`, plus a +6m/+12m EI intensity projection via `/v1/observe` | REST | — |
 | **Inbox analyst** | Pushes hotspot alerts + suggestions to workspace | Insights | — |
 | **Cortex memory** | Stores fleet run summaries, retrievable by namespace | REST | **Mitosis Cortex** |
-| **Clerk** | AI chat — answers questions, files writes, explains flags. Gemini 3.7 Flash if keyed, else Workers AI Gemma (currently: Workers AI) | Gemini / Workers AI | **Workers AI** |
+| **Clerk** | AI chat — answers questions, files writes, explains flags | Workers AI | **Workers AI** |
 
 ---
 
