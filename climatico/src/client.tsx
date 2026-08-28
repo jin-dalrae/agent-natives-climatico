@@ -1342,6 +1342,20 @@ Scanning . (file contents never leave this machine)...
 
   const last = slides.length - 1;
 
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        setStep((s) => Math.min(last, s + 1));
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        setStep((s) => Math.max(0, s - 1));
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [last]);
+
   return (
     <div className="demo-view">
       <div className="row" style={{ justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -1358,7 +1372,7 @@ Scanning . (file contents never leave this machine)...
             </button>
           ))}
         </div>
-        <span className="tag">{step + 1} / {slides.length}</span>
+        <span className="tag">{step + 1} / {slides.length} &nbsp; ← → to move</span>
       </div>
 
       {slides[step].node}
