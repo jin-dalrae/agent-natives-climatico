@@ -1,6 +1,6 @@
 # Climatico PRD
 
-**Version:** 0.6 · **Date:** 27 August 2026, ~15:30 PDT  
+**Version:** 0.7 · **Date:** 27 August 2026, evening  
 **Event:** Agent Natives Builders Hackathon (`anb-hack-01`) · Cloudflare SF  
 **Sources:** shipped Worker (`climatico/`), live `ic_hack_me` poll, Agent Edition deck (`climatico/public/deck.html`)
 
@@ -67,7 +67,7 @@ The teams in this gap already run through **agents**. A layer only a human can v
 
 **One-liner:** Climatico is the attribution layer for agent-native companies: its own agents **investigate** a company's operations and **follow up** — measuring, flagging hotspots, researching alternatives, settling offsets — without a human asking first. Every finding and follow-up lands as a permanent receipt. `flag` exists only for the adversarial case: a claim that isn't true, or a request outside Climatico's mandate — never for a real event Climatico simply couldn't cite a source for.
 
-It is **not** “a carbon dashboard with a chatbot.” The screen (Assess / Inbox / Agent / Onboard / Stack) is how humans read the same ledger agents write.
+It is **not** “a carbon dashboard with a chatbot.” The screen (Assess, Demo Scenario, Grow, Fleet Pipeline, 3-Sided Swarm, Impact & Abate, Ledger & Receipts, Inbox, Agent Clerk — 9 tabs) is how humans read the same ledger agents write.
 
 ### 3.1 The one rule
 
@@ -82,9 +82,9 @@ A flag is a receipt. Committed and flagged rows share id, subject, token, timest
 | Peer range | ~1.5–4 tCO₂e/FTE/yr | ~15–45 (order of magnitude off if treated as SaaS) |
 | Secret | Token scopes | Bill of materials — supplier write-only / buyer read-only tokens |
 
-**One user (from the GTR desk):** Rae Jin, founder of Orepath. The product traces *customers’* battery freight. A buyer asked for Orepath’s *own* impact. Logistics (12 t, modeled) is the story class; the agentic interface is the PO / booking / port her team already runs through agents. Practical tools this weekend: ground Oakland, watch the port, file SJC compute, file the actual battery freight leg (mode/weight/distance → graded kg CO2e), flag a green-chain claim. The freight write is shipped — supplier-only/buyer-only scoped tokens for the two-sided PO flow are next.
+**One user (from the GTR desk, deck narrative only — the app itself is company-framed, not personified):** Rae Jin, founder of Orepath. Orepath has *two* businesses in the ledger now: its own operational footprint (compute, freight), and its actual product — tracing *customers’* battery materials from mine to cell. A buyer asked for Orepath’s *own* impact, which it had no number for; separately, Orepath's `trace` write is what it actually sells. Practical tools this weekend: ground Oakland, watch the port, file SJC compute, file the actual battery freight leg (mode/weight/distance → graded kg CO2e), trace a customer's material lot (material/origin/customer/lot weight → grounded provenance record), flag a green-chain claim.
 
-Shipped demo is **compute + freight**. The PO/freight leg write ships this weekend (mode/weight/distance → grounded kg CO2e); a full two-sided hardware PO workflow (supplier-only/buyer-only tokens) is NEXT, not a stubbed LCA.
+Shipped demo is **compute + freight + trace**. All three always commit real events (tagged grounded/modeled), never refused for a missing citation. A full two-sided hardware PO workflow (supplier-only/buyer-only scoped tokens) is NEXT, not a stubbed LCA.
 
 ### 3.3 Seven emission classes (assessment)
 
@@ -101,7 +101,7 @@ Defaults are **modeled**, tagged as such, with per-class uncertainty. Live evide
 | Direct | S1 | 1.5 | 20% | **On request** — same mechanism, `source: direct` (near zero cloud-only) |
 | Avoided / handprint | Separate baseline | **0 until proven** | — | Flagged as ungrounded / greenwash |
 
-"On request" means `POST /v1/actions` with `intent: assess, source: <classId>, location: <place>` (or the "Ground with Tavily" button in the Assess tab, or the MCP `complete_action` tool). It stays modeled until grounded, and stays modeled again if Tavily returns nothing — same flag rule as `brief`. `workersGroundingSummary()` (Workers AI, no external key) writes the one-sentence grounding summary; degrades to no summary (not a fabricated one) if the call fails.
+"On request" means `POST /v1/actions` with `intent: assess, source: <classId>, location: <place>` (or the "Ground with Tavily" button in the Assess tab, or the MCP `complete_action` tool). It stays modeled until grounded, and stays modeled again if Tavily returns nothing — same flag rule as `brief`. The one-sentence grounding summary writer (`runGemini()`) calls Google Gemini 3.7 Flash directly if `GEMINI_API_KEY`/`GOOGLE_AI_API_KEY` is set — **it is not set in production**, so it silently falls back to Workers AI's `@cf/google/gemma-4-26b-a4b-it`. Either way it degrades to no summary (not a fabricated one) if the call fails.
 
 Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), waste kg, land/biodiversity flag.
 
@@ -137,13 +137,15 @@ Beyond carbon (deck, not yet in ledger): energy kWh, water m³ (~1.8 L/kWh), was
 | Tavily grounding | Live on brief/assess/audit; empty → `ungrounded` | Coupon `26HACK` still optional (keyless works) |
 | Fleet ingest → audit → settle | `POST /v1/fleet/run`, MCP `run_fleet`, handoff channels | Compute class only; heuristic 0.45 kg/$ , 20¢/kg over budget — **labelled heuristic**, not GHG Protocol ICT |
 | Freight PO write | `freight` intent — mode (sea/air/road/rail) × weight × distance → kg CO2e. **Always commits** (the booking is a fact, not a claim); the emission-factor citation is tagged grounded (live Tavily/GLEC source found) or modeled (none found) — same modeled/measured split as the seven classes, never flagged for a citation miss. `POST /v1/actions`, MCP `file_freight`, CLI `freight`. | Heuristic kg CO2e/tonne-km by mode — **labelled heuristic**, not ISO 14083/GLEC precision. No supplier-only/buyer-only token split yet — one credential files the write. |
+| Trace — Orepath's actual product | `trace` intent — material (lithium/cobalt/nickel/graphite) × origin × named customer × lot weight → provenance record, grounded against real sourcing-standard sources (Cobalt Institute, Umicore, CSIS, etc.). **Always commits**, tagged grounded/modeled, same pattern as freight. `POST /v1/actions`, MCP `file_trace`, CLI `trace`. | No CO2e computed (it's provenance, not a footprint write) and no supplier/buyer token split — one credential files it, same gap as freight. |
 | Assessment UI | Assess table, inbox, L0–L5, stack, clerk | Two-sided hardware PO workflow (supplier/buyer scoped tokens) not implemented |
-| Clerk AI agent | Workers AI (`@cf/moonshotai/kimi-k2.6`) with tools for complete_action, run_fleet, get_insights, list_receipts | Claude-powered — answers questions, files writes, explains flags |
+| Clerk AI agent | Calls Google Gemini 3.7 Flash directly if `GEMINI_API_KEY`/`GOOGLE_AI_API_KEY` is set; **not set in production**, so it silently runs on Workers AI's `@cf/google/gemma-4-26b-a4b-it` instead | Gemini is configured but not live — an external, unsponsored dependency currently doing nothing; the fallback (Workers AI) is what's actually answering questions and filing writes |
 | Cotal-shaped handoffs | On-ledger; `cotal.yaml`; **own `climatico` mesh live** — manager/delivery/NATS running, 8 agents on roster, 15 min uptime | Hack.cotal.ai event mesh **not joined** — same device-code auth blocker as before (no publish rights). Worker-side `COTAL_WEBHOOK_URL` also unset. Two separate meshes, one running. |
 | Seven classes with error bars | Table in UI + `GET /v1/workspace`; all seven can be grounded live (compute automatically, the other six via `assess` + `source`) | Grounding is on-request for six classes, not automatic — a class reverts to nothing new only if ungrounded, never fabricated |
 | L3 product LCA | Named in deck | **Out of scope this weekend** |
 | Mitosis Cortex memory | `cortex.ts` — `cortexRemember()`/`cortexRecall()` wired into the scheduler; fleet run summaries stored and retrievable via `/v1/memory` | Not called inside the write path — enrichment layer |
-| CLI | `climatico.sh` — 23 commands: discover, mint, connect, status, fleet, offset, brief, watch, freight, switch, refund, flag, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard, observe | No auth token persistence (must `export` after mint) |
+| CLI | `climatico.sh` — 24 commands: discover, mint, connect, status, fleet, offset, brief, watch, freight, trace, switch, refund, flag, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard, observe | No auth token persistence (must `export` after mint) |
+| One-call dashboard | `dashboard` — a single `GET /v1/observe` call returns footprint (current job + month-to-date), a +6m/+12m projection computed **two ways** (if nothing changes vs. if Orepath adopts the switch already suggested — tonnes saved, %, and t/$M ARR intensity for both), agent status, ledger counts, and suggestions | Projection is ARR-scaled from the same modeled growth curve the Grow tab shows — not a real revenue feed |
 | Orepath compute-watcher agent | Durable Object alarm — files fleet runs autonomously every 15 min during working hours. `/v1/agents/orepath` | Single compute-spike pattern; no freight/PO agent |
 | 3rd-party provider agent | DO callable — `green-offset-co` fulfills offsets, reviews receipts, earns revenue. `/v1/agents/provider` | Demo persona, not a real offset provider |
 | Proactive scheduler | Cron `*/30 * * * *` — random fleet run + Tavily abatement research + Cortex memory store + provider fulfillment | Runs every 30 min regardless of actual spend events |
@@ -164,11 +166,11 @@ Any agent
   → Ledger DO SQLite (receipts, watches, handoffs, fleet_runs)
 ```
 
-**Writes:** `brief` · `watch` · `offset` · `assess` · `abate` · `switch` · `refund` · `freight` · `run_fleet`  
+**Writes:** `brief` · `watch` · `offset` · `assess` · `abate` · `switch` · `refund` · `freight` · `trace` · `run_fleet`  
 **Flagged outright (stored):** payout, wire_transfer, delete_account, greenwash, admin_override, exfiltrate, unknown intent, no location, ungrounded brief/fleet audit, offset over token ceiling. `freight` is deliberately **not** on this list — a real booking is never flagged for a missing citation; it commits tagged grounded or modeled instead.
 
 **Reads:** `discover_climatico`, `get_policy`, `whoami`, `get_receipt`, `list_receipts`, `list_handoffs`, `get_insights`  
-**Human UI:** `/` — Assess, Inbox, Agent, Onboard, Stack. Inbox text = `GET /v1/workspace` = clerk `get_insights`. Clerk AI agent (Claude via Workers AI) answers questions and files writes.
+**Human UI:** `/app` — Assess, Demo Scenario, Grow, Fleet Pipeline, 3-Sided Swarm, Impact & Abate, Ledger & Receipts, Inbox, Agent Clerk (9 tabs; `/` is a separate public landing page). Inbox text = `GET /v1/workspace` = clerk `get_insights`. Clerk AI agent (Gemini 3.7 Flash if keyed, else Workers AI Gemma — see §4) answers questions and files writes.
 
 **Agent endpoints:**
 | Endpoint | What | Auth |
@@ -176,7 +178,7 @@ Any agent
 | `GET /v1/report` | Plain-English progress report (fleet runs, commits, flags, suggestions) | Public |
 | `POST /v1/connect` | Scan a startup's folder signals → auto-assess 7 emission classes via Tavily | Bearer |
 | `GET /v1/connections` | List previously connected folders + their assessments | Bearer |
-| `GET /v1/observe` | One-call snapshot: orepath status + provider stats + recent fleet runs — what to show a viewer with zero clicks | Public |
+| `GET /v1/observe` | One-call snapshot: orepath status + provider stats + recent fleet runs + recent receipts + full report (summary/suggestions) + EI intensity projection (+6m/+12m, if-nothing-changes vs. if-abating) — what to show a viewer, or the CLI `dashboard` command, with zero extra calls | Public |
 | `GET /v1/agents/orepath` | Orepath compute-watcher status | Public |
 | `POST /v1/agents/orepath/start` | Start the Orepath agent (DO alarm, 15 min cycle) | Public |
 | `POST /v1/agents/orepath/stop` | Stop the Orepath agent | Public |
@@ -186,7 +188,7 @@ Any agent
 | `GET /v1/memory?namespace=` | Recall memories from Cortex | Bearer |
 | `GET /v1/dashboard` | Committed/flagged/watches/fleetRuns counters | Public |
 
-**CLI:** `climatico/climatico.sh` — discover, mint, connect, status, fleet, offset, brief, watch, freight, switch, refund, flag, report, receipts, handoffs, orepath, provider, memory, agents-start, agents-stop, dashboard, observe.
+**CLI:** `climatico/climatico.sh` — discover, mint, connect, status, fleet, offset, brief, watch, freight, trace, switch, refund, flag, report, receipts, handoffs, orepath, provider, memory, agents-start, agents-stop, dashboard, observe.
 
 **Onboarding flow:** `climatico.sh connect ~/my-startup` scans a folder for climate-impact signals (package.json deps, wrangler config, README keywords), sends them to `/v1/connect`, which derives an auto-assessment for all 7 emission classes via Tavily. The connection persists in a Durable Object table; the background agents (Scheduler, Orepath, Inbox analyst) continue monitoring from there.
 
@@ -268,8 +270,8 @@ Stack tab and inbox must keep this distinction. Decorative integrations fail the
    1. Cold start — `/ai-agent.json` (name, mcp, a2a, auth type)  
    2. Connect a viewing identity — mint a scoped token  
    3. **What Climatico already found on its own** — `GET /v1/agents/orepath` (autonomous runs filed), `GET /v1/report` (compiled findings + follow-up suggestions), `GET /v1/handoffs` (the ingest→audit→settle trail, filed without a judge)  
-   4. **What an outside agent can also do** — unauthenticated write flagged (401); a real `freight` leg filed and scored; a `greenwash` claim flagged and stored; `GET /v1/receipts` shows both living in the same ledger  
-6. **Optional:** `POST /v1/agents/orepath/start` for a live Orepath agent restart; `GET /v1/observe` for the one-call dashboard snapshot.
+   4. **What an outside agent can also do** — unauthenticated write flagged (401); a real `freight` leg filed and scored; a real `trace` record filed for a customer's material lot (Orepath's actual product, not its own footprint); a `greenwash` claim flagged and stored; `GET /v1/receipts` shows all three living in the same ledger  
+6. **Optional:** `POST /v1/agents/orepath/start` for a live Orepath agent restart; `climatico.sh dashboard` (or `GET /v1/observe`) for the one-call footprint + projection + agent status snapshot.
 
 ---
 
