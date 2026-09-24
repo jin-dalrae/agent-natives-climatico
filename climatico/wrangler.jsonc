@@ -11,11 +11,7 @@
     "PRODUCT_NAME": "Climatico",
     "PUBLIC_BASE_URL": "",
     "PROVIDER_NAME": "green-offset-co",
-    "AI_MODEL": "@cf/moonshotai/kimi-k2.6"
-  },
-  "ai": {
-    "binding": "AI",
-    "remote": true
+    "AI_MODEL": "gemini-1.5-flash"
   },
   "assets": {
     "directory": "./dist",

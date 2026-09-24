@@ -1,13 +1,15 @@
 import { Think } from "@cloudflare/think";
 import { tool } from "ai";
 import { z } from "zod";
-import { createWorkersAI } from "workers-ai-provider";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { getLedger } from "./ledger";
 
 export class Clerk extends Think<Env> {
   getModel() {
-    const model = (this.env as Env & { AI_MODEL?: string }).AI_MODEL || "@cf/moonshotai/kimi-k2.6";
-    return createWorkersAI({ binding: this.env.AI })(model);
+    const apiKey = (this.env as Env & { GEMINI_API_KEY?: string }).GEMINI_API_KEY || "";
+    const google = createGoogleGenerativeAI({ apiKey });
+    const model = (this.env as Env & { AI_MODEL?: string }).AI_MODEL || "gemini-1.5-flash";
+    return google(model);
   }
 
   getSystemPrompt() {
@@ -73,7 +75,7 @@ export class Clerk extends Think<Env> {
         },
       }),
       get_insights: tool({
-        description: "Assessment: composition, maturity, inbox, sponsor next steps.",
+        description: "Assessment: composition, maturity, inbox, and next steps.",
         inputSchema: z.object({}),
         execute: async () => {
           const ledger = await getLedger(this.env);

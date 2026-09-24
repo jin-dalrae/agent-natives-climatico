@@ -1,4 +1,5 @@
 import type { EvidenceItem } from "./types";
+import { geminiSummarizeAbatement, gatherGeminiEvidence } from "./gemini";
 
 const TAVILY_SEARCH = "https://api.tavily.com/search";
 
@@ -7,14 +8,21 @@ type TavilyResponse = { results?: TavilyHit[] };
 
 /**
  * Searches for real, current greener alternatives / abatement strategies for a
- * specific business source. Uses Tavily (keyless or keyed). Returns up to 3
- * concrete sources with snippets — not invented text.
+ * specific business source. Uses Gemini Search Grounding or Tavily fallback.
  */
 export async function researchAlternatives(
   env: Env,
   className: string,
   location: string,
 ): Promise<{ suggestions: EvidenceItem[]; grounded: boolean }> {
+  const geminiKey = (env as Env & { GEMINI_API_KEY?: string }).GEMINI_API_KEY?.trim();
+  if (geminiKey) {
+    const res = await gatherGeminiEvidence(env, `${className} at ${location}`, "abate");
+    if (res.grounded && res.evidence.length > 0) {
+      return { suggestions: res.evidence.slice(0, 3), grounded: true };
+    }
+  }
+
   const query = `${className} emission reduction greener alternatives best practices ${location} 2026`;
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   const apiKey = (env as Env & { TAVILY_API_KEY?: string }).TAVILY_API_KEY;
@@ -47,8 +55,8 @@ export async function researchAlternatives(
 }
 
 /**
- * Uses Workers AI to generate a plain-English abatement plan from the research
- * results. Returns null on failure — never invents.
+ * Uses Gemini API to generate a plain-English abatement plan from research results.
+ * Returns null on failure — never invents.
  */
 export async function summarizeAbatement(
   env: Env,
@@ -56,20 +64,5 @@ export async function summarizeAbatement(
   currentTons: number,
   alternatives: EvidenceItem[],
 ): Promise<string | null> {
-  if (alternatives.length === 0) return null;
-  const sources = alternatives.map((a, i) => `${i + 1}. ${a.title}: ${a.snippet}`).join("\n");
-  const prompt = `The company's "${className}" emits ${currentTons} tonnes CO2e/year (modeled). Based ONLY on these real sources, suggest 2-3 concrete ways to reduce it. Be specific — name technologies, methods, or vendors if mentioned. If sources don't support a specific reduction, say what they do establish.\n\nSources:\n${sources}`;
-
-  try {
-    const model = ((env as Env & { AI_MODEL?: string }).AI_MODEL || "@cf/moonshotai/kimi-k2.6") as Parameters<typeof env.AI.run>[0];
-    const res = await env.AI.run(model, {
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 300,
-      temperature: 0.3,
-      stream: false,
-    });
-    return (res as { response?: string }).response?.trim() || null;
-  } catch {
-    return null;
-  }
+  return geminiSummarizeAbatement(env, className, currentTons, alternatives);
 }

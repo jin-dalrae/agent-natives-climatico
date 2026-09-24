@@ -1,4 +1,5 @@
 import type { EvidenceItem } from "./types";
+import { gatherGeminiEvidence } from "./gemini";
 
 const TAVILY_SEARCH = "https://api.tavily.com/search";
 
@@ -63,6 +64,13 @@ export async function gatherEvidence(
   location: string,
   intent: string,
 ): Promise<{ evidence: EvidenceItem[]; grounded: boolean; error?: string }> {
+  const geminiKey = (env as Env & { GEMINI_API_KEY?: string }).GEMINI_API_KEY?.trim();
+  if (geminiKey) {
+    const geminiRes = await gatherGeminiEvidence(env, location, intent);
+    if (geminiRes.grounded) {
+      return geminiRes;
+    }
+  }
   return tavilySearch(env, climateQuery(location, intent));
 }
 
@@ -102,5 +110,13 @@ export async function gatherClassEvidence(
 ): Promise<{ evidence: EvidenceItem[]; grounded: boolean; error?: string }> {
   const query = CLASS_QUERIES[classId];
   if (!query) return { evidence: [], grounded: false, error: "unknown_class" };
+
+  const geminiKey = (env as Env & { GEMINI_API_KEY?: string }).GEMINI_API_KEY?.trim();
+  if (geminiKey) {
+    const geminiRes = await gatherGeminiEvidence(env, query, "assess");
+    if (geminiRes.grounded) {
+      return geminiRes;
+    }
+  }
   return tavilySearch(env, query);
 }

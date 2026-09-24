@@ -1,4 +1,4 @@
-import type { EvidenceItem } from "./types";
+const localMemoryStore = new Map<string, Array<{ content: string; timestamp: number }>>();
 
 const CORTEX_WRITE = "https://api.mitosislabs.ai/v1/cortex/remember";
 const CORTEX_READ = "https://api.mitosislabs.ai/v1/cortex/recall";
@@ -9,18 +9,22 @@ type CortexResponse = {
   results?: Array<{ content: string; timestamp: number; metadata?: Record<string, unknown> }>;
 };
 
-/**
- * Stores a fact in Cortex (Mitosis Labs) persistent memory. Each memory
- * has a universal_id and a namespace. Returns the memory_id or null.
- */
 export async function cortexRemember(
   env: Env,
   namespace: string,
   content: string,
   metadata?: Record<string, unknown>,
 ): Promise<string | null> {
+  const memoryId = `mem_${crypto.randomUUID().slice(0, 12)}`;
+  const item = { content, timestamp: Date.now() };
+
+  const list = localMemoryStore.get(namespace) || [];
+  list.unshift(item);
+  if (list.length > 50) list.pop();
+  localMemoryStore.set(namespace, list);
+
   const key = (env as Env & { MITOSIS_API_KEY?: string }).MITOSIS_API_KEY?.trim();
-  if (!key) return null;
+  if (!key) return memoryId;
 
   try {
     const res = await fetch(CORTEX_WRITE, {
@@ -38,9 +42,9 @@ export async function cortexRemember(
     });
     if (!res.ok) return null;
     const body = (await res.json()) as CortexResponse;
-    return body.memory_id || null;
+    return body.memory_id || memoryId;
   } catch {
-    return null;
+    return memoryId;
   }
 }
 
@@ -54,7 +58,10 @@ export async function cortexRecall(
   limit = 5,
 ): Promise<Array<{ content: string; timestamp: number }>> {
   const key = (env as Env & { MITOSIS_API_KEY?: string }).MITOSIS_API_KEY?.trim();
-  if (!key) return [];
+  if (!key) {
+    const list = localMemoryStore.get(namespace) || [];
+    return list.slice(0, limit);
+  }
 
   try {
     const res = await fetch(CORTEX_READ, {
@@ -69,13 +76,16 @@ export async function cortexRecall(
         order: "desc",
       }),
     });
-    if (!res.ok) return [];
+    if (!res.ok) return (localMemoryStore.get(namespace) || []).slice(0, limit);
     const body = (await res.json()) as CortexResponse;
+    if (!body.results?.length) {
+      return (localMemoryStore.get(namespace) || []).slice(0, limit);
+    }
     return (body.results || []).map((r) => ({
       content: r.content,
       timestamp: r.timestamp,
     }));
   } catch {
-    return [];
+    return (localMemoryStore.get(namespace) || []).slice(0, limit);
   }
 }

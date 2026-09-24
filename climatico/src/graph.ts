@@ -1,7 +1,7 @@
 import type { ActionInput, EvidenceItem, Principal, Receipt } from "./types";
 import { evaluatePolicy } from "./policy";
 import { gatherEvidence, gatherClassEvidence, isGroundableClass } from "./tavily";
-import { workersGroundingSummary } from "./nebius";
+import { geminiGroundingSummary } from "./gemini";
 import { impactForSource, ABATEMENT } from "./impact";
 
 /** Heuristic freight intensity, kg CO2e per tonne-km, cited against live web evidence — not GHG Protocol/GLEC precision. */
@@ -87,7 +87,7 @@ export async function runActionGraph(
     }
     evidence = gathered.evidence;
     if (groundingClass && !base.note) {
-      const summary = await workersGroundingSummary(ctx.env, classId, evidence);
+      const summary = await geminiGroundingSummary(ctx.env, classId, evidence);
       base.note = summary ? `class-assess:${classId}: ${summary}` : `class-assess:${classId}`;
     }
   } else if (intent === "offset" || intent === "watch") {

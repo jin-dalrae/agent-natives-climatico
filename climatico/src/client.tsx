@@ -7,21 +7,19 @@ import { OREPATH, OREPATH_GROWTH } from "./insights";
 import type { FleetRun, Handoff, Receipt } from "./types";
 import "./styles.css";
 
-type Tab = "assess" | "demo" | "grow" | "pipeline" | "swarm" | "impact" | "ledger" | "inbox" | "agent";
+type Tab = "assess" | "abate" | "ledger" | "agent";
 const TABS: { id: Tab; label: string }[] = [
   { id: "assess", label: "Assess" },
-  { id: "demo", label: "Demo Scenario" },
-  { id: "grow", label: "Grow" },
-  { id: "pipeline", label: "Fleet Pipeline" },
-  { id: "swarm", label: "3-Sided Swarm" },
-  { id: "impact", label: "Impact & Abate" },
-  { id: "ledger", label: "Ledger & Receipts" },
-  { id: "inbox", label: "Inbox" },
+  { id: "abate", label: "Abate & Actions" },
+  { id: "ledger", label: "Ledger & Pipeline" },
   { id: "agent", label: "Agent Clerk" },
 ];
 
 function tabFromUrl(): Tab {
   const value = new URLSearchParams(window.location.search).get("tab");
+  if (value === "inbox") return "assess";
+  if (value === "demo" || value === "grow" || value === "impact") return "abate";
+  if (value === "pipeline" || value === "swarm") return "ledger";
   return TABS.some((t) => t.id === value) ? (value as Tab) : "assess";
 }
 
@@ -29,29 +27,29 @@ function fromDeck(): boolean {
   return new URLSearchParams(window.location.search).get("from") === "deck";
 }
 
-function SponsorPills({
-  tavilyKey,
-  cotalWebhook,
+function RuntimeStatusBar({
+  geminiReady = true,
+  searchGrounded = true,
 }: {
-  tavilyKey?: boolean;
-  cotalWebhook?: boolean;
+  geminiReady?: boolean;
+  searchGrounded?: boolean;
 }) {
   return (
-    <div className="sponsor-matrix">
-      <div className="sponsor-badge live">
-        <span className="dot ok" />
-        <strong>Cloudflare</strong>
-        <span className="sub">Workers + DO SQLite</span>
+    <div className="engine-status" role="status" aria-label="Engine status">
+      <div className="engine-badge">
+        <span className={`dot ${geminiReady ? "ok" : "wa"}`} />
+        <strong>Gemini 1.5 Flash</strong>
+        <span className="sub">{geminiReady ? "Connected" : "Key Required"}</span>
       </div>
-      <div className={`sponsor-badge ${tavilyKey ? "live" : "wa"}`}>
-        <span className={`dot ${tavilyKey ? "ok" : "wa"}`} />
-        <strong>Tavily</strong>
-        <span className="sub">{tavilyKey ? "Keyed Grounding (26HACK)" : "Keyless Search"}</span>
+      <div className="engine-badge">
+        <span className={`dot ${searchGrounded ? "ok" : "info"}`} />
+        <strong>Search Grounding</strong>
+        <span className="sub">{searchGrounded ? "Live (Google)" : "Local Fallback"}</span>
       </div>
-      <div className="sponsor-badge live">
+      <div className="engine-badge">
         <span className="dot ok" />
-        <strong>Cotal Mesh</strong>
-        <span className="sub">#team.climatico</span>
+        <strong>Edge Ledger</strong>
+        <span className="sub">DO SQLite Synced</span>
       </div>
     </div>
   );
@@ -146,7 +144,7 @@ function Hotspots({
           <div className="row" style={{ marginTop: "6px", gap: "6px" }}>
             {c.status === "modeled" && onGround && GROUNDABLE_CLASS_IDS.has(c.id) ? (
               <button type="button" className="ghost" disabled={busy} onClick={() => onGround(c.id)}>
-                Ground with Tavily
+                Ground with Gemini
               </button>
             ) : null}
             {onSwitch ? (
@@ -264,7 +262,7 @@ function PipelineView({
                       </span>
                     </div>
                     <div className="tavily-evidence-box">
-                      <span className="evidence-head">🔍 Tavily Evidence ({activeRun.audit.evidence.length} sources):</span>
+                      <span className="evidence-head">🔍 Grounded Evidence ({activeRun.audit.evidence.length} sources):</span>
                       <ul className="evidence-list">
                         {activeRun.audit.evidence.slice(0, 3).map((e, idx) => (
                           <li key={idx}>
@@ -606,6 +604,19 @@ function LedgerView({ receipts }: { receipts: Receipt[] }) {
                   <span className="price">${selectedReceipt.amountCents / 100} USD</span>
                 ) : null}
               </div>
+              {selectedReceipt.status === "committed" ? (
+                <div className="mascot-receipt-callout">
+                  <img
+                    src="/assets/mascot/mascot_thumbsup.png"
+                    alt="Committed"
+                    className="mascot-avatar-sm"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                  <span>Receipt permanently committed to Durable Object SQLite ledger.</span>
+                </div>
+              ) : null}
 
               <div className="field-group">
                 <label>What & where</label>
@@ -662,32 +673,82 @@ function ClerkPane() {
   const [draft, setDraft] = useState(
     "Orepath’s Oakland freight is the modeled hotspot. What can I file today vs what’s still modeled?",
   );
+  const isThinking = status === "submitted" || status === "streaming";
 
   return (
-    <div className="card">
-      <span className="kicker">Clerk</span>
-      <h3>Ask the clerk</h3>
+    <div className="card clerk-card">
+      <div className="clerk-head">
+        <div>
+          <span className="kicker">Gemini Assistant</span>
+          <h3>Climatico Clerk</h3>
+        </div>
+        <div className="clerk-status-badge">
+          <span className={`dot ${status === "ready" ? "ok" : "wa"}`} />
+          <span>{status === "ready" ? "Active" : status}</span>
+        </div>
+      </div>
       <p style={{ color: "var(--muted)", fontSize: 13 }}>
-        Ask about your footprint, or ask it to file a write. It uses the same tools an agent would.
-        Status: <b>{status}</b>.
+        Powered by Gemini 1.5 Flash. Ask about emission factors, run audits, or file actions with live Google Search Grounding.
       </p>
       <div className="feed">
         {messages.length === 0 ? (
-          <p>Ask for the assessment, a flag reason, or to run the fleet.</p>
+          <div className="mascot-empty-state">
+            <img
+              src="/assets/mascot/mascot_waving.png"
+              alt="Cadinal Mascot"
+              className="mascot-avatar-lg"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+            <p><strong>Hi! I'm your Climatico Clerk.</strong></p>
+            <p className="sub">Ask me to assess an emission hotspot, run a cloud spend audit, or explain any flagged transaction.</p>
+          </div>
         ) : (
           messages.map((msg: { id: string; role: string; parts: Array<{ type: string; text?: string }> }) => (
-            <p key={msg.id} className={msg.role === "user" ? "you" : "bot"}>
-              <b>{msg.role === "user" ? "you" : "clerk"} · </b>
-              {msg.parts.filter((p) => p.type === "text").map((p) => p.text ?? "").join("")}
-            </p>
+            <div key={msg.id} className={`chat-bubble ${msg.role === "user" ? "user-bubble" : "clerk-bubble"}`}>
+              <div className="bubble-author">
+                {msg.role === "user" ? (
+                  <span>You</span>
+                ) : (
+                  <span className="clerk-name">
+                    <img
+                      src="/assets/mascot/mascot_thumbsup.png"
+                      alt="Clerk"
+                      className="mascot-avatar-xs"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                    Clerk
+                  </span>
+                )}
+              </div>
+              <div className="bubble-text">
+                {msg.parts.filter((p) => p.type === "text").map((p) => p.text ?? "").join("")}
+              </div>
+            </div>
           ))
         )}
+        {isThinking ? (
+          <div className="mascot-thinking-indicator">
+            <img
+              src="/assets/mascot/mascot_thinking.png"
+              alt="Thinking"
+              className="mascot-avatar-sm pulse"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+            <span>Gemini is analyzing &amp; verifying live grounding evidence…</span>
+          </div>
+        ) : null}
       </div>
       <form
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          if (!draft.trim()) return;
+          if (!draft.trim() || isThinking) return;
           void sendMessage({ text: draft });
           setDraft("");
         }}
@@ -697,9 +758,24 @@ function ClerkPane() {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Ask the clerk…"
+          disabled={isThinking}
         />
-        <button type="submit">Send</button>
+        <button type="submit" disabled={isThinking || !draft.trim()}>
+          {isThinking ? "Thinking…" : "Send"}
+        </button>
       </form>
+      <div className="clerk-suggestions">
+        <span style={{ fontSize: "11px", color: "var(--muted)", alignSelf: "center" }}>Suggested:</span>
+        <button type="button" className="ghost" onClick={() => setDraft("Assess the Oakland port logistics emissions")}>
+          Assess Oakland Port
+        </button>
+        <button type="button" className="ghost" onClick={() => setDraft("Run fleet audit for $420 cloud spend in SJC")}>
+          Run Fleet Audit ($420 SJC)
+        </button>
+        <button type="button" className="ghost" onClick={() => setDraft("What are my highest emission classes?")}>
+          Emission Breakdown
+        </button>
+      </div>
     </div>
   );
 }
@@ -926,7 +1002,7 @@ function SwarmView({
           <div className="swarm-col-head">
             <span className="chip ok">Climatico</span>
             <h4>Climatico's agents</h4>
-            <p className="sub">Cloudflare + Nebius + Tavily</p>
+            <p className="sub">Google Gemini + Cloudflare Workers</p>
           </div>
 
           <div className="agent-cards">
@@ -1526,13 +1602,8 @@ export function App() {
 
   const title: Record<Tab, string> = {
     assess: "Dashboard",
-    demo: "Demo Scenario & CLI Walkthrough",
-    grow: "Growth vs. footprint",
-    pipeline: "Fleet: ingest, audit, settle",
-    swarm: "Who's talking to whom",
-    impact: "Impact & abatement — the modeled cascade and the same business, run differently",
+    abate: "Impact & abatement — the modeled cascade and the same business, run differently",
     ledger: "Receipts & flags",
-    inbox: "Inbox",
     agent: "Ask the clerk",
   };
 
@@ -1543,9 +1614,16 @@ export function App() {
           <img src="/assets/climatico-logo.svg" alt="Climatico" width="148" height="40" />
           <span className="sub">desk</span>
         </a>
-        <nav className="tabs">
+        <nav className="tabs" role="tablist" aria-label="Main Navigation">
           {TABS.map((t) => (
-            <button key={t.id} type="button" aria-current={tab === t.id} onClick={() => goTab(t.id)}>
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              aria-selected={tab === t.id}
+              aria-current={tab === t.id}
+              onClick={() => goTab(t.id)}
+            >
               {t.label}
             </button>
           ))}
@@ -1587,10 +1665,7 @@ export function App() {
             </section>
 
             <section className="cover">
-              <SponsorPills
-                tavilyKey={ws?.tavilyKey}
-                cotalWebhook={ws?.cotalWebhook}
-              />
+              <RuntimeStatusBar geminiReady={true} searchGrounded={true} />
               <p className="kicker">Climatico</p>
               <h1>{title[tab]}</h1>
               <div className="row">
@@ -1731,86 +1806,8 @@ export function App() {
           </>
         ) : null}
 
-        {tab === "demo" ? (
-          <DemoView
-            onRunFleet={() =>
-              void write("/v1/fleet/run", {
-                source: "cloud",
-                location,
-                spendUsd: 420,
-                monthlyBudgetKg: 50,
-                monthToDateKg: 40,
-              })
-            }
-            onRunAction={(intent, payload) =>
-              void write("/v1/actions", {
-                intent,
-                ...payload,
-              })
-            }
-            busy={busy}
-            lastReceiptId={d?.lastReceiptId}
-          />
-        ) : null}
-
-        {tab === "grow" ? (
-          <GrowView
-            lastKg={liveClass && ws?.runs?.[0]?.audit?.kgCO2e != null ? ws.runs[0].audit!.kgCO2e : null}
-            busy={busy}
-            onWrite={(kind) => {
-              if (kind === "fleet") runStoryTool("fleet-sjc");
-              else if (kind === "brief") runStoryTool("brief-oakland");
-              else if (kind === "watch") runStoryTool("watch-oakland");
-              else if (kind === "switch" || kind === "flag") runStoryTool("switch-clean-grid");
-            }}
-          />
-        ) : null}
-
-        {tab === "pipeline" ? (
-          <PipelineView
-            runs={ws?.runs ?? []}
-            handoffs={ws?.handoffs ?? []}
-            onRunFleet={(spend, budget, mtd) =>
-              void write("/v1/fleet/run", {
-                source: "cloud",
-                location,
-                spendUsd: spend,
-                monthlyBudgetKg: budget,
-                monthToDateKg: mtd,
-              })
-            }
-            busy={busy}
-            location={location}
-          />
-        ) : null}
-
-        {tab === "swarm" ? (
-          <SwarmView
-            runs={ws?.runs ?? []}
-            receipts={ws?.receipts ?? []}
-            handoffs={ws?.handoffs ?? []}
-            onRunFleet={(source, loc, spend) =>
-              void write("/v1/fleet/run", {
-                source,
-                location: loc,
-                spendUsd: spend,
-                monthlyBudgetKg: 50,
-                monthToDateKg: 40,
-              })
-            }
-            onRunAction={(intent, loc) =>
-              void write("/v1/actions", {
-                intent,
-                location: loc,
-              })
-            }
-            onVerifyBuyer={() => void verifyBuyer()}
-            buyerAudit={buyerAudit}
-            busy={busy}
-          />
-        ) : null}
-
-        {tab === "impact" ? (
+        {tab === "abate" ? (
+          <>
           <section className="card">
             <span className="kicker">Impact & abatement · modeled, not measured</span>
             <h3>The cascade — and the same business, run differently</h3>
@@ -1893,18 +1890,61 @@ export function App() {
               </tbody>
             </table>
           </section>
+          <GrowView
+            lastKg={liveClass && ws?.runs?.[0]?.audit?.kgCO2e != null ? ws.runs[0].audit!.kgCO2e : null}
+            busy={busy}
+            onWrite={(kind) => {
+              if (kind === "fleet") runStoryTool("fleet-sjc");
+              else if (kind === "brief") runStoryTool("brief-oakland");
+              else if (kind === "watch") runStoryTool("watch-oakland");
+              else if (kind === "switch" || kind === "flag") runStoryTool("switch-clean-grid");
+            }}
+          />
+          <DemoView
+            onRunFleet={() =>
+              void write("/v1/fleet/run", {
+                source: "cloud",
+                location,
+                spendUsd: 420,
+                monthlyBudgetKg: 50,
+                monthToDateKg: 40,
+              })
+            }
+            onRunAction={(intent, payload) =>
+              void write("/v1/actions", {
+                intent,
+                ...payload,
+              })
+            }
+            busy={busy}
+            lastReceiptId={d?.lastReceiptId}
+          />
+          </>
         ) : null}
 
-        {tab === "ledger" ? <LedgerView receipts={ws?.receipts ?? []} /> : null}
-
-        {tab === "inbox" ? (
-          <section className="card">
-            <span className="kicker">Inbox</span>
-            <InboxList items={ws?.inbox ?? []} />
-          </section>
+        {tab === "ledger" ? (
+          <>
+            <LedgerView receipts={ws?.receipts ?? []} />
+            <PipelineView
+              runs={ws?.runs ?? []}
+              handoffs={ws?.handoffs ?? []}
+              onRunFleet={(spend, budget, mtd) =>
+                void write("/v1/fleet/run", {
+                  source: "cloud",
+                  location,
+                  spendUsd: spend,
+                  monthlyBudgetKg: budget,
+                  monthToDateKg: mtd,
+                })
+              }
+              busy={busy}
+              location={location}
+            />
+          </>
         ) : null}
 
         {tab === "agent" ? (
+          <>
           <div className="grid g2">
             <ClerkPane />
             <section className="card">
@@ -1938,7 +1978,34 @@ export function App() {
               </div>
             </section>
           </div>
+          <SwarmView
+            runs={ws?.runs ?? []}
+            receipts={ws?.receipts ?? []}
+            handoffs={ws?.handoffs ?? []}
+            onRunFleet={(source, loc, spend) =>
+              void write("/v1/fleet/run", { source, location: loc, spendUsd: spend })
+            }
+            onRunAction={(intent, loc) => void write("/v1/actions", { intent, location: loc })}
+            onVerifyBuyer={() => void verifyBuyer()}
+            buyerAudit={buyerAudit}
+            busy={busy}
+          />
+          </>
         ) : null}
+
+        <footer className="app-footer">
+          <div className="footer-content">
+            <img
+              src="/assets/mascot/mascot_waving.png"
+              alt="Cadinal"
+              className="mascot-avatar-xs"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+            <span>Climatico · Built by Cadinal in San Francisco</span>
+          </div>
+        </footer>
 
       </main>
     </div>
