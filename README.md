@@ -1,8 +1,6 @@
-# Climatico — Agent Natives Builders Hackathon
+# Climatico — Autonomous Carbon Attribution Layer (v1.0 Standalone)
 
-Cloudflare SF, 26–27 Aug 2026. Track: **Internal** (fleet) with an External-ready discovery surface.
-
-**Result: 🏆 1st place, Internal tools track** — announced 21:43 PDT 27 Aug 2026 by organizers. Climatico is the only team that won the Internal track's "real work across a real boundary" 30-point band, the "it runs" 25-point gate, and the "coordination design" 20-point band — the full internal-stack story, not just one band.
+Climatico is an autonomous, agent-native carbon attribution and climate action ledger. Originally built and awarded **🏆 1st place (Internal Track)** at the Agent Natives Builders Hackathon in SF, Climatico has been decoupled from temporary hackathon sponsor SDKs and fully modernized as a production-ready, standalone MVP.
 
 **Live:** [`climatico.dalrae-jin-work.workers.dev`](https://climatico.dalrae-jin-work.workers.dev)
 
@@ -11,9 +9,6 @@ Cloudflare SF, 26–27 Aug 2026. Track: **Internal** (fleet) with an External-re
 | [`PRD.md`](PRD.md) | Product requirements (v1.0 — final) |
 | [`climatico/climatico.sh`](climatico/climatico.sh) | CLI — talk to the desk from your terminal |
 | [`climatico/`](climatico/) | Worker + 8 agents (Orepath, Provider, Fleet, Clerk, Scheduler, Abatement, Analysts) |
-| [`climatico/SUBMIT.md`](climatico/SUBMIT.md) | Hackathon submission payload |
-| [`hack-watch/`](hack-watch/) | Event floor monitor (live dashboard) |
-| [`climatico/public/deck.html`](climatico/public/deck.html) | Agent Edition narrative deck |
 
 Secrets stay local: `climatico/.dev.vars`, `hack-watch/.ic_token`. Copy `.dev.vars.example`.
 
@@ -26,9 +21,15 @@ and projected forward — and **follow up** on what they find, without a human
 asking first. They break impact down by business area (cloud compute,
 shipping, travel), flag hotspots, research greener alternatives, and settle
 offsets — all autonomously. Every finding and every follow-up is a permanent
-receipt. An outside agent can also file into the same ledger (a real freight
-booking, a climate brief) — but the point of Climatico is what it finds on
-its own, not a form other agents fill out for approval.
+receipt written to a Durable Object SQLite ledger.
+
+### 🚀 v1.0 Post-Hackathon Upgrades
+
+- **Gemini-first Engine**: **Google Gemini 1.5 Flash** powers Clerk chat through `@ai-sdk/google` and drives agentic grounding and factor analysis through the Gemini API.
+- **Google Search Grounding**: Uses live Google Search Grounding on the write path to fetch and cite real-world climate evidence, with Tavily retained as a fallback.
+- **Decoupled & Standalone**: Replaced direct proprietary hackathon SDK integrations with resilient local in-memory fallbacks for Cortex memory and Tenki sandboxes, so local development remains available without those service credentials.
+- **UX & Tab Consolidation**: Slimmed down from a busy 9-tab layout to **4 core tabs** (`Assess`, `Abate & Actions`, `Ledger & Pipeline`, `Agent Clerk`) paired with an elegant, real-time `RuntimeStatusBar`.
+- **Cadinal Mascot Integration**: Integrated our friendly blue seal mascot across the app to support micro-interactions: `MascotWaving` (Greeting & Footer), `MascotThinking` (Gemini grounding/loading states), and `MascotThumbsUp` (committed actions and receipts).
 
 ---
 
@@ -124,21 +125,21 @@ script, not separately-running services.
 
 ---
 
-## Four doors into the same room
+## Five ways into the same room
 
 | Door | Who uses it | Status |
 | --- | --- | --- |
 | `/mcp` | AI agents (MCP protocol), 16 tools | **DONE** |
 | `/a2a` | AI agents (Agent-to-Agent protocol) | **DONE** |
 | `/v1/*` | Any program (REST API) — includes `/v1/report`, `/v1/observe`, `/v1/agents/*`, `/v1/memory`, `/v1/dashboard` | **DONE** |
-| `/app` (web page) | Humans — 9 tabs: Assess, Demo Scenario, Grow, Fleet Pipeline, 3-Sided Swarm, Impact & Abate, Ledger & Receipts, Inbox, Agent Clerk (`/` is a separate landing page) | **DONE** |
+| `/app` (web page) | Humans — 4 core tabs (Assess, Abate, Ledger, Clerk) and real-time status bar | **DONE** |
 | `climatico.sh` | CLI — 24 commands from your terminal | **DONE** |
 
-All four read and write the **same** notebook: one Durable Object running SQLite
+All five use the **same** notebook: one Durable Object running SQLite
 on Cloudflare. That notebook survives restarts — nothing important is lost
 overnight.
 
-There is also a **Clerk** — an AI chat agent built on Workers AI. Ask it
+There is also an **Agent Clerk** — an AI chat assistant powered by Gemini 1.5. Ask it
 questions, or ask it to file a write. It uses the same tools any agent would.
 
 ---
@@ -151,21 +152,22 @@ questions, or ask it to file a write. It uses the same tools any agent would.
 - Discovery files agents can find (`/ai-agent.json`, agent card, MCP card)
 - Token minting with frozen permissions and spending caps
 - Policy that says **no** before the write, and stores the flag
-- All 9 writes + the fleet pipeline, all returning durable receipts
-- Receipt viewer, inbox, assessment tabs, sponsor-stack honesty in the UI
-- Tavily web search on the write path (grounds briefs/audits; flags if no evidence)
-- Clerk AI chat agent
+- All 9 writes + the fleet pipeline, returning durable edge receipts
+- Consolidated Assess, Abate, Ledger, and Clerk views in the UI
+- **Google Search Grounding** via Gemini on the write path (grounds briefs/audits; Tavily fallback)
+- Clerk AI chat assistant (Gemini-powered)
 - Hackathon submission filed and current — repo/demo URLs match the deployed Worker
 - ✅ **Orepath compute-watcher agent** — DO alarm, files fleet runs every 15 min during working hours. `/v1/agents/orepath`
 - ✅ **3rd-party provider agent** — `green-offset-co` fulfills offsets, reviews receipts. `/v1/agents/provider`
 - ✅ **Scheduled fleet** — cron every 30 min runs ingest→audit→settle with random location/spend
-- ✅ **Abatement researcher** — Tavily search for real greener alternatives per emission class
+- ✅ **Abatement researcher** — Gemini search for real greener alternatives per emission class, with Tavily fallback
 - ✅ **Report builder** — `/v1/report` compiles fleet runs + receipts + budget into plain-English summary
 - ✅ **Inbox analyst** — hotspot alerts and suggestions pushed to the workspace inbox automatically
 - ✅ **Cortex memory** — `cortex.ts` stores fleet run summaries, retrievable via `/v1/memory`. **Mitosis Cortex** wired into scheduler.
 - ✅ **CLI** — `climatico.sh` with 24 commands: discover, mint, connect, status, fleet, offset, brief, watch, freight, trace, switch, refund, flag, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard, observe
-- ✅ **Freight write** — `freight` intent takes mode (sea/air/road/rail), weight, distance, grounds against real Tavily/GLEC logistics evidence, scores kg CO2e via a labelled heuristic. **Always commits** — a real booking is a fact, never flagged for a missing citation, only tagged grounded or modeled. `POST /v1/actions`, MCP `file_freight`, CLI `climatico.sh freight`.
-- ✅ **Trace write — Orepath's actual product** — `trace` intent files a customer's material-lot provenance (material, origin, named customer, lot weight), grounded against real sourcing-standard evidence (Cobalt Institute, Umicore, CSIS, etc.). This is what Orepath *sells*, distinct from its own footprint — closes a gap the rest of this system didn't cover. Always commits, tagged grounded/modeled. `POST /v1/actions`, MCP `file_trace`, CLI `climatico.sh trace`.
+- ✅ **Freight write** — `freight` intent takes mode (sea/air/road/rail), weight, distance, grounds against real Gemini Search evidence (with Tavily fallback), scores kg CO2e via a labelled heuristic. **Always commits** — a real booking is a fact, never flagged for a missing citation, only tagged grounded or modeled. `POST /v1/actions`, MCP `file_freight`, CLI `climatico.sh freight`.
+- ✅ **Trace write — Orepath's actual product** — `trace` intent files a customer's material-lot provenance (material, origin, named customer, lot weight), grounded against real sourcing-standard evidence. This is what Orepath *sells*, distinct from its own footprint — closes a gap the rest of this system didn't cover. Always commits, tagged grounded/modeled. `POST /v1/actions`, MCP `file_trace`, CLI `climatico.sh trace`.
+- ✅ **Supply-chain scoped tokens** — `climatico:supplier` can file only freight and trace records; `climatico:buyer` can create briefs, watches, assessments, and independent sandbox verifications. Use `climatico.sh mint <subject> climatico:supplier` or `climatico:buyer` to mint either role.
 - ✅ **Solution switch + offset refund** — `switch` logs a transition to a greener solution against a prior offset receipt; `refund` claims back the delta. Provider agent processes the reversal and records it.
 - ✅ **One-call dashboard** — `climatico.sh dashboard` hits a single endpoint (`/v1/observe`) and prints footprint (current job, month-to-date), a +6m/+12m projection computed two ways (if nothing changes vs. if Orepath adopts the switch already suggested — tonnes saved, %, and t/$M ARR intensity either way), agent status, ledger counts, and suggestions.
 - Cotal: **two meshes, one live.** Our own `climatico` mesh is genuinely joined
@@ -174,73 +176,59 @@ questions, or ask it to file a write. It uses the same tools any agent would.
   — same device-code auth blocker as day 1 (no publish rights granted). The
   Worker's `COTAL_WEBHOOK_URL` is a separate, still-unset, optional path.
 - A `watch` write is filed (L5 onboarding step complete — a watch survives restart)
-- All 6 non-compute emission classes can be grounded live against real Tavily
+- All 6 non-compute emission classes can be grounded live against real Gemini
   sources on demand (`assess` with `source` set to the class id, or the "Ground
-  with Tavily" button in the Assess tab). They start modeled and stay modeled
+  with Gemini" button in the Assess tab). They start modeled and stay modeled
   until grounded — nothing is claimed live until it actually is.
-- Grounding summaries (written when a class is assessed) run on **Workers AI**,
-  no external key needed. Nebius Token Factory was tried first and dropped —
-  see "Who's actually in the room" below.
-- **Mitosis** Cortex memory — verified real `cortex_remember`/`cortex_recall`
-  round-trip (write + recall, real `universal_id`) — the team's own agent
-  memory via MCP, not a Climatico API
+- Grounding summaries run on **Gemini 1.5 Flash** when configured; evidence collection falls back to Tavily if Gemini is unavailable.
+- **Cortex & Tenki Local Fallbacks**: Removed proprietary dependencies, ensuring the app runs standalone.
 
 ### 🔜 LEFT (honest "not yet" list)
 
 - Each emission class starts **modeled** — an estimate with an error bar — until
   it's actually grounded. Compute grounds automatically from fleet activity; the
   other six ground on request (see above), not automatically.
-- The **freight and trace writes are both real** now (see DONE above). What's
-  still *not* built: supplier-only and buyer-only scoped tokens for the
-  two-sided PO flow — right now one credential files both, there's no
-  separate supplier/buyer split yet.
-- Tavily runs **keyless** right now (the `26HACK` coupon, which grants 8,000 extra
-  credits, is not yet claimed — two days only).
-- The Worker's own Cotal webhook (`COTAL_WEBHOOK_URL`) is still unset — the
+- The Worker's own Cotal webhook (`COTAL_WEBHOOK_URL`) is still optional — the
   code path (`announceHandoff`) fires automatically once it is, it just needs
   a real URL from the Cotal booth. Our own `climatico` mesh is live regardless
   (see above).
-- Hacker Bob / HUD: **not** integrated. Booths, credits, or prizes only.
 
 ### 🚫 We will not fake
 
-No fake Hacker Bob scan, no fake GHG Protocol engine.
 We ship what runs and we say what we haven't.
 
 ---
 
 ## Agent architecture
 
-| Agent | What it does | Where | Sponsor tech |
+| Agent | What it does | Where | Core Tech |
 |-------|-------------|-------|-------------|
 | **Orepath compute-watcher** | Employee agent — monitors cloud spend, files fleet runs every 15 min autonomously | DO alarm | — |
 | **Green offset provider** | 3rd-party — fulfills offsets, reviews receipts, earns revenue | DO callable | — |
 | **Scheduler** | Cron — runs fleet + research every 30 min | Cron trigger | — |
 | **Ingest** | Reads spend, validates location, flags if no region | Fleet pipeline | — |
-| **Audit** | Scores kgCO₂e via web evidence, checks budget | Fleet pipeline | **Tavily** |
+| **Audit** | Scores kgCO₂e via web evidence, checks budget | Fleet pipeline | **Gemini / Google Search, Tavily fallback** |
 | **Settle** | Commits offset receipt if over budget | Fleet pipeline | — |
-| **Abatement researcher** | Tavily search for real greener alternatives per class | Cron | **Tavily** |
-| **Summary writer** | Workers AI writes plain-English abatement plans | Workers AI | **Workers AI** |
+| **Abatement researcher** | Searches for real greener alternatives per class | Cron | **Gemini / Google Search, Tavily fallback** |
+| **Summary writer** | Writes plain-English abatement plans | Edge | **Gemini 1.5** |
 | **Report builder** | Compiles runs+receipts into `/v1/report`, plus a +6m/+12m EI intensity projection via `/v1/observe` | REST | — |
 | **Inbox analyst** | Pushes hotspot alerts + suggestions to workspace | Insights | — |
-| **Cortex memory** | Stores fleet run summaries, retrievable by namespace | REST | **Mitosis Cortex** |
-| **Clerk** | AI chat — answers questions, files writes, explains flags | Workers AI | **Workers AI** |
+| **Cortex memory** | Stores fleet run summaries, retrievable by namespace | REST | **Local Fallback / Cortex** |
+| **Clerk** | AI chat — answers questions, files writes, explains flags | Edge | **Gemini 1.5 Flash** |
 
 ---
 
-## Who's actually in the room
+## Technical Stack
 
 | Name | Role | Do we really use it? |
 | --- | --- | --- |
-| Cloudflare | **Host.** Runtime: Workers, Durable Objects, Workers AI, Agents SDK | YES — everything runs on it |
-| Tavily | Sponsor. Web search = evidence + abatement research | YES — the write path + cron research |
-| AIsa | Sponsor. Machine payment rail | No — not used (removed 27 Aug; see hackathon chat post) |
-| Tenki | Sponsor. Sandboxes / CI | YES — agent test environments |
-| Cotal | Organiser. Agent mesh | Partial — own `climatico` mesh live (8 agents); hack.cotal.ai event mesh **not joined** (auth blocker); Worker-side webhook unset |
-| Mitosis | Sponsor. Cortex agent memory | YES — `cortex.ts` wired into scheduler; fleet run summaries stored/recalled. 27 Aug session transcript (5 records, Tenki + Mitosis setup) ingested into office `f56e7069-…` and queryable via `mi cortex ask`. |
-| Immersive Commons | Organiser. Event MCP + submissions | YES — the hackathon itself |
-| Nebius | Sponsor. GPU Cloud / $75 Builder Program | No — grounding summaries moved to Workers AI, no external key used |
-| Hacker Bob, HUD | Credits / prizes / booths | No — not wired in, on purpose |
+| Google Gemini | **Primary AI Engine.** Generates content, grounds evidence, and hosts Agent Clerk | YES — via `@ai-sdk/google` |
+| Google Search | **Search Grounding.** Verified citations for carbon and policy assessments | YES — via Gemini Grounding API |
+| Tavily | **Evidence fallback.** Used when Gemini grounding is unavailable | YES — search fallback |
+| Cloudflare | **Edge runtime.** Workers, Durable Objects, and agent infrastructure | YES — application host |
+| Cotal | Organiser. Agent mesh | Partial — own `climatico` mesh live (8 agents); Worker-side webhook is optional |
+| Mitosis | Cortex agent memory | Optional — local in-memory fallback active by default; Mitosis API key used when configured |
+| Tenki | Sandboxes / CI | Optional — local sandbox session manager active by default |
 
 The UI keeps this distinction visible so nothing *looks* wired in when it isn't.
 
@@ -272,15 +260,12 @@ Rae had no number. That question can block a deal.
 
 ```bash
 cd climatico
-cp .dev.vars.example .dev.vars   # then add a TOKEN_SECRET (openssl rand -hex 32)
+cp .dev.vars.example .dev.vars   # then add a TOKEN_SECRET and GEMINI_API_KEY
 npm install
 npx wrangler types
 npm run dev                      # http://127.0.0.1:8787
 ```
 
-`TAVILY_API_KEY` and `COTAL_WEBHOOK_URL` are optional.
-
----
 
 ## CLI
 

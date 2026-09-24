@@ -1,4 +1,10 @@
-export const SCOPES = ["climatico:read", "climatico:transact", "climatico:admin"] as const;
+export const SCOPES = [
+  "climatico:read",
+  "climatico:transact",
+  "climatico:admin",
+  "climatico:supplier",
+  "climatico:buyer",
+] as const;
 export type Scope = (typeof SCOPES)[number];
 
 export const INTENTS = ["brief", "watch", "offset", "assess", "abate", "switch", "refund", "freight", "trace"] as const;

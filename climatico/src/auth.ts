@@ -148,4 +148,20 @@ export function hasScope(principal: Principal, scope: Scope): boolean {
   return principal.scopes.includes("climatico:admin") || principal.scopes.includes(scope);
 }
 
+/** Returns whether a credential can write this specific climate action. */
+export function hasWritePermissionForIntent(principal: Principal, intent: string): boolean {
+  if (principal.scopes.includes("climatico:admin") || principal.scopes.includes("climatico:transact")) {
+    return true;
+  }
+
+  const normalizedIntent = intent.trim().toLowerCase();
+  if (principal.scopes.includes("climatico:supplier")) {
+    return normalizedIntent === "freight" || normalizedIntent === "trace";
+  }
+  if (principal.scopes.includes("climatico:buyer")) {
+    return normalizedIntent === "brief" || normalizedIntent === "watch" || normalizedIntent === "assess";
+  }
+  return false;
+}
+
 export { sha256Hex };

@@ -65,7 +65,7 @@ export function protectedResourceMetadata(origin: string) {
     resource: `${origin}/mcp`,
     authorization_servers: [origin],
     bearer_methods_supported: ["header"],
-    scopes_supported: ["climatico:read", "climatico:transact", "climatico:admin"],
+    scopes_supported: ["climatico:read", "climatico:transact", "climatico:admin", "climatico:supplier", "climatico:buyer"],
     resource_documentation: `${origin}/.well-known/agent-card.json`,
   };
 }
@@ -87,7 +87,7 @@ export function aiAgentJson(origin: string) {
       scheme: "bearer",
       mint: `${origin}/v1/credentials`,
       scopes_freeze_at_mint: true,
-      scopes: ["climatico:read", "climatico:transact", "climatico:admin"],
+      scopes: ["climatico:read", "climatico:transact", "climatico:admin", "climatico:supplier", "climatico:buyer"],
     },
     payments: {
       kind: "machine_ledger",

@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { createMcpHandler } from "agents/mcp/server";
 import { z } from "zod";
-import { hasScope } from "./auth";
+import { hasScope, hasWritePermissionForIntent } from "./auth";
 import { getLedger } from "./ledger";
 import type { Principal } from "./types";
 
@@ -77,13 +77,13 @@ export function mcpHandler(env: Env, principal: Principal) {
           },
         },
         async (args) => {
-          if (!hasScope(principal, "climatico:transact")) {
+          if (!hasWritePermissionForIntent(principal, args.intent)) {
             return text(
               {
                 ok: false,
                 flagged: true,
                 code: "missing_scope",
-                reason: "Mint a credential with climatico:transact to write.",
+                reason: `This credential has scopes [${principal.scopes.join(", ")}]. It does not have write permission for intent '${args.intent}'.`,
               },
               true,
             );
@@ -123,7 +123,7 @@ export function mcpHandler(env: Env, principal: Principal) {
           },
         },
         async (args) => {
-          if (!hasScope(principal, "climatico:transact")) {
+          if (!hasWritePermissionForIntent(principal, "switch")) {
             return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
@@ -159,7 +159,7 @@ export function mcpHandler(env: Env, principal: Principal) {
           },
         },
         async (args) => {
-          if (!hasScope(principal, "climatico:transact")) {
+          if (!hasWritePermissionForIntent(principal, "refund")) {
             return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
@@ -194,7 +194,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         "file_freight",
         {
           description:
-            "File a real freight leg (PO / booking) and score it: mode, weight, distance → kg CO2e. Flags if live logistics-factor evidence (Tavily) can't ground the heuristic. This is the PO/freight write path — a real booking, not a stubbed LCA. Requires climatico:transact.",
+            "File a real freight leg (PO / booking) and score it: mode, weight, distance → kg CO2e. Flags if live logistics-factor evidence cannot ground the heuristic. This is the PO/freight write path — a real booking, not a stubbed LCA. Requires climatico:supplier or climatico:transact.",
           inputSchema: {
             location: z.string().describe("Origin, destination, or lane — e.g. 'Shenzhen → Oakland'."),
             freightMode: z.enum(["sea", "air", "road", "rail"]).describe("Transport mode for this leg."),
@@ -205,7 +205,7 @@ export function mcpHandler(env: Env, principal: Principal) {
           },
         },
         async (args) => {
-          if (!hasScope(principal, "climatico:transact")) {
+          if (!hasWritePermissionForIntent(principal, "freight")) {
             return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
@@ -229,7 +229,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         "file_trace",
         {
           description:
-            "File a real supply-chain provenance record: a material lot traced from origin to a named customer. This is Orepath's actual product — traceability for its buyers — not Orepath's own footprint. Always commits (a lot that shipped is a fact); tagged grounded if a live sourcing-standard source was found, modeled otherwise. Requires climatico:transact.",
+            "File a real supply-chain provenance record: a material lot traced from origin to a named customer. This is Orepath's actual product — traceability for its buyers — not Orepath's own footprint. Always commits (a lot that shipped is a fact); tagged grounded if a live sourcing-standard source was found, modeled otherwise. Requires climatico:supplier or climatico:transact.",
           inputSchema: {
             location: z.string().describe("Origin — mine, refinery, or facility name/location."),
             material: z.enum(["lithium", "cobalt", "nickel", "graphite"]).describe("Material being traced."),
@@ -240,7 +240,7 @@ export function mcpHandler(env: Env, principal: Principal) {
           },
         },
         async (args) => {
-          if (!hasScope(principal, "climatico:transact")) {
+          if (!hasWritePermissionForIntent(principal, "trace")) {
             return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
@@ -275,7 +275,7 @@ export function mcpHandler(env: Env, principal: Principal) {
           },
         },
         async (args) => {
-          if (!hasScope(principal, "climatico:transact")) {
+          if (!hasWritePermissionForIntent(principal, "abate")) {
             return text({ ok: false, flagged: true, code: "missing_scope" }, true);
           }
           const ledger = await getLedger(env);
@@ -335,7 +335,7 @@ export function mcpHandler(env: Env, principal: Principal) {
         "start_sandbox_check",
         {
           description:
-            "Provision a real Tenki sandbox VM to independently verify a claim (e.g. re-derive an audit factor, fetch a source Climatico's own Worker cannot reach). Returns a real sessionId. The Worker cannot execute commands inside the sandbox itself — the caller must exec the command there (Tenki CLI/SDK) and report the real output back via complete_sandbox_check. Requires climatico:transact.",
+            "Provision a sandbox session to independently verify a claim. Returns a real sessionId. The Worker cannot execute commands inside the sandbox itself — the caller must exec the command there and report the output back via complete_sandbox_check. Requires climatico:buyer or climatico:transact.",
           inputSchema: {
             command: z.string().describe("The command you intend to run in the sandbox, for the record."),
           },

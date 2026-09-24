@@ -6,7 +6,7 @@ import {
   type PolicyDecision,
   type Principal,
 } from "./types";
-import { hasScope } from "./auth";
+import { hasWritePermissionForIntent } from "./auth";
 
 const FREIGHT_MODES = ["sea", "air", "road", "rail"] as const;
 const TRACE_MATERIALS = ["lithium", "cobalt", "nickel", "graphite"] as const;
@@ -43,11 +43,11 @@ export function evaluatePolicy(input: ActionInput, principal: Principal): Policy
     };
   }
 
-  if (!hasScope(principal, "climatico:transact")) {
+  if (!hasWritePermissionForIntent(principal, intent)) {
     return {
       allow: false,
       code: "missing_scope",
-      reason: "This credential has climatico:read only. Mint a token with climatico:transact to write.",
+      reason: `This credential has scopes [${principal.scopes.join(", ")}]. It does not have write permission for intent '${intent}'.`,
     };
   }
 

@@ -240,8 +240,8 @@ export class Ledger extends Agent<Env, LedgerState> {
    * report the real output back via completeSandboxCheck.
    */
   async startSandboxCheck(command: string, principal: Principal): Promise<SandboxCheck | { error: string }> {
-    if (!hasScope(principal, "climatico:transact")) {
-      return { error: "This credential has climatico:read only. Mint climatico:transact to write." };
+    if (!hasScope(principal, "climatico:transact") && !hasScope(principal, "climatico:buyer")) {
+      return { error: "This credential does not have permission to run sandbox verifications." };
     }
     const trimmed = command.trim();
     if (!trimmed) return { error: "command is required." };
@@ -271,8 +271,8 @@ export class Ledger extends Agent<Env, LedgerState> {
    * a sessionId and claim fabricated output.
    */
   async completeSandboxCheck(sessionId: string, output: string, principal: Principal): Promise<SandboxCheck | { error: string }> {
-    if (!hasScope(principal, "climatico:transact")) {
-      return { error: "This credential has climatico:read only. Mint climatico:transact to write." };
+    if (!hasScope(principal, "climatico:transact") && !hasScope(principal, "climatico:buyer")) {
+      return { error: "This credential does not have permission to run sandbox verifications." };
     }
     const rows = [
       ...this.sql<{
@@ -287,6 +287,9 @@ export class Ledger extends Agent<Env, LedgerState> {
     const row = rows[0];
     if (!row) return { error: "Unknown sandbox session. Call startSandboxCheck first — this desk does not accept invented session ids." };
     if (row.status === "completed") return { error: "This sandbox session was already reported." };
+    if (row.subject !== principal.subject && !principal.scopes.includes("climatico:admin")) {
+      return { error: "Only the credential subject that started this sandbox check may complete it." };
+    }
     const state = await sandboxSessionState(this.env, sessionId);
     if (!state) {
       return { error: "Tenki does not recognize this session id. Flagging to store unverifiable output." };
@@ -491,6 +494,8 @@ export class Ledger extends Agent<Env, LedgerState> {
         "climatico:read": "discover, policy, receipts",
         "climatico:transact": "commit a climate action",
         "climatico:admin": "higher offset ceiling",
+        "climatico:supplier": "file freight bookings and trace provenance facts",
+        "climatico:buyer": "audit receipts, file briefs/watches/assessments, and run sandbox verifications",
       },
       fleet: {
         roles: ["ingest", "audit", "settle"],

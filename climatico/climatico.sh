@@ -4,7 +4,7 @@
 #
 # Commands:
 #   discover          Show agent discovery files
-#   mint [subject]    Mint a bearer token (default: cli-user)
+#   mint [subject] [scope]  Mint a bearer token (default scope: climatico:transact)
 #   whoami <token>    Show what a token can do
 #   fleet <loc> <$>   Run fleet: ingest → audit → settle
 #   offset <loc> <¢>  Commit an offset
@@ -55,10 +55,12 @@ case "$cmd" in
     ;;
   mint)
     subject="${1:-cli-user}"
-    echo "Minting token for '$subject'..."
+    scope="${2:-climatico:transact}"
+    echo "Minting $scope token for '$subject'..."
+    payload=$(python3 -c 'import json,sys; print(json.dumps({"subject": sys.argv[1], "scopes": ["climatico:read", sys.argv[2]]}))' "$subject" "$scope")
     res=$(curl -sS -X POST "$BASE/v1/credentials" \
       -H 'content-type: application/json' \
-      -d "{\"subject\":\"$subject\",\"scopes\":[\"climatico:read\",\"climatico:transact\"]}")
+      -d "$payload")
     token=$(echo "$res" | python3 -c "import json,sys; print(json.load(sys.stdin)['token'])")
     echo "Token: $token"
     echo "Scopes: $(echo "$res" | python3 -c "import json,sys; print(json.load(sys.stdin)['scopes'])")"

@@ -1,7 +1,7 @@
-import { hasScope } from "./auth";
+import { hasWritePermissionForIntent } from "./auth";
 import { json, unauthorized } from "./http";
 import { getLedger } from "./ledger";
-import type { Principal } from "./types";
+import type { ActionInput, Principal } from "./types";
 
 type JsonRpc = {
   jsonrpc?: string;
@@ -46,23 +46,29 @@ export async function handleA2A(
   const parts = rpc.params?.message?.parts ?? [];
   const dataPart = parts.find((part) => part.data)?.data;
   const text = parts.map((part) => part.text ?? "").join(" ").trim();
-  const parsed = dataPart
+  const parsed: ActionInput = dataPart
     ? {
         intent: String(dataPart.intent ?? ""),
         location: String(dataPart.location ?? ""),
         amountCents: typeof dataPart.amountCents === "number" ? dataPart.amountCents : undefined,
         source: typeof dataPart.source === "string" ? dataPart.source : undefined,
         note: typeof dataPart.note === "string" ? dataPart.note : text,
+        freightMode: typeof dataPart.freightMode === "string" ? dataPart.freightMode : undefined,
+        weightKg: typeof dataPart.weightKg === "number" ? dataPart.weightKg : undefined,
+        distanceKm: typeof dataPart.distanceKm === "number" ? dataPart.distanceKm : undefined,
+        material: typeof dataPart.material === "string" ? dataPart.material : undefined,
+        customer: typeof dataPart.customer === "string" ? dataPart.customer : undefined,
+        lotKg: typeof dataPart.lotKg === "number" ? dataPart.lotKg : undefined,
       }
     : parseText(text);
 
-  if (!hasScope(principal, "climatico:transact")) {
+  if (!hasWritePermissionForIntent(principal, parsed.intent)) {
     return json(
       request,
       rpcResult(rpc.id ?? null, {
         flagged: true,
         code: "missing_scope",
-        reason: "Mint climatico:transact to send tasks.",
+        reason: `This credential has scopes [${principal.scopes.join(", ")}]. It does not have write permission for intent '${parsed.intent}'.`,
       }),
     );
   }
