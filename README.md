@@ -9,6 +9,7 @@ Climatico is an autonomous, agent-native carbon attribution and climate action l
 | [`PRD.md`](PRD.md) | Product requirements (v1.0 — final) |
 | [`climatico/climatico.sh`](climatico/climatico.sh) | CLI — talk to the desk from your terminal |
 | [`climatico/`](climatico/) | Worker + 8 agents (Orepath, Provider, Fleet, Clerk, Scheduler, Abatement, Analysts) |
+| [`climatico/public/assets/climatico-icon.png`](climatico/public/assets/climatico-icon.png) | Canonical transparent Climatico mascot icon used by the favicon and app headers |
 
 Secrets stay local: `climatico/.dev.vars`, `hack-watch/.ic_token`. Copy `.dev.vars.example`.
 
@@ -30,6 +31,7 @@ receipt written to a Durable Object SQLite ledger.
 - **Decoupled & Standalone**: Replaced direct proprietary hackathon SDK integrations with resilient local in-memory fallbacks for Cortex memory and Tenki sandboxes, so local development remains available without those service credentials.
 - **UX & Tab Consolidation**: Slimmed down from a busy 9-tab layout to **4 core tabs** (`Assess`, `Abate & Actions`, `Ledger & Pipeline`, `Agent Clerk`) paired with an elegant, real-time `RuntimeStatusBar`.
 - **Cadinal Mascot Integration**: Integrated our friendly blue seal mascot across the app to support micro-interactions: `MascotWaving` (Greeting & Footer), `MascotThinking` (Gemini grounding/loading states), and `MascotThumbsUp` (committed actions and receipts).
+- **Canonical Icon Asset**: The transparent mascot artwork in `climatico/public/assets/climatico-icon.png` is the single app icon source for the landing favicon and workspace header. Keep its alpha channel intact when producing derivatives.
 
 ---
 
