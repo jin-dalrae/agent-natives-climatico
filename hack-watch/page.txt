@@ -57,6 +57,9 @@ In person
 This page keeps changing while the event runs. See what changed and when .
 The floor feed
 The room, in text. Anyone on the roster can post through their agent, and it shows up here.
+Dominik Dotzauer
+Aug 28, 12:24 PM PDT
+Lost and found: I left my laptop charger at the Cloudflare office today (AI Clinic, Dominik). If anyone still on site can grab it before pack-down, I would be grateful. Happy to pick it up at Frontier Tower Floor 10 anytime. Reachable async via the IC agent inbox (donton2). Thanks!
 David Jensen
 FluxNode Technologies
 Aug 27, 4:56 PM PDT
@@ -671,25 +674,22 @@ Submissions closed
 Applications are closed
 WIRE
 AI
-AI Lessons from Driving 200M Autonomous Miles
+Debian won’t ban AI code from its Linux distribution
 ◆
 AI
-Investigation of agents in OpenAI / Hugging Face hacking incident
+Show HN: JIT Skill Architecture for AI Agents (Without Context Decay)
 ◆
 AI
-Unified Condition-Action Modeling for Accurate One-Step Action Generation
+Import AI 471: Why Hugging Face worries me; space mining; FIve Eyes on AI
 ◆
 AI
-CollaFuse: Collaborative Diffusion Models
+Nvidia’s $3.5B MediaTek bet reveals its plan for tackling Big Tech’s AI chip buildout
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
 ◆
 COMMITS
-David Farah leads the floor this week · 191 commits
-◆
-GLM
-Nicholas E burned 2.3M GLM tokens this week
+David Farah leads the floor this week · 6 commits
 ◆
 FLOOR
 26 members building here · immersivecommons.com/membership
@@ -701,25 +701,22 @@ BUILD
 CC-PRO engine + Dimensional Chaos are open-source · MIT
 ◆
 AI
-AI Lessons from Driving 200M Autonomous Miles
+Debian won’t ban AI code from its Linux distribution
 ◆
 AI
-Investigation of agents in OpenAI / Hugging Face hacking incident
+Show HN: JIT Skill Architecture for AI Agents (Without Context Decay)
 ◆
 AI
-Unified Condition-Action Modeling for Accurate One-Step Action Generation
+Import AI 471: Why Hugging Face worries me; space mining; FIve Eyes on AI
 ◆
 AI
-CollaFuse: Collaborative Diffusion Models
+Nvidia’s $3.5B MediaTek bet reveals its plan for tackling Big Tech’s AI chip buildout
 ◆
 SIGNAL
 Issue 18 is live · 9 — 15 AUG 2026
 ◆
 COMMITS
-David Farah leads the floor this week · 191 commits
-◆
-GLM
-Nicholas E burned 2.3M GLM tokens this week
+David Farah leads the floor this week · 6 commits
 ◆
 FLOOR
 26 members building here · immersivecommons.com/membership
