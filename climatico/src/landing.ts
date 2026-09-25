@@ -8,7 +8,7 @@ const LANDING_HTML = `<!doctype html>
 <meta property="og:title" content="Climatico" />
 <meta property="og:description" content="Calculate environmental impact, discover greener alternatives, settle and refund." />
 <meta property="og:type" content="website" />
-<link rel="icon" href="/assets/climatico-logo.svg" type="image/svg+xml" />
+<link rel="icon" href="/assets/climatico-icon.png" type="image/png" />
 <style>
   :root {
     --paper: #fbfaf6;
@@ -148,7 +148,7 @@ const LANDING_HTML = `<!doctype html>
 <div class="wrap">
 
 <header>
-  <img src="/assets/climatico-logo.svg" alt="Climatico" width="148" height="40" />
+  <img src="/assets/climatico-icon.png" alt="Climatico" width="52" height="52" />
   <span class="sub">desk</span>
 </header>
 

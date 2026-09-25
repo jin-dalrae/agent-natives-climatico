@@ -1611,7 +1611,7 @@ export function App() {
     <div className={`shell${embedded ? " embed" : ""}`}>
       <header className="top">
         <a className="brand" href="/app">
-          <img src="/assets/climatico-logo.svg" alt="Climatico" width="148" height="40" />
+          <img src="/assets/climatico-icon.png" alt="Climatico" width="40" height="40" />
           <span className="sub">desk</span>
         </a>
         <nav className="tabs" role="tablist" aria-label="Main Navigation">
