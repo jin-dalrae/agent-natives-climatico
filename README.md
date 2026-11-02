@@ -1,331 +1,190 @@
-# Climatico — Autonomous Carbon Attribution Layer (v1.0 Standalone)
+# Climatico
 
-Climatico is an autonomous, agent-native carbon attribution and climate action ledger. Originally built and awarded **🏆 1st place (Internal Track)** at the Agent Natives Builders Hackathon in SF, Climatico has been decoupled from temporary hackathon sponsor SDKs and fully modernized as a production-ready, standalone MVP.
+**Understand a company's climate impact from its earliest stage, anticipate what changes as it scales, and use agents to make better decisions before those impacts grow.**
 
-**Live:** [`climatico.dalrae-jin-work.workers.dev`](https://climatico.dalrae-jin-work.workers.dev)
+Climatico's vision is to calculate GHG emissions and other relevant environmental impacts from real company operations, build the information a larger company will need from the beginning, and help teams act before high-impact choices become difficult to change.
 
-| Path | What |
+A small company's decisions about infrastructure, suppliers, energy, logistics, and product design can become much larger commitments as it grows. Climatico should connect those decisions to their environmental consequences: what the company causes today, what its planned growth could cause, and what it can change now.
+
+**Status: working prototype with substantial workflow gaps.** This repository contains agent interfaces, a web workspace, research tools, and a durable action ledger. It does **not yet implement the complete workflow below**. Current demo totals, simulated activity, heuristic calculations, and preset growth curves must not be presented as a company's actual footprint or a company-specific forecast.
+
+## The complete workflow we are building
+
+```text
+Define the company and reporting boundary
+                  ↓
+Collect actual operating data and preserve its sources
+                  ↓
+Calculate GHG emissions and assess other relevant impacts
+                  ↓
+Find hotspots, missing data, and decisions coming up
+                  ↓
+Project impacts under explicit growth scenarios
+                  ↓
+Compare alternatives and choose an action before scaling
+                  ↓
+Carry out the action through the company's workflow
+                  ↓
+Collect subsequent operating data and check the outcome
+                  ↺
+```
+
+The workflow must cover **electricity, cloud infrastructure, and freight**, then extend to other material sources: fuels, travel, purchased goods and services, hardware, facilities, waste, and product or supply-chain activities where applicable. One cloud bill cannot represent the whole company.
+
+### 1. Define what belongs to the company
+
+Establish the organization, sites, accounts, operations, reporting period, and relevant value-chain activities. Identify which sources belong in the inventory, where records overlap, and which sources are missing.
+
+Start with the data an early-stage team can actually provide. Preserve its history and calculation methods so the inventory can become more complete as the company grows. A partial inventory must show its coverage; it must not appear to be a complete company footprint.
+
+**Needs work:** company onboarding, organizational boundaries, reporting periods, source coverage, and secure company workspaces. The current Orepath example is a demo story, not a general company onboarding flow.
+
+### 2. Collect real operating data
+
+Support both data/document imports and direct connections to company systems.
+
+| Source | Actual input needed | What must remain traceable |
+| --- | --- | --- |
+| Electricity | Utility bills or meter readings, kWh, site, dates; contractual energy information where applicable | Bill or meter reference, location, period, units, and accounting method |
+| Cloud | Provider carbon reports and relevant usage records, account/project, service, region, dates | Provider report, reporting coverage, methodology, and allocation to the company |
+| Freight | Shipment records, carrier, mode, weight, route/distance, dates; carrier emissions reports where available | Shipment or booking reference, transport legs, inputs, and calculation method |
+| Other material sources | Fuel purchases, travel records, procurement, equipment, waste, and relevant supplier/product records | Original source, ownership, dates, units, category, and exclusions |
+
+Preserve source references, detect duplicate imports, validate units and dates, support corrections, and track missing or stale data. Finding a vendor name in a repository is a clue about where to request data; it is not evidence of consumption or emissions.
+
+**Needs work:** real ingestion for electricity, cloud, and freight; provider connections; source-document handling; normalization; reconciliation; and correction workflows. The existing folder scanner discovers metadata signals. The scheduler and compute watcher currently generate simulated spend and locations rather than reading company accounts.
+
+### 3. Calculate current GHG emissions
+
+Use actual activity with an applicable, traceable emissions factor, or an attributable supplier/provider emissions report. Preserve the inputs, units, factor value, source, version/year, geography, and methodology. Support the relevant Scope 1, 2, and 3 categories and prevent duplicate attribution.
+
+Keep these distinctions visible:
+
+- **Recorded activity:** what a bill, meter, usage export, or shipment record says happened.
+- **Calculated emissions:** emissions derived from that activity using a documented method and applicable factors.
+- **Provider-reported emissions:** figures supplied by a provider, with its methodology and coverage identified.
+- **Missing data:** an unresolved gap, never replaced by a fabricated company total or silently counted as zero.
+
+Calculated or provider-reported emissions must not be called directly measured emissions unless the source supports that description. A web citation alone does not validate company activity, establish the correct factor, or make a number measured.
+
+**Needs work:** a structured emissions inventory and reproducible calculation engine tied to source records. The current compute pipeline multiplies spend by a fixed `0.45 kgCO₂e/USD`; freight uses hardcoded factors by mode. Searching for supporting pages does not replace these heuristics with a validated calculation. The seven category totals are preset demo values.
+
+### 4. Assess other relevant environmental impacts
+
+GHG is the core inventory, but the product should also identify impacts relevant to the company's operations, sector, locations, customers, and reporting needs as it grows.
+
+Potential areas include water use and local water stress, air pollution, material and resource use, waste and e-waste, and land or biodiversity impacts. They need their own data, methods, units, and geographic context. They must not be collapsed into an unsupported single climate score.
+
+For each relevant impact, show what can be quantified, what can only be described with evidence, and what still needs data or specialist assessment. Determine applicable reporting needs for the particular company; do not assume every metric or obligation applies to every larger business.
+
+**Needs work:** impact-specific data collection, calculation/assessment methods, relevance assessment, and mapping to applicable reporting requirements. The current app names some upstream impacts but does not quantify them.
+
+### 5. Forecast what happens as the company scales
+
+Build scenarios from the company's actual baseline and explicit operating assumptions: headcount, production, shipments, compute workload, facilities, suppliers, regions, energy sources, and planned changes.
+
+Compare a continuation of current practices with specific alternatives. Show absolute impacts and useful intensity measures, alongside the assumptions, data gaps, time horizon, and uncertainty. Forecasts should update when actual data or company plans change.
+
+**Current results and future scenarios are different outputs.** A projection is a conditional forecast, not a measured future result. It must not use an invented current footprint or imply that revenue alone determines emissions.
+
+**Needs work:** company-specific growth inputs, driver-based projections, scenario comparison, sensitivity analysis, and forecast-versus-actual checks. The current growth curves and abatement trajectories are preset examples, including revenue-scaled projections; they are not forecasts built from connected company operations.
+
+### 6. Make better decisions before impacts grow
+
+Agents should identify decisions with environmental consequences before a company commits: selecting a cloud region, renewing a supplier contract, adding a facility, choosing a transport mode, purchasing equipment, or designing a production process.
+
+For each decision, compare feasible alternatives using the company's real data and explicit scenario assumptions. Include relevant costs, operational constraints, expected environmental effects, evidence, uncertainty, and tradeoffs across impacts. Identify the decision owner and when a decision is needed.
+
+The useful output is a concrete recommendation connected to a business decision, with enough evidence for the team to act on it.
+
+**Needs work:** decision triggers from real business systems, company-specific alternative evaluation, cost/impact comparisons, owners, deadlines, and a tracked decision process. Existing research can suggest alternatives, but recording a suggestion does not establish its suitability or savings.
+
+### 7. Carry out and track the action
+
+Connect the chosen action to a real task, procurement request, infrastructure change, supplier process, or other operational workflow. Track an owner, status, deadline, authorization appropriate to the action, and evidence of implementation.
+
+Distinguish an action proposed, an action chosen, an action in progress, and an action implemented. A ledger entry saying “switch” must not imply that the company has actually switched providers, regions, or transport modes.
+
+Offsets, if supported, belong in a separate record with transaction and retirement evidence. They must not silently reduce gross emissions or substitute for operational reductions. A reduction in emissions does not by itself establish a right to an offset refund.
+
+**Needs work:** action lifecycle, execution integrations, implementation confirmation, and real transaction/retirement evidence for any offset feature. The current switch/refund paths mainly record submitted information; the provider agent generates internal fulfillment records. These are not proof of an operational change, payment, refund, or retired credit.
+
+### 8. Check the outcome and keep the record useful
+
+Collect subsequent real operating data, calculate impacts consistently, and compare results with the baseline and forecast. Explain changes in business volume, boundaries, factors, and methods so a difference is not automatically attributed to the action.
+
+Keep sources, calculations, decisions, implementation evidence, and follow-up results linked. Produce reports that show coverage, unresolved gaps, methods, actual outcomes, and forecasts separately. This history should support customer questions and more demanding reporting as the company grows.
+
+**Needs work:** comparable reporting periods, baseline/version management, outcome checks, forecast reconciliation, and source-linked reporting/export. The current report summarizes ledger activity; it is not a complete company emissions or environmental-impact report.
+
+## What agents are for
+
+Agents should help maintain the workflow: request missing records, process incoming data, surface hotspots, update scenarios, research alternatives, bring decisions forward, coordinate actions, and check results.
+
+Their value comes from acting on real operational signals and carrying work across these steps. Running on a timer, producing climate prose, or writing a receipt is not enough to demonstrate that workflow.
+
+Policy checks validate supported commands, permissions, locations, and inputs, and record issues for audit. The current code does not evaluate arbitrary company statements and determine whether they are true. Product-facing issues should explain what data or evidence is missing, what needs attention, and how to resolve it.
+
+## What exists in this repository
+
+These are implemented prototype building blocks, not a claim that the complete product is operational.
+
+| Building block | Current implementation | Limit |
+| --- | --- | --- |
+| Web workspace | React views for assessment, abatement, ledger/pipeline, and Clerk chat | Includes demo company data, preset totals, and illustrative flows |
+| Durable ledger | Cloudflare Durable Object with SQLite receipts, handoffs, runs, and connection records | Stores submitted/generated records; storage alone does not verify their real-world accuracy |
+| Agent interfaces | REST, MCP, A2A, discovery files, and CLI | Interface availability does not establish complete accounting or action execution |
+| Credentials and policy | Scoped bearer credentials and request checks | Secure company identity, membership, tenant isolation, and production authorization need work; public demo credential minting is not company authentication |
+| Research | Gemini search grounding with a Tavily fallback | Collects references; does not validate company activity or automatically establish an applicable factor |
+| Compute pipeline | Ingest → audit → settle, with persisted handoffs | Spend heuristic; scheduled inputs are simulated; no real billing connection |
+| Freight records | Accepts mode, weight, and distance and records a calculation | Hardcoded emissions factors; submitted data is not independently verified shipment evidence |
+| Material trace records | Records a submitted material lot and sourcing references | Separate from the company's own footprint; generic references do not verify a particular lot's provenance |
+| Abatement and growth views | Alternative suggestions, plans, and illustrative trajectories | No complete company-specific scenario, implementation, and outcome loop |
+| Clerk | AI chat using the ledger's tools | Inherits the same data and execution limits as those tools |
+
+### Implementation priorities to complete the workflow
+
+1. Establish secure company workspaces, reporting boundaries, periods, and source coverage.
+2. Ingest and reconcile real electricity, cloud, and freight records, preserving sources and corrections.
+3. Replace heuristic/demo totals with reproducible calculations and attributable provider reports; expose missing data.
+4. Add relevant non-GHG impact methods and identify company-specific reporting needs.
+5. Build growth scenarios from actual baselines and explicit operating drivers.
+6. Connect recommendations to owned decisions and real implementation workflows.
+7. Check subsequent actuals, reconcile forecasts, and export source-linked reports.
+
+## Repository and development
+
+The project originated at the Agent Natives Builders Hackathon in San Francisco. Its original demo centers on Orepath, a battery-material tracing startup. That scenario illustrates the problem; the intended product serves companies from early operations through scale.
+
+| Path | Contents |
 | --- | --- |
-| [`PRD.md`](PRD.md) | Product requirements (v1.0 — final) |
-| [`climatico/climatico.sh`](climatico/climatico.sh) | CLI — talk to the desk from your terminal |
-| [`climatico/`](climatico/) | Worker + 8 agents (Orepath, Provider, Fleet, Clerk, Scheduler, Abatement, Analysts) |
-| [`climatico/public/assets/climatico-icon.png`](climatico/public/assets/climatico-icon.png) | Canonical transparent Climatico mascot icon used by the favicon and app headers |
+| [`climatico/`](climatico/) | Cloudflare Worker, React workspace, agents, and CLI |
+| [`climatico/src/fleet.ts`](climatico/src/fleet.ts) | Current compute-spend pipeline and heuristic |
+| [`climatico/src/graph.ts`](climatico/src/graph.ts) | Action recording, freight calculations, switch/refund paths |
+| [`climatico/src/impact.ts`](climatico/src/impact.ts) | Preset impact rows and abatement trajectory |
+| [`climatico/src/insights.ts`](climatico/src/insights.ts) | Demo company story, category totals, and growth scenarios |
+| [`climatico/src/ledger.ts`](climatico/src/ledger.ts) | Durable SQLite storage |
+| [`climatico/src/server.ts`](climatico/src/server.ts) | Routes and scheduled demo activity |
+| [`climatico/src/orepath-agent.ts`](climatico/src/orepath-agent.ts) | Simulated compute-watcher activity |
+| [`climatico/climatico.sh`](climatico/climatico.sh) | CLI and local folder metadata scan |
+| [`PRD.md`](PRD.md) | Earlier prototype requirements; not yet reconciled with this vision |
+| [`climatico/public/deck.html`](climatico/public/deck.html) | Existing demo deck; not yet reconciled with this vision |
 
-Secrets stay local: `climatico/.dev.vars`, `hack-watch/.ic_token`. Copy `.dev.vars.example`.
+The prototype is configured for [this demo deployment](https://climatico.dalrae-jin-work.workers.dev). Deployment availability and service connections are not verified by this README.
 
----
+The stack uses React, TypeScript, Vite, Cloudflare Workers, Durable Objects/SQLite, the Cloudflare Agents SDK, and Gemini, with Tavily as a research fallback. Some earlier hackathon integrations have local fallbacks; they must not be presented as connected external services without checking their configuration and behavior.
 
-## What is Climatico?
-
-Climatico's own agents **investigate** a company's environmental impact — today
-and projected forward — and **follow up** on what they find, without a human
-asking first. They break impact down by business area (cloud compute,
-shipping, travel), flag hotspots, research greener alternatives, and settle
-offsets — all autonomously. Every finding and every follow-up is a permanent
-receipt written to a Durable Object SQLite ledger.
-
-### 🚀 v1.0 Post-Hackathon Upgrades
-
-- **Gemini-first Engine**: **Google Gemini 1.5 Flash** powers Clerk chat through `@ai-sdk/google` and drives agentic grounding and factor analysis through the Gemini API.
-- **Google Search Grounding**: Uses live Google Search Grounding on the write path to fetch and cite real-world climate evidence, with Tavily retained as a fallback.
-- **Decoupled & Standalone**: Replaced direct proprietary hackathon SDK integrations with resilient local in-memory fallbacks for Cortex memory and Tenki sandboxes, so local development remains available without those service credentials.
-- **UX & Tab Consolidation**: Slimmed down from a busy 9-tab layout to **4 core tabs** (`Assess`, `Abate & Actions`, `Ledger & Pipeline`, `Agent Clerk`) paired with an elegant, real-time `RuntimeStatusBar`.
-- **Cadinal Mascot Integration**: Integrated our friendly blue seal mascot across the app to support micro-interactions: `MascotWaving` (Greeting & Footer), `MascotThinking` (Gemini grounding/loading states), and `MascotThumbsUp` (committed actions and receipts).
-- **Canonical Icon Asset**: The transparent mascot artwork in `climatico/public/assets/climatico-icon.png` is the single app icon source for the landing favicon and workspace header. Keep its alpha channel intact when producing derivatives.
-
----
-
-## The one big idea (remember this)
-
-**A flag is a receipt.**
-
-- If an agent asks to file a climate action and we say yes → we save a receipt.
-- If an agent asks something shady (like "delete my account" or "call this
-  green" with no proof) → we say **no** and we **save that too**.
-
-Committed and flagged live in the same notebook, with the same shape. Nothing
-is silently dropped. If a judge checks later, every attempt is on the record.
-
-Because: *"We would rather return nothing than a plausible climate paragraph."*
-
----
-
-## How a stranger agent uses it (the story)
-
-Imagine a robot has never met Climatico. Here's what happens in 5 steps:
-
-| Step | What happens | Like... |
-| --- | --- | --- |
-| 1. Find it | Robot opens `/ai-agent.json` | A sign on the door: "agents welcome here" |
-| 2. Get a key | `POST /v1/credentials` gives it a **bearer token** | A hotel keycard that only opens certain doors |
-| 3. Prove who it is | Token is sent on every call | Showing the keycard at each door |
-| 4. Do something | Robot files a **write** (see below) | Signing a form — but by a robot, instantly |
-| 5. Get proof | Every write returns a **receipt** | A stamped receipt, kept forever |
-
-The keycard detail: **permissions freeze the moment the key is made.** You cannot
-upgrade a key later — if the robot wants more power, it needs a brand-new key and
-a human to approve it.
-
----
-
-## What the desk accepts (the writes)
-
-| Word | What it means | Example |
-| --- | --- | --- |
-| `brief` | Write a short, evidence-backed climate note | "Here's what climate risk looks like for Oakland port" |
-| `watch` | Keep an eye on a place over time | "Alert me about heat / air quality in Lahaina" |
-| `offset` | Pay to balance out emissions | "Commit $25 of offsets" (money is capped by token) |
-| `assess` | Score a site's climate risk, or ground one of the 6 non-compute classes | "Assess the Shenzhen factory" |
-| `abate` | Record a reduction plan for a business source | "Move compute to a lower-carbon region" |
-| `freight` | File a real freight leg — a fact, always commits | "8,000kg by sea, Shenzhen → Oakland, 11,000km" |
-| `trace` | File a customer's material lot provenance — a fact, always commits | "500kg cobalt, DRC → Acme EV" |
-| `switch` | Log a transition to a greener solution | "We moved from X to Y" |
-| `refund` | Claim back the difference after a `switch` | "Refund the delta on the prior offset" |
-| `run_fleet` | Turn a spend spike into a receipt | "$420 cloud bill in SJC → how many kg → offset if over budget" |
-
-### What gets flagged (and stored)
-
-`payout`, `wire_transfer`, `delete_account`, `greenwash` (a climate claim with no
-evidence), `admin_override`, `exfiltrate`, unknown requests, requests with no
-location, and briefs/fleet audits with no real sources. **`freight` and `trace`
-are never flagged for a missing citation** — a real booking or a real material
-lot commits either way, tagged grounded or modeled.
-
----
-
-## The fleet (our coolest piece — DONE)
-
-`run_fleet` is three **small agents** working like an assembly line:
-
-```
-  a cloud bill spikes: $420 in SJC
-        │
-        ▼
-  ① INGEST   — "Where and how much?"  (flags if no location)
-        │
-        ▼
-  ② AUDIT    — "How many kg of CO2 is that?"  (checks the internet for real factors, flags if it can't find any)
-        │
-        ▼
-  ③ SETTLE   — "Over monthly budget? Then commit an offset receipt."
-```
-
-Every step writes a **handoff** — a note passed to the next agent that is saved
-forever. A human (or another agent) can read the whole chain later:
-`GET /v1/handoffs`.
-
-This is the "real work across a real boundary" judging band: our fleet talks to
-three different outside systems.
-
-A real, working demo of this end to end — real credential minting, a real fleet
-run with real Tavily evidence, a real flagged greenwash claim, a real read-only
-buyer audit — lives in
-[`climatico/scripts/two_sided_swarm.py`](climatico/scripts/two_sided_swarm.py).
-It runs as one sequential script against the live Worker; the named roles in its
-output (`TracerFleetAgent`, `ComplianceAgent`, etc.) are narration labels for that
-script, not separately-running services.
-
----
-
-## Five ways into the same room
-
-| Door | Who uses it | Status |
-| --- | --- | --- |
-| `/mcp` | AI agents (MCP protocol), 16 tools | **DONE** |
-| `/a2a` | AI agents (Agent-to-Agent protocol) | **DONE** |
-| `/v1/*` | Any program (REST API) — includes `/v1/report`, `/v1/observe`, `/v1/agents/*`, `/v1/memory`, `/v1/dashboard` | **DONE** |
-| `/app` (web page) | Humans — 4 core tabs (Assess, Abate, Ledger, Clerk) and real-time status bar | **DONE** |
-| `climatico.sh` | CLI — 24 commands from your terminal | **DONE** |
-
-All five use the **same** notebook: one Durable Object running SQLite
-on Cloudflare. That notebook survives restarts — nothing important is lost
-overnight.
-
-There is also an **Agent Clerk** — an AI chat assistant powered by Gemini 1.5. Ask it
-questions, or ask it to file a write. It uses the same tools any agent would.
-
----
-
-## Check: what's DONE vs what's LEFT
-
-### ✅ DONE (real, running today)
-
-- Live on the internet: **https://climatico.dalrae-jin-work.workers.dev**
-- Discovery files agents can find (`/ai-agent.json`, agent card, MCP card)
-- Token minting with frozen permissions and spending caps
-- Policy that says **no** before the write, and stores the flag
-- All 9 writes + the fleet pipeline, returning durable edge receipts
-- Consolidated Assess, Abate, Ledger, and Clerk views in the UI
-- **Google Search Grounding** via Gemini on the write path (grounds briefs/audits; Tavily fallback)
-- Clerk AI chat assistant (Gemini-powered)
-- Hackathon submission filed and current — repo/demo URLs match the deployed Worker
-- ✅ **Orepath compute-watcher agent** — DO alarm, files fleet runs every 15 min during working hours. `/v1/agents/orepath`
-- ✅ **3rd-party provider agent** — `green-offset-co` fulfills offsets, reviews receipts. `/v1/agents/provider`
-- ✅ **Scheduled fleet** — cron every 30 min runs ingest→audit→settle with random location/spend
-- ✅ **Abatement researcher** — Gemini search for real greener alternatives per emission class, with Tavily fallback
-- ✅ **Report builder** — `/v1/report` compiles fleet runs + receipts + budget into plain-English summary
-- ✅ **Inbox analyst** — hotspot alerts and suggestions pushed to the workspace inbox automatically
-- ✅ **Cortex memory** — `cortex.ts` stores fleet run summaries, retrievable via `/v1/memory`. **Mitosis Cortex** wired into scheduler.
-- ✅ **CLI** — `climatico.sh` with 24 commands: discover, mint, connect, status, fleet, offset, brief, watch, freight, trace, switch, refund, flag, report, receipts, handoffs, orepath, provider, memory, agents-start/stop, dashboard, observe
-- ✅ **Freight write** — `freight` intent takes mode (sea/air/road/rail), weight, distance, grounds against real Gemini Search evidence (with Tavily fallback), scores kg CO2e via a labelled heuristic. **Always commits** — a real booking is a fact, never flagged for a missing citation, only tagged grounded or modeled. `POST /v1/actions`, MCP `file_freight`, CLI `climatico.sh freight`.
-- ✅ **Trace write — Orepath's actual product** — `trace` intent files a customer's material-lot provenance (material, origin, named customer, lot weight), grounded against real sourcing-standard evidence. This is what Orepath *sells*, distinct from its own footprint — closes a gap the rest of this system didn't cover. Always commits, tagged grounded/modeled. `POST /v1/actions`, MCP `file_trace`, CLI `climatico.sh trace`.
-- ✅ **Supply-chain scoped tokens** — `climatico:supplier` can file only freight and trace records; `climatico:buyer` can create briefs, watches, assessments, and independent sandbox verifications. Use `climatico.sh mint <subject> climatico:supplier` or `climatico:buyer` to mint either role.
-- ✅ **Solution switch + offset refund** — `switch` logs a transition to a greener solution against a prior offset receipt; `refund` claims back the delta. Provider agent processes the reversal and records it.
-- ✅ **One-call dashboard** — `climatico.sh dashboard` hits a single endpoint (`/v1/observe`) and prints footprint (current job, month-to-date), a +6m/+12m projection computed two ways (if nothing changes vs. if Orepath adopts the switch already suggested — tonnes saved, %, and t/$M ARR intensity either way), agent status, ledger counts, and suggestions.
-- Cotal: **two meshes, one live.** Our own `climatico` mesh is genuinely joined
-  and running — manager/delivery/NATS all up, 8 roster agents, 15+ min uptime.
-  The hack.cotal.ai event mesh (tied to the $300 best-use prize) is **not joined**
-  — same device-code auth blocker as day 1 (no publish rights granted). The
-  Worker's `COTAL_WEBHOOK_URL` is a separate, still-unset, optional path.
-- A `watch` write is filed (L5 onboarding step complete — a watch survives restart)
-- All 6 non-compute emission classes can be grounded live against real Gemini
-  sources on demand (`assess` with `source` set to the class id, or the "Ground
-  with Gemini" button in the Assess tab). They start modeled and stay modeled
-  until grounded — nothing is claimed live until it actually is.
-- Grounding summaries run on **Gemini 1.5 Flash** when configured; evidence collection falls back to Tavily if Gemini is unavailable.
-- **Cortex & Tenki Local Fallbacks**: Removed proprietary dependencies, ensuring the app runs standalone.
-
-### 🔜 LEFT (honest "not yet" list)
-
-- Each emission class starts **modeled** — an estimate with an error bar — until
-  it's actually grounded. Compute grounds automatically from fleet activity; the
-  other six ground on request (see above), not automatically.
-- The Worker's own Cotal webhook (`COTAL_WEBHOOK_URL`) is still optional — the
-  code path (`announceHandoff`) fires automatically once it is, it just needs
-  a real URL from the Cotal booth. Our own `climatico` mesh is live regardless
-  (see above).
-
-### 🚫 We will not fake
-
-We ship what runs and we say what we haven't.
-
----
-
-## Agent architecture
-
-| Agent | What it does | Where | Core Tech |
-|-------|-------------|-------|-------------|
-| **Orepath compute-watcher** | Employee agent — monitors cloud spend, files fleet runs every 15 min autonomously | DO alarm | — |
-| **Green offset provider** | 3rd-party — fulfills offsets, reviews receipts, earns revenue | DO callable | — |
-| **Scheduler** | Cron — runs fleet + research every 30 min | Cron trigger | — |
-| **Ingest** | Reads spend, validates location, flags if no region | Fleet pipeline | — |
-| **Audit** | Scores kgCO₂e via web evidence, checks budget | Fleet pipeline | **Gemini / Google Search, Tavily fallback** |
-| **Settle** | Commits offset receipt if over budget | Fleet pipeline | — |
-| **Abatement researcher** | Searches for real greener alternatives per class | Cron | **Gemini / Google Search, Tavily fallback** |
-| **Summary writer** | Writes plain-English abatement plans | Edge | **Gemini 1.5** |
-| **Report builder** | Compiles runs+receipts into `/v1/report`, plus a +6m/+12m EI intensity projection via `/v1/observe` | REST | — |
-| **Inbox analyst** | Pushes hotspot alerts + suggestions to workspace | Insights | — |
-| **Cortex memory** | Stores fleet run summaries, retrievable by namespace | REST | **Local Fallback / Cortex** |
-| **Clerk** | AI chat — answers questions, files writes, explains flags | Edge | **Gemini 1.5 Flash** |
-
----
-
-## Technical Stack
-
-| Name | Role | Do we really use it? |
-| --- | --- | --- |
-| Google Gemini | **Primary AI Engine.** Generates content, grounds evidence, and hosts Agent Clerk | YES — via `@ai-sdk/google` |
-| Google Search | **Search Grounding.** Verified citations for carbon and policy assessments | YES — via Gemini Grounding API |
-| Tavily | **Evidence fallback.** Used when Gemini grounding is unavailable | YES — search fallback |
-| Cloudflare | **Edge runtime.** Workers, Durable Objects, and agent infrastructure | YES — application host |
-| Cotal | Organiser. Agent mesh | Partial — own `climatico` mesh live (8 agents); Worker-side webhook is optional |
-| Mitosis | Cortex agent memory | Optional — local in-memory fallback active by default; Mitosis API key used when configured |
-| Tenki | Sandboxes / CI | Optional — local sandbox session manager active by default |
-
-The UI keeps this distinction visible so nothing *looks* wired in when it isn't.
-
----
-
-## The customer story (why this exists)
-
-**Rae Jin** runs **Orepath** — a startup that traces battery materials (lithium,
-cobalt, nickel) from mine to car, for EV makers.
-
-A cell buyer asked: *"What's YOUR company's footprint — not the mines'?"*
-Rae had no number. That question can block a deal.
-
-- Orepath's **biggest** footprint is **logistics** (12 tonnes/yr, ±35%) — still modeled.
-- Orepath has two things in the ledger: its **own** footprint, and its actual
-  **product** — tracing customers' battery materials.
-- What Rae can file **today**: ground the Oakland port (`brief`), watch it
-  (`watch`), file the SJC compute bill that runs the tracer (`run_fleet`), file
-  the actual battery freight leg (`freight` — mode, weight, distance → real
-  grounded kg CO2e), trace a customer's material lot (`trace` — material,
-  origin, customer, lot weight → grounded provenance record — this is what
-  Orepath sells), and flag any green supply-chain slogan (`greenwash` →
-  flagged & stored).
-- **Next:** supplier-only / buyer-only scoped tokens for the two-sided PO flow.
-
----
-
-## Run it yourself (short version)
+### Run the prototype locally
 
 ```bash
 cd climatico
-cp .dev.vars.example .dev.vars   # then add a TOKEN_SECRET and GEMINI_API_KEY
+cp .dev.vars.example .dev.vars
+# Set TOKEN_SECRET and the API keys needed for the features you use.
 npm install
 npx wrangler types
-npm run dev                      # http://127.0.0.1:8787
+npm run dev
 ```
 
+Open the local URL printed by Vite, then `/app`. This runs the existing prototype, including its demo behavior. It does not activate the missing workflow described above.
 
-## CLI
-
-```bash
-cd climatico
-./climatico.sh discover          # Agent discovery files
-./climatico.sh mint judge        # Mint a bearer token
-export CLIMATICO_TOKEN="<token>"
-./climatico.sh fleet SJC 420     # Ingest → audit → settle
-./climatico.sh freight "Shenzhen -> Oakland" sea 8000 11000  # File a real freight leg
-./climatico.sh trace "Democratic Republic of Congo" cobalt "Acme EV" 500  # File a provenance record
-./climatico.sh dashboard         # One-call footprint + EI projection + agent status
-./climatico.sh report            # Plain-English progress report
-./climatico.sh flag              # Test a forbidden claim
-./climatico.sh orepath           # Check Orepath agent status
-./climatico.sh agents-start      # Start auto-pilot (15 min cycles)
-./climatico.sh connect ~/my-startup  # Scan folder, auto-assess 7 classes
-./climatico.sh connect ~/my-startup --dry-run  # Show the payload, send nothing
-./climatico.sh status            # Show connected folders + assessments
-./climatico.sh switch SJC "move compute to FRA" <priorId> 3580 500  # Log a switch
-./climatico.sh refund SJC <priorId> 3580 500  # Claim refund on prior offset
-./climatico.sh observe           # Watch Orepath agent live (10s refresh)
-./climatico.sh receipts          # Recent receipts
-./climatico.sh handoffs          # Recent handoff log
-./climatico.sh help              # Full command list
-```
-
----
-
-## Privacy — your business data never leaves your machine
-
-Climatico follows the Salesforce / Google / Workday pattern: **we read your metadata, not your records**.
-
-When you run `./climatico.sh connect ~/my-startup`:
-
-| Stays on your machine | Leaves (small JSON payload) |
-| --- | --- |
-| File contents of `package.json`, `wrangler.*`, `README.md`, `.env`, source code | Vendor names from deps (`"stripe"`, `"datadog"`) |
-| Anything else in the folder | Cloud provider from config (`"Cloudflare Workers"`) |
-| | README keyword hits (`"mentions shipping"`) |
-| | Kind, class, confidence — **no values, no snippets** |
-
-The CLI prints the exact JSON payload before sending and supports `--dry-run` to inspect without transmitting. No file content is sent. No file content is stored. The server's `/v1/connect` handler does not accept a `file_contents` field — by design, by contract, by source code.
-
-**This is the binding rule**, not a feature. Auditable in the CLI source. Future data connections (Salesforce, Google billing, Workday) will follow the same model: extract rollups locally, send rollups, never records.
-
----
-
-## More (deep dives, for when you have energy)
-
-- [`PRD.md`](PRD.md) — the full product contract (v0.7)
-- [`climatico/public/deck.html`](climatico/public/deck.html) — the pitch deck
-- [`climatico/SUBMIT.md`](climatico/SUBMIT.md) — hackathon submission payload
-- [`hack-watch/`](hack-watch/) — what's happening on the event floor right now
-
-**Shortest honest summary:** Climatico's own agents investigate a company on
-their own and follow up — that's the point, not a form other agents fill out
-for approval. Everything they find or do lands as a permanent receipt, whether
-it's a commit or a flag. Compute, freight, and trace are real pipelines today —
-including Orepath's actual product, not just its own footprint; the rest is
-honestly labelled as estimation. We ship what runs, and we say what we haven't.
+Keep secrets in local configuration. The current folder scanner is intended to send metadata signals rather than file contents. Real operational-data ingestion will need an explicit data-handling design; the earlier scanner's privacy description is not a blanket promise about future document or provider integrations.
