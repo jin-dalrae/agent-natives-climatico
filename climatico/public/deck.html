@@ -318,7 +318,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <path d="M50 44.6A24 24 0 1 1 50 19.4l-8.17 5.71a14 14 0 1 0 0 13.78Z" fill="var(--accent)"/>
         <path d="M33.15 33.28C48.1 29.24 54.7 19.49 51.2 9.41c-11.87 5.04-17.59 12.1-18.05 23.87Z" fill="var(--accent-2)"/>
       </svg>
-      <span class="tag">Website edition · Agent Edition · Internal track · 13 agents</span>
+      <span class="tag">Website edition · Agent Edition · 13 agents</span>
     </div>
     <h1>Helping startups scale<br>sustainably, from <em>day one.</em></h1>
     <p class="lede">That is why we built Climatico. Website edition: a founder sees their own EI and a task list before early habits become permanent. Agent Edition: the same product, but any AI agent can submit data to it directly — and a fleet of agents runs the calculation, evidence, suggestions, and offset settlement without a human in the loop.</p>
@@ -368,18 +368,18 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div>
         <div class="who-meta">Rae Jin · founder · Orepath · Seed · 14 people in SF</div>
         <p class="lede" style="margin-top:0">Orepath traces battery materials mine → cell for EV buyers. Green on the customer’s chain. Then a cell buyer asked: <em>what’s your company’s impact — not the mines?</em> No answer can block the deal.</p>
-        <p class="lede">The highest-emission activity isn't on a dashboard. It's in a <b>purchase order, a booking, a port record</b>. Those systems are already run by agents. Climatico lets an agent submit real data at that moment — or it flags and records why, if the claim isn't backed by evidence.</p>
+        <p class="lede">The highest-emission activity isn't on a dashboard. It's in a <b>purchase order, a booking, a port record</b>. Those systems are already run by agents. Climatico lets an agent submit real data at that moment — or it rejects the claim and logs why.</p>
       </div>
     </div>
     <div class="grid g2" style="margin-top:16px;">
       <div class="card">
-        <span class="kicker">Practical tools · live this weekend</span>
+        <span class="kicker">Practical tools · live now</span>
         <ul class="ticks">
           <li><b>Ground Oakland port</b> — <span class="inline">brief</span> + Tavily. Evidence on the place.</li>
           <li><b>Watch the port</b> — L5. Survives restart. Still modeled tonnes.</li>
           <li><b>File the tracer’s compute</b> — <span class="inline">run_fleet</span> on SJC. The live class.</li>
           <li><b>File the battery freight leg</b> — <span class="inline">freight</span>: mode, weight, distance → real kg CO2e. Always commits, tagged grounded or modeled.</li>
-          <li><b>Flag a green chain</b> — <span class="inline">greenwash</span> is a receipt, not a marketing line.</li>
+          <li><b>Reject unverified claims</b> — a rejected claim is logged, never printed as fact.</li>
         </ul>
       </div>
       <div class="card">
@@ -446,9 +446,9 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <p>Assessment, report, dashboard, actions, cohort leaderboard. The founder product.</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
-        <span class="kicker">Agent Edition · this weekend</span>
+        <span class="kicker">Agent Edition · live now</span>
         <h3>The same attribution, as a write</h3>
-        <p>Discovery card, scoped token, policy before the write, durable receipt. Agents file the spike while it is still cheap.</p>
+        <p>Discovery card, scoped token, validated writes, durable evidence trail. Agents file the spike while it is still cheap.</p>
       </div>
       <div class="card">
         <span class="kicker">One rule on both</span>
@@ -459,11 +459,11 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   </div>
 </section>
 
-<section class="slide" id="slide-5" data-name="The rule">
+<section class="slide" id="slide-5" data-name="Evidence">
   <div class="inner">
-    <div class="eyebrow">Agent Edition · the one rule</div>
-    <h2 class="slide-title">Every rejected submission is recorded, the same as an accepted one.</h2>
-    <p class="lede">Both rows live in the same SQLite table, with the same id, subject, token and permanence. The rules are checked before anything is saved. That's what makes it safe to let an unfamiliar agent use the system without supervision.</p>
+    <div class="eyebrow">Evidence trail · every number carries its source</div>
+    <h2 class="slide-title">Every number carries its evidence. Rejections are logged too.</h2>
+    <p class="lede">Each write lands with its inputs, sources, and method, so a buyer or auditor can trace any figure back. Out-of-scope requests are checked before anything is saved — and the rejection is logged in the same trail.</p>
     <div class="grid g2">
       <div class="card" style="border-color: var(--ok);">
         <div class="row" style="justify-content:space-between;margin-bottom:12px;">
@@ -473,7 +473,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 {
   <span class="k">"status"</span>: <span class="g">"committed"</span>,
   <span class="k">"evidence"</span>: [ <span class="c">/* 5 Tavily sources */</span> ],
-  <span class="k">"subject"</span>: <span class="g">"judge-agent"</span>
+  <span class="k">"subject"</span>: <span class="g">"ops-agent"</span>
 }</pre>
       </div>
       <div class="card" style="border-color: var(--flag);">
@@ -491,12 +491,12 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
     </div>
     <div class="grid g2" style="margin-top:16px;">
       <div class="card">
-        <span class="kicker">Writes the desk accepts</span>
+        <span class="kicker">Writes the API accepts</span>
         <p><span class="inline">brief</span> <span class="inline">watch</span> <span class="inline">offset</span> <span class="inline">assess</span> <span class="inline">abate</span> <span class="inline">switch</span> <span class="inline">refund</span> <span class="inline">freight</span> <span class="inline">run_fleet</span></p>
       </div>
       <div class="card">
-        <span class="kicker">Flagged and stored</span>
-        <p><span class="chip no">payout</span> <span class="chip no">greenwash</span> <span class="chip no">exfiltrate</span> <span class="chip no">ungrounded</span> · unknown intent, no location, over ceiling. The policy never runs after the write.</p>
+        <span class="kicker">Rejected and logged</span>
+        <p><span class="chip no">payout</span> <span class="chip no">greenwash</span> <span class="chip no">exfiltrate</span> <span class="chip no">ungrounded</span> · unknown intent, no location, over ceiling. Validation runs before the write.</p>
       </div>
     </div>
   </div>
@@ -531,14 +531,14 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 
 <section class="slide" id="slide-7" data-name="Cold start">
   <div class="inner">
-    <div class="eyebrow">What a judge actually scores</div>
+    <div class="eyebrow">Cold start · five calls to a permanent record</div>
     <h2 class="slide-title">A stranger agent, zero setup, five calls to a permanent record.</h2>
-    <p class="lede">Internal track, External-shaped discovery. The 30-point field is what an unfamiliar agent can actually trigger — <span class="inline">/ai-agent.json</span>, not the marketing description.</p>
+    <p class="lede">Discovery first: what matters is what an unfamiliar agent can actually trigger — <span class="inline">/ai-agent.json</span>, not the marketing description.</p>
     <div class="steps">
       <div class="step">
         <div class="step-n">01</div>
         <div class="step-t">Read the probe</div>
-        <div class="step-d"><span class="inline">GET /ai-agent.json</span> — Immersive Commons looks for this filename. Agent Card and MCP cards sit next to it.</div>
+        <div class="step-d"><span class="inline">GET /ai-agent.json</span> — the discovery file. Agent Card and MCP cards sit next to it.</div>
       </div>
       <div class="step">
         <div class="step-n">02</div>
@@ -553,21 +553,21 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div class="step">
         <div class="step-n">04</div>
         <div class="step-t">Write</div>
-        <div class="step-d">MCP <span class="inline">complete_action</span> / <span class="inline">run_fleet</span>, REST <span class="inline">POST /v1/actions</span>, A2A <span class="inline">SendMessage</span>. One policy.</div>
+        <div class="step-d">MCP <span class="inline">complete_action</span> / <span class="inline">run_fleet</span>, REST <span class="inline">POST /v1/actions</span>, A2A <span class="inline">SendMessage</span>. One validation layer.</div>
       </div>
       <div class="step">
         <div class="step-n">05</div>
         <div class="step-t">Keep the receipt</div>
-        <div class="step-d">Committed or flagged, same shape. Retry with the same <span class="inline">idempotencyKey</span> returns the original row.</div>
+        <div class="step-d">Accepted or rejected, same shape. Retry with the same <span class="inline">idempotencyKey</span> returns the original row.</div>
       </div>
     </div>
     <figure>
-      <svg viewBox="0 0 1020 210" role="img" aria-label="Any agent discovers ai-agent.json, mints a bearer, writes through MCP A2A or REST, hits one policy, and lands a receipt in the Durable Object ledger.">
+      <svg viewBox="0 0 1020 210" role="img" aria-label="Any agent discovers ai-agent.json, mints a bearer, writes through MCP A2A or REST, passes one validation layer, and lands in the Durable Object evidence trail.">
         <g font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="currentColor" opacity=".55">
           <text x="8" y="18">CALLER</text>
           <text x="168" y="18">PROBE</text>
           <text x="368" y="18">SURFACES</text>
-          <text x="612" y="18">POLICY</text>
+          <text x="612" y="18">CHECKS</text>
           <text x="830" y="18">LEDGER</text>
         </g>
         <rect x="8" y="70" width="120" height="70" fill="none" stroke="currentColor" stroke-width="1.25"/>
@@ -575,7 +575,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <text x="68" y="118" text-anchor="middle" font-size="10" fill="currentColor" opacity=".6" font-family="IBM Plex Mono, monospace">never seen us</text>
         <rect x="168" y="48" width="160" height="48" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
         <text x="248" y="68" text-anchor="middle" font-size="11" fill="var(--accent)" font-family="IBM Plex Mono, monospace">/ai-agent.json</text>
-        <text x="248" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".6" font-family="IBM Plex Mono, monospace">event probe</text>
+        <text x="248" y="84" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".6" font-family="IBM Plex Mono, monospace">discovery</text>
         <rect x="168" y="112" width="160" height="48" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
         <text x="248" y="132" text-anchor="middle" font-size="11" fill="var(--accent)" font-family="IBM Plex Mono, monospace">POST /v1/credentials</text>
         <text x="248" y="148" text-anchor="middle" font-size="9.5" fill="currentColor" opacity=".6" font-family="IBM Plex Mono, monospace">scopes freeze</text>
@@ -606,13 +606,13 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   </div>
 </section>
 
-<section class="slide" id="slide-8" data-name="Judge demo">
+<section class="slide" id="slide-8" data-name="Live demo">
   <div class="inner">
     <div class="eyebrow">Demo · scripts/demo.sh against the live Worker</div>
     <h2 class="slide-title">Point an agent at it. Or press play.</h2>
-    <p class="lede">This is the walkthrough a judge can run without us. It hits the desk at <span class="inline" id="demoBaseLabel">http://127.0.0.1:8787</span> — mint, 401, grounded brief, stored flag, fleet over budget.</p>
+    <p class="lede">This is the walkthrough anyone can run without us. It hits the API at <span class="inline" id="demoBaseLabel">http://127.0.0.1:8787</span> — mint, 401, grounded brief, rejected claim, fleet over budget.</p>
     <div class="row" style="margin-top:16px;">
-      <button type="button" id="playDemo">Play judge demo</button>
+      <button type="button" id="playDemo">Play demo</button>
       <button type="button" class="ghost" id="stepDemo">One step</button>
       <button type="button" class="ghost" id="resetDemo">Reset</button>
       <span class="tag" id="demoStatus">idle</span>
@@ -632,7 +632,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
 
 <section class="slide" id="slide-9" data-name="The fleet">
   <div class="inner">
-    <div class="eyebrow">Internal track · real work across a boundary</div>
+    <div class="eyebrow">How it works · spend to settled receipt</div>
     <h2 class="slide-title">A $420 SJC spike, attributed before the invoice exists.</h2>
     <p class="lede">Ingest parses the region. Audit scores compute with a <b style="color:var(--ink);font-weight:600;">labelled heuristic of 0.45&nbsp;kg per USD</b>, cited against live Tavily sources — not GHG Protocol ICT. Settle writes an offset if the month is over budget. Every handoff is a row.</p>
     <figure>
@@ -643,12 +643,12 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         <rect x="196" y="28" width="230" height="96" fill="none" stroke="currentColor" stroke-width="1.25"/>
         <text x="212" y="52" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">ingest</text>
         <text x="212" y="74" font-size="10.5" fill="currentColor" opacity=".8" font-family="IBM Plex Mono, monospace">spike → location + spend</text>
-        <text x="212" y="94" font-size="10" fill="currentColor" opacity=".55" font-family="IBM Plex Mono, monospace">flags if no region</text>
+        <text x="212" y="94" font-size="10" fill="currentColor" opacity=".55" font-family="IBM Plex Mono, monospace">rejected if no region</text>
         <rect x="466" y="28" width="230" height="96" fill="none" stroke="currentColor" stroke-width="1.25"/>
         <text x="482" y="52" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">audit</text>
         <text x="482" y="74" font-size="10.5" fill="currentColor" opacity=".8" font-family="IBM Plex Mono, monospace">189.0 kg · heuristic 0.45 kg/$</text>
         <text x="482" y="94" font-size="10.5" fill="currentColor" opacity=".8" font-family="IBM Plex Mono, monospace">40 + 189 vs 50 kg → 179 over</text>
-        <text x="482" y="112" font-size="10" fill="currentColor" opacity=".55" font-family="IBM Plex Mono, monospace">flags if ungrounded</text>
+        <text x="482" y="112" font-size="10" fill="currentColor" opacity=".55" font-family="IBM Plex Mono, monospace">rejected if ungrounded</text>
         <rect x="736" y="28" width="230" height="96" fill="none" stroke="currentColor" stroke-width="1.25"/>
         <text x="752" y="52" font-size="12" fill="var(--accent)" font-family="IBM Plex Mono, monospace">settle</text>
         <text x="752" y="74" font-size="10.5" fill="currentColor" opacity=".8" font-family="IBM Plex Mono, monospace">3 580¢ offset, token-capped</text>
@@ -757,7 +757,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <div class="inner wide">
     <div class="eyebrow">Two sponsors, two real mechanics &middot; not badges</div>
     <h2 class="slide-title">A sandbox the Worker can create but not run. A memory that round-trips for real.</h2>
-    <p class="lede">Tenki hit a real platform limit this weekend and got built around it honestly. Mitosis is a verified real write, then a real recall — not a claim.</p>
+    <p class="lede">Tenki hit a real platform limit during the build and got built around it honestly. Mitosis is a verified real write, then a real recall — not a claim.</p>
     <div class="grid g2">
       <div class="card" style="border-color: var(--accent);">
         <span class="kicker">Tenki &middot; two hops, because a Worker can only do one</span>
@@ -780,7 +780,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
           </div>
           <div class="step">
             <div class="step-n">04</div>
-            <div class="step-t">Flagged if the session isn't ours</div>
+            <div class="step-t">Rejected if the session isn't ours</div>
             <div class="step-d">The reported sessionId is checked against what this ledger actually created, then re-confirmed with Tenki itself. Invented output is a 422.</div>
           </div>
         </div>
@@ -794,7 +794,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <span class="k">"ok"</span>: <span class="g">true</span>,
   <span class="k">"memoryId"</span>: <span class="g">"universal_id..."</span>
 }</pre>
-        <p style="margin-top:12px;"><b>What it's for:</b> enrichment, not the write path itself &mdash; a fleet run commits or flags on policy and Tavily evidence alone. Cortex is where that history becomes queryable later, by us or another agent.</p>
+        <p style="margin-top:12px;"><b>What it's for:</b> enrichment, not the write path itself &mdash; a fleet run is accepted or rejected on validation and Tavily evidence alone. Cortex is where that history becomes queryable later, by us or another agent.</p>
       </div>
     </div>
   </div>
@@ -804,7 +804,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
   <div class="inner wide">
     <div class="eyebrow">Agent Edition &middot; an agent army on both sides of one ledger</div>
     <h2 class="slide-title">Client swarm &harr; Climatico service &rarr; buyer ecosystem.</h2>
-    <p class="lede">The same ledger grew a real cast of investigating agents this weekend. Orepath's own compute-watcher files what it finds autonomously, Climatico's fleet enforces policy and settles receipts, third-party providers deliver services through the same surface, and downstream buyers verify with read-only credentials. One ledger underneath all of it.</p>
+    <p class="lede">The same ledger grew a real cast of investigating agents. Orepath's own compute-watcher files what it finds autonomously, Climatico's fleet validates, calculates, and settles, third-party providers deliver services through the same surface, and downstream buyers verify with read-only credentials. One ledger underneath all of it.</p>
     <div class="grid g3">
       <div class="card" style="border-color: var(--warn);">
         <span class="chip wa" style="margin-bottom:8px;">Client army</span>
@@ -814,7 +814,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div class="card" style="border-color: var(--ok);">
         <span class="chip ok" style="margin-bottom:8px;">Service army</span>
         <h3>Climatico: 10 agents in one Worker</h3>
-        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e against live Tavily sources. <b>Settle</b> commits a token-capped offset. <b>Policy</b> flags forbidden intents &mdash; and records the rejection. <b>Scheduler</b> (cron) runs all three plus Tavily abatement research every 30 min. <b>Abatement researcher</b> + <b>summary writer</b> (Workers AI) find real greener alternatives. <b>Report builder</b> compiles <code>/v1/report</code>. <b>Inbox analyst</b> pushes hotspot alerts. <b>Clerk</b> (Workers AI) answers questions. Every handoff is a row.</p>
+        <p><b>Ingest</b> parses the spike. <b>Audit</b> scores kgCO2e against live Tavily sources. <b>Settle</b> commits a token-capped offset. <b>Validation</b> rejects out-of-scope requests &mdash; and logs the rejection. <b>Scheduler</b> (cron) runs all three plus Tavily abatement research every 30 min. <b>Abatement researcher</b> + <b>summary writer</b> (Workers AI) find real greener alternatives. <b>Report builder</b> compiles <code>/v1/report</code>. <b>Inbox analyst</b> pushes hotspot alerts. <b>Clerk</b> (Workers AI) answers questions. Every handoff is a row.</p>
       </div>
       <div class="card" style="border-color: var(--accent);">
         <span class="chip info" style="margin-bottom:8px;">3rd-party + buyer</span>
@@ -824,7 +824,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
     </div>
     <div class="card" style="margin-top:14px;">
       <span class="kicker">The boundary &middot; what every agent must cross</span>
-      <p><span class="inline">/.well-known/agent-card.json</span> A2A discovery &middot; <span class="inline">/v1/credentials</span> scopes freeze at mint (5&nbsp;000&cent; ceiling) &middot; <span class="inline">/mcp &middot; /a2a &middot; /v1/*</span> one policy underneath &middot; <span class="inline">SQLite Ledger</span> the settlement of record &middot; <span class="inline">climatico.sh</span> CLI for human operators. In the UI this is the <b>3-Sided Swarm</b> tab, deployed and live.</p>
+      <p><span class="inline">/.well-known/agent-card.json</span> A2A discovery &middot; <span class="inline">/v1/credentials</span> scopes freeze at mint (5&nbsp;000&cent; ceiling) &middot; <span class="inline">/mcp &middot; /a2a &middot; /v1/*</span> one validation layer underneath &middot; <span class="inline">SQLite Ledger</span> the settlement of record &middot; <span class="inline">climatico.sh</span> CLI for human operators. In the UI this is the <b>3-Sided Swarm</b> tab, deployed and live.</p>
     </div>
   </div>
 </section>
@@ -885,10 +885,10 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
         </ul>
       </div>
       <div class="card" style="border-color: var(--flag);">
-        <span class="kicker">Flagged &middot; stored</span>
+        <span class="kicker">Rejected &middot; logged</span>
         <ul class="ticks">
-          <li>Greenwash claimed at &ldquo;Orepath Global Chain&rdquo; <b>intercepted before the write</b></li>
-          <li>Flag <span class="inline">eac21a5b</span> persisted &mdash; same table as commits</li>
+          <li>Unverified claim at &ldquo;Orepath Global Chain&rdquo; <b>stopped before the write</b></li>
+          <li>Rejection <span class="inline">eac21a5b</span> logged &mdash; same trail as accepted writes</li>
           <li>Read-only buyer minted <span class="inline">climatico:read</span> and audited <b>6</b> receipts</li>
         </ul>
       </div>
@@ -940,7 +940,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
       <div class="card" style="border-color: var(--warn);">
         <span class="chip wa" style="margin-bottom:8px;">Where we won&rsquo;t fake</span>
         <h3>Water &amp; air rows are upstream, not scored</h3>
-        <p>CO&#8322;e is the modelled and filed core. Water, NOx/PM and e-waste are named as knock-ons &mdash; but the desk won&rsquo;t mint a pollution or handprint number it cannot back with evidence.</p>
+        <p>CO&#8322;e is the modelled and filed core. Water, NOx/PM and e-waste are named as knock-ons &mdash; but Climatico won&rsquo;t print a pollution or handprint number it cannot back with evidence.</p>
       </div>
     </div>
   </div>
@@ -988,7 +988,7 @@ figcaption { margin-top: 8px; font-size: 10.5px; color: var(--muted); max-width:
     <h2 class="slide-title">Website edition for founders. Agent Edition for any AI agent, even one Climatico has never seen before.</h2>
     <div class="grid g2">
       <div class="card">
-        <span class="kicker">Run the desk</span>
+        <span class="kicker">Run it yourself</span>
 <pre>cd climatico
 cp .dev.vars.example .dev.vars
 npm install &amp;&amp; npx wrangler types
@@ -997,12 +997,12 @@ npm run demo         <span class="c"># this slide, in a shell</span>
 ./climatico.sh fleet SJC 420   <span class="c"># CLI: 23 commands</span>
 ./climatico.sh orepath         <span class="c"># check Orepath agent</span>
 ./climatico.sh agents-start    <span class="c"># start the auto-pilot</span></pre>
-        <p style="margin-top:12px;">Mint, prove the 401, file a Houston brief, commit an offset, store a greenwash flag, run the fleet under and over budget. CLI runs the same flows from any terminal.</p>
+        <p style="margin-top:12px;">Mint, prove the 401, file a Houston brief, commit an offset, reject an unverified claim, run the fleet under and over budget. CLI runs the same flows from any terminal.</p>
       </div>
       <div class="card">
-        <span class="kicker">Surfaces a probe will find</span>
+        <span class="kicker">Surfaces an agent will find</span>
         <table>
-          <tr><td class="k">/ai-agent.json</td><td>event probe</td></tr>
+          <tr><td class="k">/ai-agent.json</td><td>discovery file</td></tr>
           <tr><td class="k">/.well-known/agent-card.json</td><td>A2A card</td></tr>
           <tr><td class="k">/v1/credentials</td><td>mint, scopes freeze</td></tr>
           <tr><td class="k">/mcp</td><td>15 tools, bearer required</td></tr>
@@ -1013,7 +1013,7 @@ npm run demo         <span class="c"># this slide, in a shell</span>
           <tr><td class="k">/v1/agents/orepath</td><td>Orepath employee agent (auto-fleet)</td></tr>
           <tr><td class="k">/v1/agents/provider</td><td>3rd-party offset provider</td></tr>
           <tr><td class="k">/v1/memory</td><td>Cortex memory store / recall</td></tr>
-          <tr><td class="k">/v1/workspace</td><td>same feed as the desk</td></tr>
+          <tr><td class="k">/v1/workspace</td><td>same feed as the dashboard</td>
           <tr><td class="k">climatico/climatico.sh</td><td>CLI — 23 commands</td></tr>
         </table>
       </div>
@@ -1054,7 +1054,7 @@ npm run demo         <span class="c"># this slide, in a shell</span>
     maturity: [
       { level: 0, name: "L0 · estimated", done: true, how: "Seven modeled classes with error bars. Nothing claimed as measured." },
       { level: 1, name: "L1 · credential", done: true, how: "Mint climatico:transact. Scopes freeze. Ceiling 5 000¢." },
-      { level: 2, name: "L2 · grounded write", done: true, how: "File a brief or assess. Tavily must return sources or we flag." },
+      { level: 2, name: "L2 · grounded write", done: true, how: "File a brief or assess. Tavily must return sources or it stays modeled." },
       { level: 3, name: "L3 · fleet", done: true, how: "run_fleet on a usage spike. Ingest → audit → settle, handoffs stored." },
       { level: 4, name: "L4 · settlement", done: true, how: "Over-budget spike commits an offset receipt, capped at the token." },
       { level: 5, name: "L5 · continuous", done: true, how: "Open a watch on a place. It keeps running even after you close your laptop." }
@@ -1071,18 +1071,18 @@ npm run demo         <span class="c"># this slide, in a shell</span>
     inbox: [
       { from: "audit", channel: "fleet.audit", tone: "wa", title: "SJC is 179 kg over the monthly budget", body: "Compute class scored 189 kgCO2e from $420 spend. Factor is a published heuristic, cited against 5 live sources.", action: "Settle the offset or cut spend in this region." },
       { from: "settle", channel: "fleet.settle", tone: "ok", title: "Offset committed · 35.8 USD", body: "Receipt on the ledger. Retry-safe via idempotencyKey.", action: "Show this receipt to a buyer agent with climatico:read only." },
-      { from: "policy", channel: "ledger", tone: "no", title: "Flagged greenwash @ everywhere", body: "greenwash is outside Climatico's mandate. The system files climate actions; it does not accept unverified green claims.", action: "This rejection is also recorded." },
+      { from: "policy", channel: "ledger", tone: "no", title: "Rejected: unverified claim", body: "Unverified green claims are outside Climatico's mandate. The system files climate actions with evidence; it does not print claims it cannot back.", action: "The rejection is logged in the same trail." },
       { from: "clerk", channel: "assess", tone: "ok", title: "Grounded brief for Houston, TX", body: "5 live sources. First: Billion-Dollar Weather and Climate Disasters", action: "Promote this place to a watch, or run fleet against the same location." }
     ],
     sponsors: [
       { name: "Cloudflare", role: "Host · runtime", status: "host", insight: "Workers, Durable Objects, Agents SDK, MCP." },
-      { name: "Tavily", role: "Live evidence", status: "booth", insight: "Ungrounded briefs and audits are flagged." },
-      { name: "Cotal", role: "Mesh · $300 best use", status: "prize", insight: "Handoff channels already match Cotal names." }
+      { name: "Tavily", role: "Live evidence", status: "booth", insight: "Ungrounded briefs and audits are rejected and logged." },
+      { name: "Cotal", role: "Agent mesh", status: "prize", insight: "Handoff channels already match Cotal names." }
     ],
     next: [
       "Hotspot SJC: 179 kg over. Keep the offset receipt.",
-      "Claim Tavily 26HACK so audits are not keyless.",
-      "Submit early: agent_surface names files, not the climate pitch."
+      "Connect a cloud billing report so compute is measured, not modeled.",
+      "Answer the buyer's questionnaire from the evidence trail."
     ]
   };
 
@@ -1094,7 +1094,7 @@ npm run demo         <span class="c"># this slide, in a shell</span>
       a2a: "http://127.0.0.1:8787/a2a",
       auth: { type: "http", scopes_freeze_at_mint: true }
     },
-    "mint": { token: "clm_demo", token_type: "bearer", scopes: ["climatico:read", "climatico:transact"], maxAmountCents: 5000, subject: "judge-agent" },
+    "mint": { token: "clm_demo", token_type: "bearer", scopes: ["climatico:read", "climatico:transact"], maxAmountCents: 5000, subject: "ops-agent" },
     "401": { error: "invalid_token", hint: "Mint a scoped credential at POST /v1/credentials" },
     "brief": { receipt: { intent: "brief", location: "Houston, TX", status: "committed", evidence: [{ title: "Billion-Dollar Weather and Climate Disasters" }] } },
     "greenwash": { receipt: { intent: "greenwash", location: "everywhere", status: "flagged", flagCode: "forbidden_intent", flagReason: "the system does not accept unverified claims." } },
@@ -1108,11 +1108,11 @@ npm run demo         <span class="c"># this slide, in a shell</span>
 
   var DEMO = [
     { id: "health", n: "01", t: "Health", d: "GET /health", method: "GET", path: "/health" },
-    { id: "probe", n: "02", t: "Event probe", d: "GET /ai-agent.json", method: "GET", path: "/ai-agent.json" },
-    { id: "mint", n: "03", t: "Mint credential", d: "POST /v1/credentials", method: "POST", path: "/v1/credentials", body: { subject: "judge-agent", scopes: ["climatico:read", "climatico:transact"] } },
+    { id: "probe", n: "02", t: "Discovery", d: "GET /ai-agent.json", method: "GET", path: "/ai-agent.json" },
+    { id: "mint", n: "03", t: "Mint credential", d: "POST /v1/credentials", method: "POST", path: "/v1/credentials", body: { subject: "ops-agent", scopes: ["climatico:read", "climatico:transact"] } },
     { id: "unauth", n: "04", t: "Unauthenticated write", d: "POST /v1/actions → 401", method: "POST", path: "/v1/actions", body: { intent: "brief", location: "Houston, TX" }, noAuth: true },
     { id: "brief", n: "05", t: "Grounded brief", d: "brief · Houston, TX", method: "POST", path: "/v1/actions", body: { intent: "brief", location: "Houston, TX" } },
-    { id: "flag", n: "06", t: "Stored flag", d: "greenwash · 422", method: "POST", path: "/v1/actions", body: { intent: "greenwash", location: "everywhere" } },
+    { id: "flag", n: "06", t: "Rejected claim", d: "greenwash · 422", method: "POST", path: "/v1/actions", body: { intent: "greenwash", location: "everywhere" } },
     { id: "fleet", n: "07", t: "Fleet spike", d: "SJC $420 → 189 kg", method: "POST", path: "/v1/fleet/run", body: { source: "cloud", location: "SJC", spendUsd: 420, monthlyBudgetKg: 50, monthToDateKg: 40 } },
     { id: "handoffs", n: "08", t: "Handoffs", d: "GET /v1/handoffs", method: "GET", path: "/v1/handoffs" }
   ];
@@ -1151,14 +1151,14 @@ npm run demo         <span class="c"># this slide, in a shell</span>
       pipeline: "Turn a spend spike into a receipt",
       swarm: "Who's talking to whom",
       impact: "The cascade, and the same business run differently",
-      ledger: "Every write, committed or flagged",
+      ledger: "Every write, accepted or rejected",
       inbox: "Actionable messages",
       agent: "The clerk holds the same tools"
     };
-    html += '<div class="eyebrow">Agent Natives · Internal track · one ledger</div>';
+    html += '<div class="eyebrow">One ledger · every write traceable</div>';
     html += "<h2 class='slide-title' style='font-size:22px'>" + esc(titles[tab] || titles.assess) + "</h2>";
     html += '<div class="stats">';
-    [["committed", d.committed], ["flagged", d.flagged], ["fleet runs", d.fleetRuns], ["watches", d.watches]].forEach(function (row) {
+    [["accepted", d.committed], ["rejected", d.flagged], ["fleet runs", d.fleetRuns], ["watches", d.watches]].forEach(function (row) {
       html += '<div class="stat"><b>' + (row[1] ?? 0) + "</b><span>" + row[0] + "</span></div>";
     });
     html += "</div>";

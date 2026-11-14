@@ -123,7 +123,7 @@ Agents should help maintain the workflow: request missing records, process incom
 
 Their value comes from acting on real operational signals and carrying work across these steps. Running on a timer, producing climate prose, or writing a receipt is not enough to demonstrate that workflow.
 
-Policy checks validate supported commands, permissions, locations, and inputs, and record issues for audit. The current code does not evaluate arbitrary company statements and determine whether they are true. Product-facing issues should explain what data or evidence is missing, what needs attention, and how to resolve it.
+The API validates commands, permissions, locations, and inputs before writing, and logs rejected requests with their reasons, so an audit can see what was turned away and why. The current code does not evaluate arbitrary company statements and determine whether they are true. Product-facing issues should explain what data or evidence is missing, what needs attention, and how to resolve it.
 
 ## What exists in this repository
 
@@ -134,7 +134,7 @@ These are implemented prototype building blocks, not a claim that the complete p
 | Web workspace | React views for assessment, abatement, ledger/pipeline, and Clerk chat | Includes demo company data, preset totals, and illustrative flows |
 | Durable ledger | Cloudflare Durable Object with SQLite receipts, handoffs, runs, and connection records | Stores submitted/generated records; storage alone does not verify their real-world accuracy |
 | Agent interfaces | REST, MCP, A2A, discovery files, and CLI | Interface availability does not establish complete accounting or action execution |
-| Credentials and policy | Scoped bearer credentials and request checks | Secure company identity, membership, tenant isolation, and production authorization need work; public demo credential minting is not company authentication |
+| Credentials and validation | Scoped bearer credentials and request validation | Secure company identity, membership, tenant isolation, and production authorization need work; public demo credential minting is not company authentication |
 | Research | Gemini search grounding with a Tavily fallback | Collects references; does not validate company activity or automatically establish an applicable factor |
 | Compute pipeline | Ingest → audit → settle, with persisted handoffs | Spend heuristic; scheduled inputs are simulated; no real billing connection |
 | Freight records | Accepts mode, weight, and distance and records a calculation | Hardcoded emissions factors; submitted data is not independently verified shipment evidence |
@@ -167,8 +167,8 @@ The project originated at the Agent Natives Builders Hackathon in San Francisco.
 | [`climatico/src/server.ts`](climatico/src/server.ts) | Routes and scheduled demo activity |
 | [`climatico/src/orepath-agent.ts`](climatico/src/orepath-agent.ts) | Simulated compute-watcher activity |
 | [`climatico/climatico.sh`](climatico/climatico.sh) | CLI and local folder metadata scan |
-| [`PRD.md`](PRD.md) | Earlier prototype requirements; not yet reconciled with this vision |
-| [`climatico/public/deck.html`](climatico/public/deck.html) | Existing demo deck; not yet reconciled with this vision |
+| [`PRD.md`](PRD.md) | Product contract (v2.0); buyer-request-first narrative |
+| [`climatico/public/deck.html`](climatico/public/deck.html) | Demo deck; narrative reconciled November 2026 |
 
 The prototype is configured for [this demo deployment](https://climatico.dalrae-jin-work.workers.dev). Deployment availability and service connections are not verified by this README.
 
