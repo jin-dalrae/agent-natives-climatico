@@ -16,6 +16,7 @@ import { getLedger, Ledger } from "./ledger";
 import { mcpHandler } from "./mcp";
 import { researchAlternatives, summarizeAbatement } from "./abatement";
 import { buildReport } from "./report";
+import { buildAnswer } from "./answer";
 import { getOrepathAgent, OrepathAgent } from "./orepath-agent";
 import { getProviderAgent, ProviderAgent } from "./provider";
 import { cortexRemember, cortexRecall } from "./cortex";
@@ -328,6 +329,20 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
     ctx.waitUntil(enrichReport(env));
 
     return json(request, report);
+  }
+
+  if (path === "/v1/answer" && request.method === "GET") {
+    const principal = await principalOr401(request, env);
+    if (principal instanceof Response) return principal;
+    const ledger = await getLedger(env);
+    const answer = buildAnswer({
+      runs: await ledger.listFleetRuns(10),
+      receipts: await ledger.listReceipts(40),
+      buyer: url.searchParams.get("buyer") ?? "",
+      period: url.searchParams.get("period") ?? "",
+      company: url.searchParams.get("company") ?? "",
+    });
+    return json(request, answer);
   }
 
   // --- Orepath employee agent endpoints ---

@@ -5,10 +5,12 @@ import { useAgentChat } from "@cloudflare/ai-chat/react";
 import type { EmissionClass, FounderStory, InboxMessage, SponsorLink, WorkspaceView } from "./insights";
 import { OREPATH, OREPATH_GROWTH } from "./insights";
 import type { FleetRun, Handoff, Receipt } from "./types";
+import type { BuyerAnswer } from "./answer";
 import "./styles.css";
 
-type Tab = "assess" | "abate" | "ledger" | "agent";
+type Tab = "answer" | "assess" | "abate" | "ledger" | "agent";
 const TABS: { id: Tab; label: string }[] = [
+  { id: "answer", label: "Buyer Answer" },
   { id: "assess", label: "Assess" },
   { id: "abate", label: "Abate & Actions" },
   { id: "ledger", label: "Ledger & Pipeline" },
@@ -20,7 +22,7 @@ function tabFromUrl(): Tab {
   if (value === "inbox") return "assess";
   if (value === "demo" || value === "grow" || value === "impact") return "abate";
   if (value === "pipeline" || value === "swarm") return "ledger";
-  return TABS.some((t) => t.id === value) ? (value as Tab) : "assess";
+  return TABS.some((t) => t.id === value) ? (value as Tab) : "answer";
 }
 
 function fromDeck(): boolean {
@@ -1465,6 +1467,192 @@ Scanning . (file contents never leave this machine)...
   );
 }
 
+function BuyerAnswerTab({
+  token,
+  mint,
+  write,
+  busy,
+}: {
+  token: string;
+  mint: () => Promise<string | null>;
+  write: (path: string, body: unknown) => Promise<void>;
+  busy: boolean;
+}) {
+  const [buyer, setBuyer] = useState("EV cell buyer");
+  const [period, setPeriod] = useState("2026");
+  const [company, setCompany] = useState("Orepath");
+  const [answer, setAnswer] = useState<BuyerAnswer | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function compile() {
+    setLoading(true);
+    setError(null);
+    try {
+      const t = token || sessionStorage.getItem("climatico.token") || (await mint());
+      if (!t) throw new Error("Could not mint a credential.");
+      const qs = new URLSearchParams({ buyer, period, company });
+      const res = await fetch(`/v1/answer?${qs}`, {
+        headers: { Authorization: `Bearer ${t}` },
+      });
+      if (!res.ok) throw new Error(`Answer request failed (${res.status}).`);
+      setAnswer((await res.json()) as BuyerAnswer);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Answer request failed.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const grounded = answer?.lines.filter((l) => l.status === "grounded").length ?? 0;
+  const modeled = answer?.lines.filter((l) => l.status === "modeled").length ?? 0;
+
+  return (
+    <>
+      <section className="card">
+        <span className="kicker">Incoming buyer request</span>
+        <h3>Supplier emissions questionnaire</h3>
+        <p className="lede">
+          {buyer} asks {company} for its own {period} footprint — Scope 1+2 plus freight legs —
+          before signing. Compile the answer from the evidence trail: every line carries its
+          method and sources, and gaps are stated, not hidden.
+        </p>
+        <div className="row">
+          <label>
+            Buyer <input value={buyer} onChange={(e) => setBuyer(e.target.value)} maxLength={120} />
+          </label>
+          <label>
+            Period <input value={period} onChange={(e) => setPeriod(e.target.value)} maxLength={120} />
+          </label>
+          <label>
+            Company <input value={company} onChange={(e) => setCompany(e.target.value)} maxLength={120} />
+          </label>
+          <button type="button" className="primary" disabled={loading || busy} onClick={() => void compile()}>
+            {loading ? "Compiling…" : "Compile answer"}
+          </button>
+        </div>
+        {error ? <p className="lede">{error}</p> : null}
+      </section>
+
+      {answer ? (
+        <>
+          <div className="metrics">
+            <div className="metric">
+              <div className="k">Grounded lines</div>
+              <div className="v">{grounded}</div>
+              <div className="d">backed by live sources</div>
+            </div>
+            <div className="metric">
+              <div className="k">Modeled lines</div>
+              <div className="v">{modeled}</div>
+              <div className="d">recorded, awaiting sources</div>
+            </div>
+            <div className="metric">
+              <div className="k">Gaps</div>
+              <div className="v">{answer.gaps.length}</div>
+              <div className="d">stated, not hidden</div>
+            </div>
+          </div>
+
+          {answer.lines.length === 0 ? (
+            <section className="card">
+              <span className="kicker">Empty ledger</span>
+              <h3>No records to answer with yet.</h3>
+              <p className="lede">
+                File a cloud calculation or a freight leg first, then compile again. Trace records
+                never count — they are customer shipments, not your footprint.
+              </p>
+              <div className="row">
+                <button
+                  type="button"
+                  disabled={loading || busy}
+                  onClick={() =>
+                    void write("/v1/fleet/run", {
+                      source: "cloud",
+                      location: "SJC",
+                      spendUsd: 420,
+                      monthlyBudgetKg: 50,
+                      monthToDateKg: 40,
+                    })
+                  }
+                >
+                  Calculate spend impact ($420)
+                </button>
+                <button
+                  type="button"
+                  disabled={loading || busy}
+                  onClick={() =>
+                    void write("/v1/actions", {
+                      intent: "freight",
+                      location: "Shenzhen -> Oakland",
+                      freightMode: "sea",
+                      weightKg: 8000,
+                      distanceKm: 11000,
+                    })
+                  }
+                >
+                  File freight leg (sea)
+                </button>
+              </div>
+            </section>
+          ) : (
+            <div className="msg-list">
+              {answer.lines.map((l) => (
+                <article className="msg" key={l.id}>
+                  <div className="msg-meta">
+                    <span className={`chip ${l.status === "grounded" ? "ok" : "wa"}`}>{l.status}</span>
+                    <span className="channel-tag">{l.method}</span>
+                    <span className="timestamp">{new Date(l.at).toLocaleString()}</span>
+                  </div>
+                  <h3>{l.label}</h3>
+                  <p>{l.detail}</p>
+                  <p className="how">
+                    <b>Sources: </b>
+                    {l.sources.length ? l.sources.map((s) => s.title).join(" · ") : "none yet"}
+                    {l.sourceCount > l.sources.length ? ` (+${l.sourceCount - l.sources.length} more)` : ""}
+                  </p>
+                  <p className="how">
+                    <b>Receipts: </b>
+                    {l.receiptIds.length ? l.receiptIds.map((id) => id.slice(0, 8)).join(", ") : "—"}
+                  </p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          <div className="grid g2">
+            <section className="card">
+              <span className="kicker">Coverage</span>
+              <h3>Grounded vs modeled</h3>
+              <p className="lede">
+                Grounded: {answer.coverage.grounded.length ? answer.coverage.grounded.join(", ") : "none yet"}
+              </p>
+              <p className="lede">
+                Modeled: {answer.coverage.modeled.length ? answer.coverage.modeled.join(", ") : "none — fully grounded"}
+              </p>
+            </section>
+            <section className="card">
+              <span className="kicker">Gaps &amp; exclusions</span>
+              <h3>What this answer does not claim</h3>
+              {answer.gaps.map((g) => (
+                <p className="lede" key={g}>
+                  {g}
+                </p>
+              ))}
+              {answer.excludedTraceRecords > 0 ? (
+                <p className="lede">
+                  {answer.excludedTraceRecords} trace record(s) excluded: customer shipments, not{" "}
+                  {answer.company}&rsquo;s own footprint.
+                </p>
+              ) : null}
+            </section>
+          </div>
+        </>
+      ) : null}
+    </>
+  );
+}
+
 export function App() {
   const [tab, setTab] = useState<Tab>(tabFromUrl);
   const [ws, setWs] = useState<WorkspaceView | null>(null);
@@ -1484,7 +1672,7 @@ export function App() {
     }
   }, []);
 
-  async function mint() {
+  async function mint(): Promise<string | null> {
     setBusy(true);
     try {
       const res = await fetch("/v1/credentials", {
@@ -1501,6 +1689,7 @@ export function App() {
         sessionStorage.setItem("climatico.token", body.token);
       }
       await load();
+      return body.token ?? null;
     } finally {
       setBusy(false);
     }
@@ -1601,6 +1790,7 @@ export function App() {
   }
 
   const title: Record<Tab, string> = {
+    answer: "Buyer answer — one request, one auditable response",
     assess: "Dashboard",
     abate: "Impact & abatement — the modeled cascade and the same business, run differently",
     ledger: "Receipts & flags",
@@ -1644,6 +1834,10 @@ export function App() {
       </header>
 
       <main className="main">
+        {tab === "answer" ? (
+          <BuyerAnswerTab token={token} mint={mint} write={write} busy={busy} />
+        ) : null}
+
         {tab === "assess" ? (
           <>
             <section className="identity">

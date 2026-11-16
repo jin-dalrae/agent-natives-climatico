@@ -179,3 +179,19 @@ Scanning . (file contents never leave this machine)...
 | `./bin/orepath connect . --dry-run` | Privacy-preserving auto-assessment | Derived signals JSON printed |
 | `./bin/orepath receipts 5` | Show recent ledger receipts | Last 5 receipts from SQLite DO |
 | `./bin/orepath handoffs` | View agent-to-agent pipeline log | Ingest → Audit → Settle chain |
+
+---
+
+## 4. Buyer Answer (Front Door)
+
+Open [`/app?tab=answer`](https://climatico.dalrae-jin-work.workers.dev/app?tab=answer). Enter the buyer, period, and company, then **Compile answer**. Behind the button is one call:
+
+```bash
+TOKEN=$(curl -s -X POST https://climatico.dalrae-jin-work.workers.dev/v1/credentials \
+  -H 'Content-Type: application/json' \
+  -d '{"subject":"demo","scopes":["climatico:read"]}' | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
+curl -H "Authorization: Bearer $TOKEN" \
+  "https://climatico.dalrae-jin-work.workers.dev/v1/answer?buyer=CellCo&period=2026&company=Orepath"
+```
+
+The response compiles committed ledger records into one line per record — cloud runs, freight legs, grounded assessments — each with its method, sources, and receipt ids. Trace records are excluded (customer shipments, not the company's footprint), classes without records are listed as gaps, and nothing is summed into an invented total.
